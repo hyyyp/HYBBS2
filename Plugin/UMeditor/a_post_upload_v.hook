@@ -1,0 +1,13 @@
+if(!$info) {
+	$d['state']	= $upload->getError(); 
+}else{
+	$d['state'] = 'SUCCESS';
+	$d["url"]=$d['file_path'];
+	$d["name"] = $info['photo']['savename'];
+	$d["originalName"] =$info['photo']['name'];
+	$d["type"] = '.'.$info['photo']['ext'];
+	$d["size"] = $info['photo']['size'];
+	
+	echo json_encode($d);
+	die;
+}

@@ -1,0 +1,111 @@
+{include header}
+<div class="wrapper">
+    {include header_menu}
+
+    {include left_menu}
+    <div class="main-container">
+        <div class="padding-md">
+            <h2 class="header-text no-margin">
+                插件
+                <form action="{php HYBBS_URL('admin');}" method="post" style="display:inline-block" class="form-horizontal no-margin form-border">
+                <input name="one1" type="hidden" value="on">
+                <button class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 清理缓存</button>
+                </form>
+            </h2>
+
+            <div class="gallery-filter m-top-md" style="margin:10px 0">
+                <ul class="clearfix">
+                    <li><a href="{php HYBBS_URL('admin','code');}">我的插件</a></li>
+                    <li><a href="{php HYBBS_URL('admin','codeol');}">线上插件 & 下载插件</a></li>
+                    <li class="active"><a href="{php HYBBS_URL('admin','code_op');}">插件优先级</a></li>
+                    
+                </ul>
+            </div>
+
+
+            <div class="row">
+            {foreach $data as $key => $v}
+            <div class="col-sm-12">
+                <div class="smart-widget">
+                    <div class="smart-widget-header">
+                        <i class="fa fa-{$v.conf.icon} fa-2x"></i> {$v.conf.name} <span class="badge badge-info">{$v.name}</span>
+                        <span class="smart-widget-option">
+                            <span class="refresh-icon-animated" style="display: none;">
+                                <i class="fa fa-circle-o-notch fa-spin"></i>
+                            </span>
+                           
+                            <a href="#" class="widget-collapse-option" data-toggle="collapse">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a href="#" class="widget-refresh-option">
+                                <i class="fa fa-refresh"></i>
+                            </a>
+                            <a href="#" class="widget-remove-option">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="smart-widget-inner" style="display: block;">
+                        
+                        <div class="smart-widget-body">
+                            <small style="color: purple" class="text-muted">作者: {$v.conf.user} <strong style="color: darkcyan;"> &nbsp;版本:{$v.conf.version}</strong></small>
+                            <div class="seperator"></div>
+                            <p class="m-bottom-none">
+                                {$v.conf.mess}
+                            </p>
+                            <div class="list-group">
+                                {foreach $v['hook'] as $vv}
+                                <a href="javascript:void(0)" class="list-group-item ">{php echo str_replace('.hook','',$vv);} <input class="input-hook pull-right" type="text" style="width:50px" code="{$v.name}" hook="{$vv}"> <span class="label label-success pull-right" style="margin-right:10px">{if isset($v['p'][$vv])}{$v['p'][$vv]}{/if}</span></a>
+                                {/foreach}
+                             {if isset($v['p'][$vv])}{/if}
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+            
+
+            {/foreach}
+            </div>
+       
+
+        </div>
+    </div><!-- ENd box  -->
+
+
+
+<script type="text/javascript">
+    window.onload = function(){
+        $(".input-hook").blur(function(){
+            var _this = $(this);
+            var hook = _this.attr('hook');
+            var code = _this.attr('code');
+            var v = _this.val();
+            $('#formInModal').modal('show');
+            $.post('{php HYBBS_URL('admin','code_op');}',{hook:hook,code:code,value:v},function(e){
+                $('#formInModal').modal('hide');
+
+            });
+        });
+    };
+</script>
+
+<div class="modal fade" id="formInModal">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">修改中...</h4>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-success alert-custom alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <i class="fa fa-check-circle m-right-xs"></i><strong>提示!</strong> 正在修改中. 完毕后会自动关闭对话框!
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{include footer}

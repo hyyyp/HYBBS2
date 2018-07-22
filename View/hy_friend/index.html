@@ -1,0 +1,89 @@
+{if IS_LOGIN}
+<div class="friend-box">
+	<audio id="play-msg">
+    <source src="{#WWW}public/mp3/msg.mp3" type="audio/mp3">
+</audio>
+	<audio id="play-system">
+    <source src="{#WWW}public/mp3/system.mp3" type="audio/mp3">
+</audio>
+	<div class="friend-box-close" onclick="$('.friend-box').toggleClass('friend-box-a')">×</div>
+	<div class="friend-info-box">
+		<img src="{#WWW}{$user.avatar.b}">
+		<h2>{$user.user} </h2>
+		<p>
+			<span class="badge badge-purple bounceIn animation-delay2" style="font-size: 14px;font-weight: 400;background: cadetblue;">{$usergroup[NOW_GID]['name']}</span>
+		</p>
+		<p>
+		<a href="{php HYBBS_URL('my',$user['user']);}">{$_LANG['个人中心']}</a>
+		<span>|</span>
+		<a href="{php HYBBS_URL('user','out')}">{$_LANG['退出账号']}</a>
+		</p>
+		<p>
+		<a href="javascript:void(0);" onclick="clear_mess()">{$_LANG['清空未读']}</a>
+		{if $user['gid'] == C('ADMIN_GROUP')}
+		<span>|</span>
+		<a href="{php HYBBS_URL('admin')}">{$_LANG['管理后台']}</a>
+		{/if}
+		</p>
+	</div>
+	<script type="text/javascript">
+	{if IS_LOGIN}
+	window.hy_user = "{#NOW_USER}";
+	window.hy_avatar = WWW + "{$user.avatar.a}";
+	{else}
+	window.hy_user = '';
+	window.hy_avatar = '';
+	{/if}
+	$(function(){
+		load_friend();
+	})
+	</script>
+	<div class="friend-div-box">
+		<input type="text" class="friend-text" placeholder="{$_LANG['搜索好友名']}">
+		<img src="{#WWW}View/hy_friend/cog.png" style="padding-top: 7px;padding-left: 7px;font-size: 18px;display: inline-block;"></span>
+	</div>
+	<div class="friend-title">
+		{$_LANG['关注列表']} +
+	</div>
+	<div class="friend-div-box">
+		<ul class="friend-ul" id="friend-1">
+			<li><a onclick="new_chat('title','ssss',444,465,0,'{$_LANG['系统']}','View/hy_friend/bell.png','系统消息')" class="clearfix">
+			<img src="{#WWW}View/hy_friend/bell.png" class="img-circle" alt="user avatar">
+			<div class="chat-detail m-left-sm">
+				<div class="chat-name">{$_LANG['系统']}</div>
+				<div class="chat-message">{$_LANG['系统消息']}</div>
+			</div>
+			<div class="chat-status">
+			<span class="friend-zx"></span>
+			</div>
+			<div class="chat-alert">
+				<span id="friend-span-0" class="badge badge-purple bounceIn animation-delay2 friend-hide">0</span></div></a></li>
+		</ul>
+	</div>
+	<div class="friend-title">
+		{$_LANG['粉丝列表']} +
+	</div>
+	<div class="friend-div-box">
+		<ul class="friend-ul" id="friend-3">
+			
+		</ul>
+	</div>
+	<div class="friend-title">
+		{$_LANG['陌生人']} +
+	</div>
+	<div class="friend-div-box">
+		<ul class="friend-ul" id="friend-0">
+			
+		</ul>
+	</div>
+
+</div>
+<div class="friend-v" onclick="$('.friend-box').toggleClass('friend-box-a')"></div>
+<script type="text/javascript">
+	$(function(){
+		$(".friend-title").click(function(){
+			$(this).next().toggleClass('friend-div-box-hide');
+		})
+	})
+</script>
+{/if}

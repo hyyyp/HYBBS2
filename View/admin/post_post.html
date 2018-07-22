@@ -1,0 +1,234 @@
+{include header}
+<div class="wrapper">
+    {include header_menu} {include left_menu}
+    <div class="main-container">
+        
+        <div class="padding-md">
+            <h2 class="header-text">
+                子评论管理
+            </h2>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="widget-stat clearfix">
+                        <span class="stat-icon bg-success bounceIn animation-delay3"><i class="fa fa-comments"></i></span>
+                        <div class="stat-info">
+                            <small class="text-muted text-upper">子评论数量</small>
+                            <span>{php echo S('Post_post')->count()}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="widget-stat clearfix">
+                        <span class="stat-icon bg-warning bounceIn animation-delay3"><i class="fa fa-comments-o"></i></span>
+                        <div class="stat-info">
+                            <small class="text-muted text-upper">今日发表子评论</small>
+                            <span>{php echo S('Post_post')->count(['atime[>]'=>strtotime(date('Y-m-d'))])}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="">
+                <button style="margin-bottom: 10px;" class="btn btn-success" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    <span class="fa fa-search" aria-hidden="true"></span> 搜索子评论
+                </button>
+                <div class="collapse {if X('get.search_submit')}in{/if}" id="collapseExample">
+                    <div class="well">
+                        <form action="{php HYBBS_URL(ACTION_NAME,METHOD_NAME,['pageid'=>1])}" method="get" class="form-horizontal" onsubmit="return search_from(this)">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="uid" class="col-sm-2 control-label">UID</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" name="uid" id="uid" placeholder="完整用户UID" value="{php echo X('get.uid')}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="username" class="col-sm-2 control-label">用户名</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" name="username" class="form-control" id="username" placeholder="完整用户名" value="{php echo X('get.username')}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="pid" class="col-sm-2 control-label">ID</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" name="pid" id="pid" placeholder="完整子评论ID" value="{php echo X('get.pid')}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="pid" class="col-sm-2 control-label">PID</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" name="pid" id="pid" placeholder="所属PID" value="{php echo X('get.pid')}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="tid" class="col-sm-2 control-label">TID</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" name="tid" id="tid" placeholder="筛选某文章下的评论, 输入完整TID" value="{php echo X('get.tid')}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="content" class="col-sm-2 control-label">子评论内容</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" name="content" class="form-control" id="content" placeholder="关键字, 搜索此项会消耗较长时间" value="{php echo X('get.content')}">
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-lg-6">
+                                    <!-- <div class="form-group">
+                                        <label for="fid" class="col-sm-2 control-label">分类</label>
+                                        <div class="col-sm-10">
+                                            <select name="fid" class="form-control">
+                                              <option value="-1">不筛选</option>
+                                              {foreach S('forum')->select('*',['ORDER'=>['id'=>'ASC']]) as $v}
+                                              <option value="{$v.id}" {if X('get.fid') == $v['id']}selected{/if}>{$v.name}</option>
+                                              {/foreach}
+                                            </select>
+                                        </div>
+                                    </div> -->
+                                    <!-- <div class="form-group">
+                                        <label for="" class="col-sm-2 control-label">置顶</label>
+                                        <div class="col-sm-10">
+                                          <select name="top" class="form-control">
+                                              <option value="0">不筛选</option>
+                                              <option value="1" {if X('get.top') == 1}selected{/if}>板块置顶</option>
+                                              <option value="2" {if X('get.top') == 2}selected{/if}>全站置顶</option>
+                                          </select>
+                                        </div>
+                                    </div> -->
+                                    <!-- <div class="form-group">
+                                        <label for="" class="col-sm-2 control-label">锁定状态</label>
+                                        <div class="col-sm-10">
+                                          <select name="state" class="form-control">
+                                              <option value="0">不筛选</option>
+                                              <option value="1" {if X('get.state') == 1}selected{/if}>未锁定</option>
+                                              <option value="2" {if X('get.state') == 2}selected{/if}>锁定</option>
+                                          </select>
+                                        </div>
+                                    </div> -->
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <div class="col-md-5 col-md-offset-2">
+                                            <input type="hidden" name="search_submit" value="search_submit">
+                                            <button type="submit" name="search_submit" value="search_submit" class="btn btn-primary">
+                                                <span class="fa fa-search" aria-hidden="true"></span> 搜索
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div><!-- 搜索 -->
+
+            <form action="" method="post">
+                <input type="hidden" name="gn" value="del">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered m-top-md" id="dataTable">
+                        <thead>
+                            <tr class="bg-dark-blue">
+                                <th>
+                                    <div class="custom-checkbox">
+                                        <input type="checkbox" id="chkx" onclick="if($(this).is(':checked'))$('.checkboxx').prop('checked','checked'); else $('.checkboxx').attr('checked',false);">
+                                        <label for="chkx"></label>
+                                    </div>
+                                </th>
+                                <th>ID</th>
+                                <th width="400">相关数据</th>
+                                
+                                <th>作者&UID</th>
+                                
+                                <th>发表时间</th>
+                                
+                                <th>赞踩</th>
+                                
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $Thread = M('Thread'); ?>
+                            {foreach $data as $v}
+                            <tr>
+                                <td>
+                                    <div class="custom-checkbox">
+                                        <input name="id[]" value="{$v.id}" class="checkboxx" type="checkbox" id="chk{$v.id}">
+                                        <label for="chk{$v.id}"></label>
+                                    </div>
+                                </td>
+                                <td>{$v.id}</td>
+                                <td>
+                                    <p>文章tid：{$v.tid}</p>
+                                    <p>所属评论pid：{$v.pid}</p>
+                                    <p>文章标题：<a href="{php HYBBS_URL('thread',$v['tid'])}" target="_blank">{php echo $Thread->get_title($v['tid'])}</a></p>
+                                    <p style="word-break: break-all;" title="内容被截断输出">内容：{php echo mb_substr(strip_tags($v['content']),0,100)}</p>
+                                    
+                                    
+                                </td>
+                                
+                                <td>{php echo M('User')->uid_to_user($v['uid'])}<small class="badge badge-success badge-square bounceIn animation-delay2 m-left-xs">{$v.uid}</small></td>
+                                
+                                <td>
+                                    <p><?php echo date("Y-m-d H:i:s",$v['atime']); ?></p>
+                                    
+                                    
+                                </td>
+                               
+                                <td>
+                                    <p>赞：{$v.goods}</p>
+                                    <p>踩：{$v.nos}</p>
+                                </td>
+                                
+                                <td>
+                                    <!-- <a target="_blank" href="{if $v['pid']==0}{php HYBBS_URL('thread',$v['tid']);}{else}{php HYBBS_URL('post','edit',['id'=>$v['pid']]);}{/if}" class="btn btn-success btn-xs">修改</a> -->
+                                
+                                </td>
+                            </tr>
+                            {/foreach}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="smart-widget-body">
+                    <div class="row">
+                       
+                        <div class="col-md-12">
+                            <button class="btn btn-danger">删除 (不可恢复)</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <nav aria-label="..." class="text-center">
+                <ul class="pagination ">
+                {if $pageid!=1}
+                    <li class="">
+                        <a href="{php HYBBS_URl(ACTION_NAME,METHOD_NAME,['pageid'=>$pageid-1])}{$x}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+                    </li>
+                {/if}
+                <?php $tmp = $page_count ?>
+
+                {for $i=($pageid-5 < 1) ? 1 : $pageid -5; $i< (($pageid + 5 > $tmp) ? $tmp+1 : $pageid + 5) ; $i++}
+                <li class="{if $pageid == $i}active{/if}">
+                    <a href="{php HYBBS_URl(ACTION_NAME,METHOD_NAME,['pageid'=>$i])}{$x}"  >
+                    {$i}
+                    </a>
+                </li>
+                {/for}
+                {if $pageid!=$page_count}
+                <li>
+                    <a href="{php HYBBS_URl(ACTION_NAME,METHOD_NAME,['pageid'=>$pageid+1])}{$x}" aria-label="Next"><span aria-hidden="true">»</span></a>
+                </li>
+                {/if}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <script type="text/javascript">
+    function search_from(obj){
+        var data = $(obj).serialize();
+        window.location.href='{php HYBBS_URL(ACTION_NAME,METHOD_NAME)}?'+data;//+'&pageid=1';
+        return false;
+    }
+    </script>
+    {include footer}

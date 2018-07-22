@@ -1,0 +1,96 @@
+<header class="top-nav">
+    <div class="top-nav-inner">
+        <div class="nav-header">
+            <button type="button" class="navbar-toggle pull-left sidebar-toggle" id="sidebarToggleSM">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <ul class="nav-notification pull-right">
+                <li>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cog fa-lg"></i></a>
+                    <span class="badge badge-danger bounceIn">1</span>
+                    <ul class="dropdown-menu dropdown-sm pull-right user-dropdown">
+                        <li class="user-avatar">
+                            <img src="{#WWW}{$user.avatar.b}" alt="" class="img-circle">
+                            <div class="user-content">
+                                <h5 class="no-m-bottom">{$user.user}</h5>
+                                <div class="m-top-xs">
+                                    <a href="{#WWW}" class="m-right-sm">返回网站首页</a>
+                                    <a href="{php HYBBS_URL('admin','out')}">退出</a>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <a href="{php HYBBS_URL('admin')}">
+                                后台主页
+                                <span class="badge badge-danger bounceIn animation-delay2 pull-right">1</span>
+                            </a>
+                        </li>
+
+                        <li class="divider"></li>
+                        <li>
+                            <a href="{php HYBBS_URL('admin','op')}">网站设置</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <a href="{#WWW}" class="brand">
+                <i class="fa fa-yc"></i><span class="brand-name">HY BBS</span>
+            </a>
+        </div>
+        <div class="nav-container">
+            <button type="button" class="navbar-toggle pull-left sidebar-toggle" id="sidebarToggleLG">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <ul class="nav-notification">
+                <li>
+                    <a href="javascript:history.back(-1)">
+                        <i class="fa fa-chevron-circle-left"></i>
+                        返回上一页
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:;" onclick="location.href=location.href">
+                        <i class="fa fa-retweet"></i>
+                        刷新本页
+                    </a>
+                </li>
+            </ul>
+            <div class="pull-right m-right-sm">
+                <div class="user-block hidden-xs">
+                    <a href="#" id="userToggle" data-toggle="dropdown">
+                        <img src="{#WWW}{$user.avatar.b}" alt="" class="img-circle inline-block user-profile-pic">
+                        <div class="user-detail inline-block">
+                            {$user.user}
+                            <i class="fa fa-angle-down"></i>
+                        </div>
+                    </a>
+                    <div class="panel border dropdown-menu user-panel">
+                        <div class="panel-body paddingTB-sm">
+                            <ul>
+
+                                <li>
+                                    <a href="{#WWW}">
+                                        <i class="fa fa-inbox fa-lg"></i><span class="m-left-xs">返回首页</span>
+                                        
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{php HYBBS_URL('admin','out')}">
+                                        <i class="fa fa-power-off fa-lg"></i><span class="m-left-xs">退出后台</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div><!-- ./top-nav-inner -->
+</header>

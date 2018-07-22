@@ -1,0 +1,483 @@
+{include header}
+<div class="wrapper">
+    {include header_menu}
+    {include left_menu}
+    <div class="main-container">
+        <div class="padding-md">
+            <h2 class="header-text no-margin">
+                用户管理
+            </h2>
+            <script>
+            function edit_forum(uid, user, gid, email, gold, credits) {
+
+                $("#edit0").val(uid);
+                $("#edit1").val(user);
+                $("#edit2").val(gid);
+                $("#edit3").val(email);
+                $("#edit7").val(gold);
+                $("#edit8").val(credits);
+
+                $('#normalModal1').modal('show')
+            }
+
+            function deluser(id, obj) { //删除用户
+                if (!confirm("确定删除?")) {
+                    return;
+                }
+
+                $(obj).attr("disabled", true);
+
+                $.post('{php HYBBS_URL('admin','user')}', { id: id, gn: 4 },
+                    function(e) {
+                        $(obj).removeAttr("disabled");
+                        if (e.error) {
+                            $(obj).parent().parent().remove();
+                        }
+
+                    }, 'json');
+            }
+            </script>
+            <div class="row" style="    margin-top: 10px;">
+                <div class="col-md-3">
+                    <div class="widget-stat clearfix">
+                        <span class="stat-icon bg-info bounceIn animation-delay3"><i class="fa fa-users"></i></span>
+                        <div class="stat-info">
+                            <small class="text-muted text-upper">站点用户数量</small>
+                            <span>{php echo S('User')->count()}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="widget-stat clearfix">
+                        <span class="stat-icon bg-success bounceIn animation-delay3"><i class="fa fa-user-plus"></i></span>
+                        <div class="stat-info">
+                            <small class="text-muted text-upper">今日注册</small>
+                            <span>{php echo S('User')->count(['atime[>]'=>strtotime(date('Y-m-d'))])}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="">
+                <button class="btn btn-success" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    <span class="fa fa-search" aria-hidden="true"></span> 搜索用户
+                </button>
+
+                <button class="btn btn-success" href="javascript:void(0)" data-toggle="modal" data-target="#normalModal"><i class="fa fa-plus"></i> 添加用户</button>
+
+                <div style="margin-top:10px" class="collapse {if X('get.search_submit')}in{/if}" id="collapseExample">
+                    <div class="well">
+                        <form action="{php HYBBS_URL(ACTION_NAME,METHOD_NAME,['pageid'=>1])}" method="get" class="form-horizontal" onsubmit="return search_from(this)">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="uid" class="col-sm-2 control-label">UID</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" name="uid" placeholder="完整用户UID" value="{php echo X('get.uid')}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="user" class="col-sm-2 control-label">用户名</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" name="user" class="form-control" placeholder="完整用户名" value="{php echo X('get.user')}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="user_key" class="col-sm-2 control-label">模糊用户名</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" name="user_key" placeholder="模糊搜索用户名" value="{php echo X('get.user_key')}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email" class="col-sm-2 control-label">邮箱</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" name="email" placeholder="完整邮箱" value="{php echo X('get.email')}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email_key" class="col-sm-2 control-label">模糊邮箱</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" name="email_key" placeholder="筛选某文章下的评论, 输入完整TID" value="{php echo X('get.email_key')}">
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="gid" class="col-sm-2 control-label">用户组</label>
+                                        <div class="col-sm-10">
+                                            <select name="gid" class="form-control">
+                                              <option value="-1">不筛选</option>
+                                              {foreach S('usergroup')->select('*',['ORDER'=>['gid'=>'ASC']]) as $v}
+                                              <option value="{$v.gid}" {if X('get.gid') == $v['gid']}selected{/if}>[{$v.gid}] {$v.name}</option>
+                                              {/foreach}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="" class="col-sm-2 control-label">登陆状态</label>
+                                        <div class="col-sm-10">
+                                          <select name="ban_login" class="form-control">
+                                              <option value="0">不筛选</option>
+                                              <option value="1" {if X('get.ban_login') == 1}selected{/if}>允许登陆</option>
+                                              <option value="2" {if X('get.ban_login') == 2}selected{/if}>禁止登陆</option>
+                                          </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="" class="col-sm-2 control-label">发言状态</label>
+                                        <div class="col-sm-10">
+                                          <select name="ban_post" class="form-control">
+                                              <option value="0">不筛选</option>
+                                              <option value="1" {if X('get.ban_post') == 1}selected{/if}>允许发贴</option>
+                                              <option value="2" {if X('get.ban_post') == 2}selected{/if}>禁止发贴</option>
+                                          </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <div class="col-md-5 col-md-offset-2">
+                                            <input type="hidden" name="search_submit" value="search_submit">
+                                            <button type="submit" name="search_submit" value="search_submit" class="btn btn-primary">
+                                                <span class="fa fa-search" aria-hidden="true"></span> 搜索
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div><!-- 搜索 -->
+            <form action="" method="post">
+                <input type="hidden" name="gn" value="del_more">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered m-top-md" id="dataTable">
+                        <thead>
+                            <tr class="bg-dark-blue">
+                                <th>
+                                    <div class="custom-checkbox">
+                                        <input type="checkbox" id="chkx" onclick="if($(this).is(':checked'))$('.checkboxx').prop('checked','checked'); else $('.checkboxx').attr('checked',false);">
+                                        <label for="chkx"></label>
+                                    </div>
+                                </th>
+                                <th>用户信息</th>
+                                <th>权限信息</th>
+                                <th>发表数量</th>
+                                <th>货币积分</th>
+                                <th>粉丝</th>
+                                <th>关注</th>
+                                <th>已用空间</th>
+                                <th>注册时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {foreach $data as $v}
+                            <tr>
+                                <td>
+                                    <div class="custom-checkbox">
+                                        <input name="id[]" value="{$v.uid}" class="checkboxx" type="checkbox" id="chk{$v.uid}">
+                                        <label for="chk{$v.uid}"></label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p>UID：{$v.uid}</p>
+                                    <p>用户名：{$v.user}</p>
+                                    <p>邮箱：{$v.email}</p>
+                                </td>
+                                <td>
+                                    <p>用户组GID：{$v.gid}</p>
+                                    <p>用户组名称：{$usergroup[$v['gid']]['name']}</p>
+                                    {if C('ADMIN_GROUP') != $v['gid']}
+                                    <label class="mui-switch-box">
+                                        <span>允许登陆：</span>
+                                        <input data-type="login" data-uid="{$v.uid}" class='tgl tgl-ios' id='cb1{$v.uid}' type='checkbox' {if $v[ 'ban_login']==0 }checked{/if}>
+                                        <label class='tgl-btn' for='cb1{$v.uid}'></label>
+
+                                    </label>
+                                    <label style="display:block;margin-top:5px" class="mui-switch-box">
+                                        <span>允许发言：</span>
+
+                                        <input data-type="post" data-uid="{$v.uid}" class='tgl tgl-ios' id='cb2{$v.uid}' type='checkbox' {if $v[ 'ban_post']==0 }checked{/if}>
+                                        <label class='tgl-btn' for='cb2{$v.uid}'></label>
+
+                                    </label>
+                                    {/if}
+                                </td>
+                                <td>
+                                    <p>文章数量：{$v.threads}</p>
+                                    <p>评论数量：{$v.posts}</p>
+                                    <p>子评论数量：{$v.post_ps}</p>
+                                </td>
+                                <td>
+                                    <p>金币数量：{$v.gold}</p>
+                                    <p>积分数量：{$v.credits}</p>
+                                </td>
+                                <td>{$v.follow}</td>
+                                <td>{$v.fans}</td>
+                                <td>
+                                    <p>上传：{$v.file_size}kb</p>
+                                    <p>聊天：{$v.chat_size}b</p>
+                                </td>
+                                <td>
+                                    <?php echo empty($v['atime'])?'史前生物':date("Y-m-d H:i:s",$v['atime']) ?>
+                                </td>
+                                <td>
+                                    <button type="button" onclick="edit_forum({$v.uid},'{$v.user}',{$v.gid},'{$v.email}',{$v.gold},{$v.credits})" class="btn btn-success btn-xs">编辑</button>
+                                    {if C('ADMIN_GROUP') != $v['gid']}
+                                    <button type="button" onclick="deluser({$v.uid},this)" class="btn btn-danger btn-xs">删除</button>
+                                    {/if}
+                                    <div class="btn-group marginTB-x navbar-right">
+                                    <button type="button" class="btn btn-success btn-xs dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">操作 <span class="caret"></span></button>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
+                                        <li><a href="javascript:;" onclick="clean_user({$v.uid},'del_thread')">删除所有文章</a></li>
+                                        <li><a href="javascript:;" onclick="clean_user({$v.uid},'del_post')">删除所有评论</a></li>
+                                        <li><a href="javascript:;" onclick="clean_user({$v.uid},'del_post_post')">删除所有子评论</a></li>
+                                        <li><a href="javascript:;" onclick="clean_user({$v.uid},'del_file')">删除所有已上传文件</a></li>
+                                        <li class="divider"></li>
+                                        <li><a href="javascript:;" onclick="clean_user({$v.uid},'del_follow')">清空关注列表</a></li>
+                                        <li><a href="javascript:;" onclick="clean_user({$v.uid},'del_chat')">清空聊天记录</a></li>
+                                    </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            {/foreach}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="checkbox inline-block">
+                            <div class="custom-checkbox">
+                                <input type="checkbox" name="del_post" id="inlineCheckbox1" class="checkbox-red">
+                                <label for="inlineCheckbox1"></label>
+                            </div>
+                            <div class="inline-block vertical-top">
+                                勾选此项 确认多选删除
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="alert alert-danger alert-custom alert-dismissible" role="alert">
+                            <i class="fa fa-times-circle m-right-xs"></i> <strong>特殊警告!</strong> 当你删除用户后，他的所有文章，评论，附件，文件，图片，聊天记录，好友粉丝等。有关他的一切数据都会被删除。而且无法恢复数据！
+                        </div>
+                        <button class="btn btn-danger">删除勾选用户 (不可恢复)</button>
+                    </div>
+                </div>
+            </form>
+            <nav aria-label="..." class="text-center">
+                <ul class="pagination ">
+                {if $pageid!=1}
+                    <li class="">
+                        <a href="{php HYBBS_URl(ACTION_NAME,METHOD_NAME,['pageid'=>$pageid-1])}{$x}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+                    </li>
+                {/if}
+                <?php $tmp = $page_count ?>
+
+                {for $i=($pageid-5 < 1) ? 1 : $pageid -5; $i< (($pageid + 5 > $tmp) ? $tmp+1 : $pageid + 5) ; $i++}
+                <li class="{if $pageid == $i}active{/if}">
+                    <a href="{php HYBBS_URl(ACTION_NAME,METHOD_NAME,['pageid'=>$i])}{$x}"  >
+                    {$i}
+                    </a>
+                </li>
+                {/for}
+                {if $pageid!=$page_count}
+                <li>
+                    <a href="{php HYBBS_URl(ACTION_NAME,METHOD_NAME,['pageid'=>$pageid+1])}{$x}" aria-label="Next"><span aria-hidden="true">»</span></a>
+                </li>
+                {/if}
+                </ul>
+            </nav>
+        </div>
+        <!-- ENd box  -->
+    </div>
+
+<!-- Modal -->
+<form method="post">
+    <div class="modal fade" id="normalModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">添加用户</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="gn" value="2">
+                    <div class="form-group">
+                        <label for="">用户名</label>
+                        <input type="text" name="user" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="">用户组</label>
+                        <select class="form-control" name="group">
+                            {foreach $usergroup as $v}
+                            <option value="{$v.gid}" {if $v['gid']==2}selected="selected"{/if}>{$v.name}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">邮箱</label>
+                        <input type="email" name="email" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="">密码</label>
+                        <input type="text" name="pass" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<form method="post">
+    <div class="modal fade" id="normalModal1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">修改用户</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="gn" value="3">
+                    <input type="hidden" name="id" id="edit0">
+                    <div class="form-group">
+                        <label for="">用户名</label>
+                        <input name="user" id="edit1" type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="">用户组</label>
+                        <select class="form-control" id="edit2" name="group">
+                            {foreach $usergroup as $v}
+                            <option value="{$v.gid}">{$v.name}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">邮箱</label>
+                        <input name="email" id="edit3" type="email" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="">密码 (留空则不修改)</label>
+                        <input name="pass" id="" type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="">金币</label>
+                        <input name="gold" id="edit7" type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="">积分</label>
+                        <input name="credits" id="edit8" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!-- !Modal -->
+
+<script type="text/javascript">
+    function search_from(obj){
+        var data = $(obj).serialize();
+        window.location.href='{php HYBBS_URL(ACTION_NAME,METHOD_NAME)}?'+data;//+'&pageid=1';
+        return false;
+    }
+
+    window.onload = function(){
+        $('.mui-switch-box input').click(function(){
+            var _this = $(this);
+            var uid   = _this.data('uid');
+            var type  = _this.data('type');
+            $.ajax({
+                url:'{php HYBBS_URL('admin','ajax_user_switch')}',
+                type:'post',
+                data:{
+                    uid:uid,
+                    type:type
+                },
+                dataType:'json',
+                success:function(e){
+                    if(!e.error){
+                        swal('无法切换',e.info,'error');
+                    }
+                    else{
+                        if(e.state){
+                            _this.removeAttr("checked"); 
+                            console.log('禁止使用');
+                            
+                        }else{
+                            _this.attr("checked","true");
+                            console.log('开放');
+                        }
+                        
+                    }
+
+                },
+                error:function(e){
+
+                }
+
+            })
+        });
+    }
+    function clean_user(uid,type){
+        var a = {
+            del_thread:'删除所有文章',
+            del_post:'删除所有评论',
+            del_post_post:'删除所有子评论',
+            del_file:'删除所有已上传文件',
+            del_follow:'清空关注列表',
+            del_chat:'清空聊天记录'
+        };
+        swal({
+            title: "确认操作",
+            text: a[type],
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "确定",
+            cancelButtonText: '取消',
+            closeOnConfirm: false,
+        }).then(
+            function() {
+                $.ajax({
+                    url: '{php HYBBS_URL('admin','ajax_clean_user')}' ,
+                    type: "POST",
+                    cache: false,
+                    data: {
+                        uid: uid,
+                        type:type
+                    },
+                    dataType: 'json'
+                }).then(function(e) {
+                    swal(e.error ? "操作成功" : "操作失败", e.info, e.error ? "success" : "error");
+                    /*if (e.error) {
+                        setTimeout(function() {
+                            if (type == 'thread')
+                                window.location.href = www;
+                            else
+                                window.location.reload();
+
+                        }, 1000);
+                    }*/
+
+                }, function() {
+                    swal("失败", "请尝试重新提交", "error");
+                });
+            },
+            function() {
+
+            }
+
+        );
+    }
+</script>
+{include footer}

@@ -1,0 +1,381 @@
+{include header}
+<div class="wrapper">
+    {include header_menu}
+    {include left_menu}
+    <style>
+    .gallery-list .gallery-item {
+        position: relative;
+        display: inline-block;
+        width: 33%;
+        padding: 2px;
+    }
+    .gallery-list .gallery-item .gallery-wrapper .gallery-title.action{
+        background-color: #2baab1;
+    }
+    .gallery-list .gallery-item .gallery-wrapper .gallery-overlay .gallery-action.action {
+        background-color: #2baab1;
+    }
+    .smart-widget .smart-widget-inner .smart-widget-body {
+        padding: 0;
+    }
+    .ddx td{
+        background-color: #DFDFDF !important
+    }
+    tr td{
+        background-color: #fff !important;
+    }
+    </style>
+    <!-- Modal -->
+    <form method="post">
+    <div class="modal fade" id="normalModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">添加分类</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="gn" value="1">
+                    <div class="form-group">
+                        <label for="">分类ID</label>
+                        <input type="text" name="id" class="form-control" AUTOCOMPLETE="off" value="<?php $i=-1; foreach ($forum as $v) {
+                            if($v['id'] > $i)
+                                $i = $v['id'];
+                        }echo $i+1; ?>">
+                        如果提交后 出现 该ID已存在, 请在该ID上+1
+                    </div><!-- /form-group -->
+                    <div class="form-group">
+                        <label for="">板块名称</label>
+                        <input type="text" name="name" class="form-control" AUTOCOMPLETE="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="">板块别名</label>
+                        <input type="text" name="name2" class="form-control" AUTOCOMPLETE="off">
+                        注意: 不可以全部数字 . (建议使用字母别名, 不建议使用中文以及特殊符号)
+                    </div>
+                    <div class="form-group">
+                        <label for="">字体颜色</label>
+                        <input type="text" name="color" class="form-control" >
+                        用于对某些模板的独立性颜色控制 可使用 #FFF rgb 以及 rgba
+                    </div>
+                    <div class="form-group">
+                        <label for="">背景颜色</label>
+                        <input type="text" name="background" class="form-control">
+                        用于对某些模板的独立性颜色控制 可使用 #FFF rgb 以及 rgba
+                    </div>
+                    <div class="form-group">
+                        <label for="">板块描述 (支持HTML)</label>
+                        <textarea name="html" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="">父分类ID</label>
+                        <select class="form-control" name="fid">
+                            <option value="-1" selected="selected">无父分类 (默认)</option>
+                            {foreach $forum as $v}
+                            <option value="{$v.id}">{$v.name}</option>
+                            {/foreach}
+                        </select>
+                        作为大分类 不需要设置该项, 如果作为子分类 则需要选择你的父分类
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+
+    <form method="post">
+    <div class="modal fade" id="normalModal1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">修改分类</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="gn" value="2">
+                    <input type="hidden" id="iid" name="iid" value="">
+                    <div class="form-group">
+                        <label for="">分类ID (不建议更改)</label>
+                        <input name="id" id="edit0" type="text" class="form-control" AUTOCOMPLETE="off">
+                    </div><!-- /form-group -->
+                    <div class="form-group">
+                        <label for="">板块名称</label>
+                        <input name="name" id="edit1" type="text" class="form-control" AUTOCOMPLETE="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="">板块别名</label>
+                        <input name="name2" id="edit2" type="text" class="form-control" AUTOCOMPLETE="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="">字体颜色</label>
+                        <input type="text" id="edit3" name="color" class="form-control" >
+                        用于对某些模板的独立性颜色控制 可使用 #FFF rgb 以及 rgba
+                    </div>
+                    <div class="form-group">
+                        <label for="">背景颜色</label>
+                        <input type="text" id="edit4" name="background" class="form-control">
+                        用于对某些模板的独立性颜色控制 可使用 #FFF rgb 以及 rgba
+                    </div>
+                    <div class="form-group">
+                        <label for="">板块描述 (支持HTML)</label>
+                        <textarea name="html" id="edit5" class="form-control"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="">父分类ID</label>
+                        <select class="form-control" id="edit6" name="fid">
+                            <option value="-1" selected="selected">无父分类 (默认)</option>
+                            {foreach $forum as $v}
+                            <option value="{$v.id}">{$v.name}</option>
+                            {/foreach}
+                        </select>
+                    </div><!-- /form-group -->
+
+                
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+
+    <form method="post">
+    <div class="modal fade" id="normalModal2">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">合并分类</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="gn" value="move">
+                
+
+                   <div class="form-group">
+                        <label ></label>
+                        <div >
+                            <span>如果下面没显示你最新的板块. 请刷新一下论坛缓存!</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label >将这个分类的文章</label>
+                        
+                            <select name="move_f1" class="form-control">
+                                {foreach $forum as $v}
+                                <option value="{$v.id}">{$v.name}</option>
+                                {/foreach}
+                            </select>
+                        
+                    </div>
+                    <div class="form-group">
+                        <label >移动到这个分类</label>
+                        
+                            <select name="move_f2" class="form-control">
+                                {foreach $forum as $v}
+                                <option value="{$v.id}">{$v.name}</option>
+                                {/foreach}
+                            </select>
+                        
+                    </div>
+                    <div class="form-group">
+                        <label class=""></label>
+                        
+                            <div class="checkbox inline-block">
+                                <div class="custom-checkbox">
+                                    <input type="checkbox" name="move_check" class="checkbox-red" id="inlineCheckbox3" >
+                                    <label for="inlineCheckbox3"></label>
+                                </div>
+                                <div class="inline-block vertical-top">
+                                    确定操作
+                                </div>
+                            </div>
+                        
+                    </div>
+                    <div class="form-group">
+                        <label ></label>
+                        
+                            <button class="btn btn-success" >移动</button>
+                        
+                    </div><!-- /form-group -->
+
+                
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    </form>
+
+    <!-- !Modal -->
+
+    <div class="main-container">
+        <div class="padding-md">
+            <h2 class="header-text no-margin">
+                分类 & 板块 - 管理
+            </h2>
+            <div class="gallery-filter m-top-md m-bottom-md">
+                <ul class="clearfix">
+                    <li class="active"><a href="javascript:void(0)" data-toggle="modal" data-target="#normalModal"><i class="fa fa-plus"></i> 添加分类 (板块)</a></li>
+                    <li class="active"><a href="javascript:void(0)" data-toggle="modal" data-target="#normalModal2"><i class="fa fa-copy"></i> 合并分类 (板块)</a></li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="smart-widget">
+
+        		<div class="smart-widget-header">
+        			板块列表
+        		</div>
+        		<div class="smart-widget-inner">
+        			
+                    <script>
+                    function edit_forum(id,name,name2,color,background,fid){
+                        var i=0;
+                        $("#edit6").val('-1');
+                        $("#iid").val(id);
+                        $("#edit0").val(id);
+                        $("#edit1").val(name);
+                        $("#edit2").val(name2);
+                        $("#edit3").val(color);
+                        $("#edit4").val(background);
+                        $("#edit5").val($('#pre-'+id).text());
+                        $("#edit6").val(fid);
+                        
+                        $('#normalModal1').modal('show')
+                    }
+                    function del_forum(id){
+                        swal({
+                            title: "确认删除",
+                            text: '一旦删除该分类, 该分类下的文章,评论\r\n删除时会有小延迟,请等待! 时间取决于数据大小',
+                            type: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#DD6B55",
+                            confirmButtonText: "删除",
+                            cancelButtonText:'取消',
+
+                        }).then(
+                            function(){
+                                $.post("{php HYBBS_URL('admin','forum')}",{gn:3,id:id},function(e){
+                                    if(e.error)
+                                        window.location.reload();
+                                },'json');
+                            },
+                            function(){
+                                
+                            }
+                        );
+
+                        
+                    }
+                    </script>
+
+                			<div class="smart-widget-body">
+                                <div class="table-responsive">
+                				<table class="table table-striped">
+                		      		<thead>
+                		        		<tr>
+                			          		<th>分类ID</th>
+                			          		<th>分类信息</th>
+                                            
+                                            <th width="180" title="用于模板使用">颜色</th>
+                                            
+                                            <th>板块描述HTML</th>
+                                            
+                			          		<th>父分类信息</th>
+                			          		
+                                            <th>额外操作</th>
+                                            <th>上传图标</th>
+                		        		</tr>
+                		      		</thead>
+                		      		<tbody>
+                                        
+                			        	{foreach $data as $v}
+                                        
+                                        <tr >
+                                            <td>{$v.id}</td>
+                                            <td>
+                                                <p>名称：{$v.name}</p>
+                                                <p>别名：{$v.name2}</p>
+                                                <p>主题数：<span class="badge badge-primary">{$v.threads}</span></p>
+                                                <p>评论数：<span class="badge badge-success">{$v.posts}</span></p>
+                                            </td>
+                                            
+                                            <td>
+                                                <p>
+                                                    字体颜色：<i style="background: {$v.color};float: left;width: 20px;height: 20px;display: inline-block;border-radius: 4px;margin-right:5px"></i>{$v.color}
+                                                </p>
+                                                <p>
+                                                    背景颜色：<i style="background: {$v.background};float: left;width: 20px;height: 20px;display: inline-block;border-radius: 4px;margin-right:5px"></i>{$v.background}
+                                                </p>
+                                            </td>
+                                            
+                                            <td>
+                                                <pre id="pre-{$v.id}" style="width:200px;max-height:200px">{$v.html}</pre>
+                                            </td>
+                                            {php $tmp=false;}
+
+                                            {foreach $data1 as $vv}
+
+                                                {if $v['fid'] == $vv['id']}
+                                                    <td>
+                                                        <p>父分类ID：{$vv.id}</p>
+                                                        <p>父分类名称：{$vv.name}</p>
+                                                    </td>
+                                                    {php $tmp=1;}
+
+                                                {/if}
+                                            {/foreach}
+                                            {if !$tmp}
+                                            <td></td>
+                                            
+
+                                            {/if}
+                                            <td>
+                                                <button onclick="edit_forum({$v.id},'{$v.name}','{$v.name2}','{$v.color}','{$v.background}',{$v.fid})" class="btn btn-success btn-xs">修改</button>
+                                                <button onclick="del_forum({$v['id']})" class="btn btn-danger btn-xs">删除</button>
+                                            </td>
+                                            <td>
+                                                <img alt="点我上传" title="点我上传" class="pull-left" width="30" height="30" src="{#WWW}upload/forum{$v.id}.png" onerror="onerror='';this.src='{#WWW}upload/de.png'" onclick="$('#file-{$v.id}').click()">
+
+                                                <form style="display:none;" action="{php HYBBS_URL('admin','forumupload')}" method="post" enctype="multipart/form-data">
+                                                    <input type="hidden" name="forum" value="{$v.id}">
+                                                    <input id="file-{$v.id}" type="file" name="photo" onchange="$(this).parent().submit()">   
+
+                                                </form>
+                                            </td>
+
+                                        </tr>
+                                        
+                                        {/foreach}
+                			      	</tbody>
+                			    </table>
+                                </div>
+
+
+
+                    </div>
+        		</div><!-- ./smart-widget-inner -->
+        	</div>
+            <div class="smart-widget-body">
+
+
+				<a href="{if $pageid==1}javascript:void(0);{else}{php HYBBS_URL('admin','forum',['pageid'=>$pageid-1])}{/if}" class="btn btn-success marginTB-xs" {if $pageid==1}disabled{/if}><i class="fa fa-angle-double-left m-left-xs"></i> 上一页</a>
+
+				<a href="{if $pageid==$page_count}javascript:void(0);{else}{php HYBBS_URL('admin','forum',['pageid'=>$pageid+1])}{/if}" style="float:right" class="btn btn-success marginTB-xs" {if $pageid==$page_count}disabled{/if}>下一页<i class="fa fa-angle-double-right m-left-xs"></i></a>
+
+
+			</div>
+            
+            
+        </div><!-- ENd box  -->
+
+    </div>
+
+{include footer}

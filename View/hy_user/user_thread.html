@@ -1,0 +1,90 @@
+{include h}
+<div class="dashboard-header">
+    <p class="sub-title">{$_LANG['您已发布']}
+        <span>{$data.threads}</span>{$_LANG['篇文章作品']}<a href="{php HYBBS_URL('post')}"><span class="new-post-btn">{$_LANG['写文章']}</span></a></p>
+</div>
+<!--{hook t_user_thread_0}-->
+<div class="dashboard-wrapper select-posts">
+	<article class="panel panel-default archive" role="main">
+        <!--{hook t_user_thread_1}-->
+        {foreach $thread_data as $v}
+        <!--{hook t_user_thread_2}-->
+    	<article class="archive clr">
+    	<h3>
+    	       <a href="{php HYBBS_URL('thread',$v['tid']);}" title="as dasd">{$v.title}</a>
+    	</h3>
+    	<div class="archive-excerpt">
+    		<p>
+    			{$v.summary}
+    		</p>
+    	</div>
+    	<div class="postlist-meta">
+    		<div class="postlist-meta-time">
+    			<i class="fa fa-clock-o"></i>&nbsp;{php echo humandate($v['atime'])}
+    		</div>
+
+    		<div class="postlist-meta-category">
+    			<i class="fa fa-folder-open"></i>&nbsp;<a href="{php HYBBS_URL('forum',$v['fid']);}" rel="category tag"><?php echo $forum[$v['fid']]['name']; ?></a>
+    		</div>
+
+            {if !empty($v['img'])}
+            <div class="postlist-meta-category">
+                <i class="fa fa-image"></i>&nbsp;<a href="#" rel="category tag">{$_LANG['图片数量']}: {php echo count(explode(',',$v['img']))}</a>
+            </div>
+            {/if}
+
+            {if $v['files']}
+            <div class="postlist-meta-category">
+                <i class="fa fa-file"></i>&nbsp;<a href="#" rel="category tag">{$_LANG['附件数量']}: {$v.files}</a>
+            </div>
+            {/if}
+            {if $v['posts']}
+            <div class="postlist-meta-category">
+                <i class="fa fa-send"></i>&nbsp;<a href="#" rel="category tag">{$_LANG['评论数量']}: {$v.posts}</a>
+            </div>
+            {/if}
+
+           
+
+    		<div class="postlist-meta-like like-btn" style="float:right;">
+    			<i class="fa fa-thumbs-o-down"></i>&nbsp;<span>{$v.nos}</span>&nbsp;
+    		</div>
+    		<div class="postlist-meta-collect collect-btn collect-no" style="float:right;">
+    			<i class="fa fa-thumbs-o-up"></i>&nbsp;<span>{$v.goods}</span>&nbsp;
+    		</div>
+            <div class="postlist-meta-collect collect-btn collect-no" style="float:right;">
+                <i class="fa fa-fire"></i>&nbsp;<span>{$v.views}</span>&nbsp;
+            </div>
+    	</div>
+    	</article>
+        <!--{hook t_user_thread_3}-->
+        {/foreach}
+        <!--{hook t_user_thread_4}-->
+        <div class="pagination">
+            {if $pageid!=1}
+    		<span class="pg-item">
+
+                <a class="page-numbers" href="{php HYBBS_URL('my',$data['user'],['thread'=>$pageid-1]);}">{$_LANG['上一页']}</a>
+            </span>
+            {/if}
+            <?php $tmp = ($data['threads']%10) ?(intval($data['threads']/10)+1) : intval($data['threads']/10) ; ?>
+            {for $i=($pageid-5 < 1) ? 1 : $pageid -5; $i< (($pageid + 5 > $tmp) ? $tmp+1 : $pageid + 5) ; $i++}
+
+
+            <span class="pg-item ">
+                <{if $pageid == $i}span{else}a{/if} class="page-numbers {if $pageid == $i}current{/if}" href="{php HYBBS_URL('my',$data['user'],['thread'=>$i]);}">
+                    {$i}
+                </{if $pageid == $i}span{else}a{/if}>
+            </span>
+            {/for}
+            {if $pageid!=$page_count}
+            <span class="pg-item" {if $pageid==1}disabled{/if}>
+                <a class="next page-numbers" href="{php HYBBS_URL('my',$data['user'],['thread'=>$pageid+1]);}">{$_LANG['下一页']}</a>
+            </span>
+            {/if}
+    	</div>
+        <!--{hook t_user_thread_5}-->
+	</article>
+    <!--{hook t_user_thread_6}-->
+</div>
+{include f}

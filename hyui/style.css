@@ -1,0 +1,220 @@
+@font-face {
+  font-family: 'icomoon';
+  src:  url('fonts/icomoon.eot?l48ce8');
+  src:  url('fonts/icomoon.eot?l48ce8#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?l48ce8') format('truetype'),
+    url('fonts/icomoon.woff?l48ce8') format('woff'),
+    url('fonts/icomoon.svg?l48ce8#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  
+  /* Enable Ligatures ================ */
+  letter-spacing: 0;
+  -webkit-font-feature-settings: "liga";
+  -moz-font-feature-settings: "liga=1";
+  -moz-font-feature-settings: "liga";
+  -ms-font-feature-settings: "liga" 1;
+  font-feature-settings: "liga";
+  -webkit-font-variant-ligatures: discretionary-ligatures;
+  font-variant-ligatures: discretionary-ligatures;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-bubble:before {
+  content: "\e900";
+}
+.icon-like:before {
+  content: "\e915";
+}
+.icon-eye:before {
+  content: "\e914";
+}
+.icon-user2:before {
+  content: "\e903";
+}
+.icon-search:before {
+  content: "\e904";
+}
+.icon-star:before {
+  content: "\e905";
+}
+.icon-film:before {
+  content: "\e906";
+}
+.icon-lock:before {
+  content: "\e907";
+}
+.icon-bookmark:before {
+  content: "\e908";
+}
+.icon-fire:before {
+  content: "\e909";
+}
+.icon-eye2:before {
+  content: "\f06e";
+}
+.icon-comment:before {
+  content: "\f075";
+}
+.icon-thumbs-o-up:before {
+  content: "\e90a";
+}
+.icon-thumbs-o-down:before {
+  content: "\e90b";
+}
+.icon-thumb-tack:before {
+  content: "\e90c";
+}
+.icon-bell-o:before {
+  content: "\e90d";
+}
+.icon-group:before {
+  content: "\e90e";
+}
+.icon-users:before {
+  content: "\e90e";
+}
+.icon-sort:before {
+  content: "\e90f";
+}
+.icon-unsorted:before {
+  content: "\e90f";
+}
+.icon-rotate-left:before {
+  content: "\e910";
+}
+.icon-undo2:before {
+  content: "\e910";
+}
+.icon-mail-reply:before {
+  content: "\e911";
+}
+.icon-reply:before {
+  content: "\e911";
+}
+.icon-mail-reply-all:before {
+  content: "\e912";
+}
+.icon-reply-all:before {
+  content: "\e912";
+}
+.icon-qq:before {
+  content: "\f1d6";
+}
+.icon-hand-pointer-o:before {
+  content: "\e913";
+}
+.icon-television:before {
+  content: "\f26c";
+}
+.icon-tv:before {
+  content: "\f26c";
+}
+.icon-menu:before {
+  content: "\e901";
+}
+.icon-grid2:before {
+  content: "\e902";
+}
+.icon-chevron-left:before {
+  content: "\e91a";
+}
+.icon-chevron-right:before {
+  content: "\e91b";
+}
+.icon-chevron-small-left:before {
+  content: "\e91c";
+}
+.icon-dots-two-horizontal:before {
+  content: "\e91d";
+}
+.icon-grid:before {
+  content: "\e91e";
+}
+.icon-home:before {
+  content: "\e91f";
+}
+.icon-plus:before {
+  content: "\e920";
+}
+.icon-comment-discussion:before {
+  content: "\e921";
+}
+.icon-eye3:before {
+  content: "\e922";
+}
+.icon-pencil2:before {
+  content: "\e923";
+}
+.icon-image:before {
+  content: "\e924";
+}
+.icon-diamonds:before {
+  content: "\e925";
+}
+.icon-coin-dollar:before {
+  content: "\e926";
+}
+.icon-undo:before {
+  content: "\e927";
+}
+.icon-bubbles4:before {
+  content: "\e928";
+}
+.icon-user:before {
+  content: "\e929";
+}
+.icon-key:before {
+  content: "\e92a";
+}
+.icon-accessibility:before {
+  content: "\e92b";
+}
+.icon-happy:before {
+  content: "\e92c";
+}
+.icon-notification:before {
+  content: "\e92d";
+}
+.icon-cancel-circle:before {
+  content: "\e92e";
+}
+.icon-cross:before {
+  content: "\e92f";
+}
+.icon-exit:before {
+  content: "\e930";
+}
+.icon-circle-down:before {
+  content: "\e931";
+}
+.icon-checkbox-checked:before {
+  content: "\e932";
+}
+.icon-share:before {
+  content: "\e933";
+}
+.icon-weibo:before {
+  content: "\e934";
+}
+.icon-yahoo2:before {
+  content: "\e935";
+}
+.icon-cog:before {
+  content: "\e936";
+}
+

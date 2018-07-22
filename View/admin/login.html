@@ -1,0 +1,31 @@
+{include header}
+<!--Modal-->
+<div class="modal fade lock-screen-wrapper" id="lockScreen">
+	<div class="modal-dialog">
+		<div class="modal-content">
+		    <div class="modal-body">
+				<div class="lock-screen-img">
+					<img src="{#WWW}{$user.avatar.b}" alt="">
+				</div>
+				<div class="text-center m-top-sm">
+					<div class="h4 text-white">{$user.user}</div>
+                    <form action="{php HYBBS_URL('admin','login')}" method="POST">
+    					<div class="input-group m-top-sm">
+    						<span class="input-group-btn">
+    							
+    							<a class="btn btn-info" href="{#WWW}"><i class="fa fa-home"></i> </a>
+    						</span>
+    						<input type="password" name="pass" class="form-control text-sm" placeholder="输入管理员密码">
+    						<span class="input-group-btn">
+    							<button class="btn btn-success">
+    								<i class="fa fa-arrow-right"></i>
+    							</button>
+    						</span>
+    					</div>
+                    </form>
+				</div>
+		    </div>
+	  	</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+{include footer}

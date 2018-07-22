@@ -1,0 +1,2 @@
+<?php !defined('HY_PATH') && exit('HY_PATH not defined.'); ?>
+{"menu_fix":"0","menu_forum":"0","max":"1","diy_link":"http:\/\/bbs.hyphp.cn,HYBBS\u6f14\u793a\u5bfc\u822a,1","width":"","css":"","forum_html_on":"0","forum_right":"1","show_sleep":"0","logo":"hybbs"}

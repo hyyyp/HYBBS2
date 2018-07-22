@@ -1,0 +1,310 @@
+html,body,ul,li{
+		margin: 0;
+		padding: 0;
+	}
+	body{
+		background: #F1D3D1;
+		padding: 10px;
+		width: 100%;
+		height:100%;
+		font-family: Helvetica Neue,Microsoft Yahei,Hiragino Sans GB,WenQuanYi Micro Hei,sans-serif;
+		overflow: hidden;
+
+	}
+	html{
+		width: 100%;
+		height:100%;
+	}
+	* {
+	    -webkit-box-sizing: border-box;
+	    -moz-box-sizing: border-box;
+	    box-sizing: border-box;
+	}
+	.container{
+		margin: 0 auto;
+    	width: 400px;
+    	height: 158px;
+    	margin-top: 100px;
+    	position: relative;
+
+	    
+	    -webkit-transition: all .5s ease;
+	    transition: all .5s ease;
+	}
+	@media (max-width: 529px) {
+		.container{
+			width: 100%;
+			margin-top: 0px;
+		}
+	}
+	.container.a{
+		width: 100%;
+		height: 100%;
+		margin-top: 0px;
+
+	}
+	
+	.box{
+		height: 100%;
+		background: #FFF;
+	    border-radius: 15px;
+	    padding-bottom: 10px;
+	    padding: 50px 20px;
+	    box-shadow: 0px 33px 31px #EB7A72;
+	    -webkit-transition: all .5s ease;
+	    transition: all .5s ease;
+	}
+	
+
+	.close {
+		display: none;
+		position: absolute;
+	    font-size: 25px;
+	    font-weight: 700;
+	    line-height: 1;
+	    color: #000;
+	    text-shadow: 0 1px 0 #fff;
+	    filter: alpha(opacity=20);
+	    opacity: .2;
+	    cursor: pointer;
+	    border: 0;
+	    /* margin-right: 10px; */
+	    /* margin-top: 10px; */
+	    background: #FFF;
+	    outline: 0;
+	    right: 8px;
+	    top: 7px;
+	    z-index: 2;
+	}
+	.title{
+		position: absolute;
+	    top: 0;
+	    left: 0;
+	    right: 0;
+	    
+	    text-align: center;
+	    font-weight: bold;
+	    z-index: 1;
+	    
+	    margin-top: 10px;
+	}
+	.title a{
+	color: #D51C5A;
+	text-decoration: none;
+	}
+	.container.a .close{
+		display: block;
+	}
+	.search-input{
+		position: relative;
+		display: table;
+		border-collapse: separate;
+		width: 100%;
+		border: solid 2px rgba(207,201,201,1);
+		border-radius: 15px;
+		/* box-shadow: inset 0 1px 1px rgba(0,0,0,.075); */
+	    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+	    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+	    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+	}
+	.search-input:hover {
+	    border-color: #E1B9B6;
+	    outline: 0;
+	    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgb(241, 211, 209);
+	    box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgb(229, 180, 177);
+	}
+	.search-input input{
+		width: 100%;
+
+	    border: 0;
+	    outline: 0;
+	        color: #7A7373;
+	        border-radius: 25px;
+	    font-size: 16px;
+	    padding: 8px 15px;
+
+	}
+	.search-input button{
+	    border: 0;
+	    background: transparent;
+	    cursor: pointer;
+	    border-left: solid 3px #F2EFEE;
+	    padding-left: 11px;
+	    outline: 0;
+    }
+	.search-input button i{
+		color: #CFC9C9;
+	}
+	.search-input:hover button i{
+		color:#E1B9B6;
+	}
+	.bottom-ul{
+		    position: absolute;
+	    bottom: 0;
+	    height: 30px;
+	    width: 100%;
+	}
+
+	.bottom-ul,.bottom-ul li{
+		list-style: none;
+	}
+	.bottom-ul li{
+		float: left;
+		width: 16.6666666667%;
+		height: 30px
+	}
+	.bottom-ul li:first-child{
+
+	}
+	.bottom-ul li:last-child{
+		
+	}
+
+	.search-page{
+		display: none;
+		margin-top: 10px;
+		position: absolute;
+	    top: 0;
+	    bottom: 50px;
+	    overflow-y: auto;
+	    overflow-x: hidden;
+	    width: 100%;
+
+	}
+	.search-page::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+}
+.search-page::-webkit-scrollbar-corner {
+    background: transparent;
+}
+.search-page::-webkit-scrollbar-thumb {
+    min-height: 20px;
+    background-clip: content-box;
+        box-shadow: 0 0 0 5px rgba(222, 222, 222, 0.51) inset;
+}
+.search-page::-webkit-scrollbar-track, .search-page::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    border: 5px solid transparent;
+}
+.search-page::-webkit-scrollbar-track, .search-page::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    border: 5px solid transparent;
+}
+
+
+	.container.a .search-page{
+		display: block;
+	}
+	.search-page div{
+	    margin-bottom: 14px;
+	}
+	.search-page h4{
+	    margin: 0;
+	    padding: 0;
+	}
+    
+	.search-page a{
+		font-weight: bold;
+    	color: #09C;
+    	text-decoration: none;
+		line-height: 1.54;
+    	font-weight: 400;
+	    font-size: medium;
+	    margin-bottom: 1px;
+
+	}
+	.search-page .more{
+	    background: #D51C5A;
+    color: #FFF;
+    display: block;
+    position: relative;
+    overflow: hidden;
+    height: 30px;
+    line-height: 30px;
+    padding: 0 10px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-bottom: 10px
+	}
+	.search-page .more.a{
+		    background: rgba(213, 28, 90, 0.56);
+		        cursor: no-drop;
+	}
+	.search-page .content{
+		        line-height: 1.5;
+    	letter-spacing: 0.5px;
+		font-size: 13px;
+	    color: #333;
+	    margin: 0;
+	    padding: 0;
+	        word-break: break-all;
+	}
+	.search-page .content span{
+		    color: #666;
+		    font-size: 12px;
+		    white-space:nowrap; 
+	}
+
+	.search-page .content-bottom{
+		margin: 0;
+	    padding: 0;
+	        word-break: break-all;
+	        margin-top: 6px;
+	            color: green;
+    	font-size: 13px;
+    	/* display: block; */
+	}
+	.search-radio{
+		margin-top: 6px;
+	}
+	.search-radio input{
+		display: none;
+	}
+	.search-radio input+label{
+	        background: #EAEAEA;
+    border-radius: 50px;
+    color: #2B2B2B;
+	    font-size: 12px;
+	    padding: 3px 9px;
+	    cursor: pointer;
+	}
+	.search-radio input+label.a{
+	    background: #D51C5A;
+	    
+	    color: #FFF;
+	  
+	}
+	.search-page .user-box{
+		    font-size: 12px;
+    background: #D51C5A;
+    display: block;
+    float: left;
+    padding: 5px 6px;
+    border-radius: 25px;
+    color: #FFF;
+    margin-right: 10px;
+    margin-bottom: 5px;
+	}
+	.user-box img{
+		        width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    vertical-align: middle;
+    margin-right: 3px;
+    border: solid 2px #FFF;
+	}
+	
+	label.a a{
+		    color: #FFF;
+    font-size: inherit;
+    white-space: nowrap;
+	}
+	.search-page label.a{
+		    margin-bottom: 5px;
+    display: block;
+    float: left;
+    margin-right: 5px;
+	}

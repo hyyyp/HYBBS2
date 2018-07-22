@@ -1,0 +1,49 @@
+{include h}
+<div class="dashboard-header">
+<p class="sub-title">{$_LANG['您已发表']}<span>{$data.posts}</span>{$_LANG['条评论']}</p>
+<p class="tip"></p>
+</div>
+<!--{hook t_user_post_0}-->
+<div class="dashboard-wrapper select-comment">
+	<ul class="user-msg">
+		<!-- <li class="tip">共有 6 条评论，其中 6 条已获准， 0 条正等待审核。</li> -->
+        <!--{hook t_user_post_1}-->
+        {foreach $post_data as $v}
+        <!--{hook t_user_post_2}-->
+		<li>
+		<div class="message-content">
+			{$v.content}
+            
+		</div>
+		<a class="" href="{php HYBBS_URL('thread',$v['tid']);}">{php echo humandate($v['atime'])}  {$_LANG['发表在']}  {$v.title}</a></li>
+        </li>
+        <!--{hook t_user_post_3}-->
+        {/foreach}
+        <!--{hook t_user_post_4}-->
+	</ul>
+    <!--{hook t_user_post_5}-->
+    <div class="pagination">
+        {if $pageid!=1}
+        <span class="pg-item" disabled>
+            <a class="page-numbers" href="{php HYBBS_URL('my',$data['user'],['post'=>$pageid-1]);}">{$_LANG['上一页']}</a>
+        </span>
+        {/if}
+        <?php $tmp = ($data['posts']%10) ?(intval($data['posts']/10)+1) : intval($data['posts']/10) ; ?>
+        {for $i=($pageid-5 < 1) ? 1 : $pageid -5; $i< (($pageid + 5 > $tmp) ? $tmp+1 : $pageid + 5) ; $i++}
+
+
+        <span class="pg-item ">
+            <{if $pageid == $i}span{else}a{/if} class="page-numbers {if $pageid == $i}current{/if}" href="{php HYBBS_URL('my',$data['user'],['post'=>$i]);}">
+                {$i}
+            </{if $pageid == $i}span{else}a{/if}>
+        </span>
+        {/for}
+        {if $pageid!=$page_count}
+        <span class="pg-item" >
+            <a class="next page-numbers" href="{php HYBBS_URL('my',$data['user'],['post'=>$pageid+1]);}">{$_LANG['下一页']}</a>
+        </span>
+        {/if}
+    </div>
+    <!--{hook t_user_post_6}-->
+</div>
+{include f}

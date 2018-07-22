@@ -1,0 +1,20 @@
+//<?php
+
+$tmp_img = explode(',',trim($img,','));
+
+$img='';
+if(!empty($tmp_img)){
+	$il = 0;
+	foreach ($tmp_img as $key => $v) {
+		if(strpos($v,'/emoji/') !== FALSE || strpos($v,'img.baidu.com/hi') !== FALSE || empty($v)){
+			$il++;
+			unset($tmp_img[$key]);
+			continue;
+		}
+		$img.=$v.',';
+	}
+	
+	$sz = $sz - $il;
+
+}
+$img=trim($img,',');

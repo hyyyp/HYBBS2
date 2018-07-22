@@ -1,0 +1,438 @@
+{include header}
+<div class="wrapper">
+    {include header_menu}
+    {include left_menu}
+    <style>
+    .gallery-list .gallery-item {
+        position: relative;
+        display: inline-block;
+        
+      
+    }
+    .gallery-list .gallery-item .gallery-wrapper .gallery-title.action{
+        background-color: #2baab1;
+    }
+    .gallery-list .gallery-item .gallery-wrapper .gallery-overlay .gallery-action.action {
+        background-color: #2baab1;
+    }
+    .ss{
+        display: none;
+    }
+    .show{
+        display: block;
+    }
+    </style>
+    <div class="main-container">
+        <div class="padding-md">
+            <h2 class="header-text no-margin">
+				外观 & 模板 
+                <form action="{php HYBBS_URL('admin')}" method="post" style="display:inline-block" class="form-horizontal no-margin form-border">
+                <input name="one1" type="hidden" value="on">
+                <button class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 清理缓存</button>
+                </form>
+                
+			</h2>
+            <div class="gallery-filter m-top-md">
+				<ul class="clearfix">
+					<li class="active"><a href="{php HYBBS_URL('admin','view')}">我的模板</a></li>
+					<li><a href="{php HYBBS_URL('admin','viewol')}">线上模板 & 下载模板</a></li>
+                    <li onclick="$('.ss').toggleClass('show');$(this).toggleClass('active');"><a href="javascript:;">模板高级设置</a></li>
+                    
+                    <li class="pull-right active"><a href="#" onclick="$('#gn1').val('add');;$('#zti').text('新建模板')" data-toggle="modal" data-target="#normalModal1"><i class="fa fa-plus"></i> 制作模板</a></li>
+                    <li class="pull-right active"  data-toggle="tooltip" data-placement="bottom" title="如果已有相同模板,会被覆盖! 慎重上传. (HTML5上传 请勿使用IE低版本上传)">
+                        <a style="background-color: #9d4141;" href="#" >
+                            <label for="upload_zip" style="display: inherit;font-weight: 400;cursor: pointer;">
+                                <i class="fa fa-upload"></i> 上传模板.zip
+                            </label>
+                        </a>
+                    </li> 
+
+                    <input type="file" id="upload_zip" name="upload_zip" onchange="fileSelected('upload_zip');" style="display:none">
+				</ul>
+			</div>
+
+            <div class="smart-widget widget-green ss" style="margin-top: 15px;">
+                <div class="smart-widget-inner">
+                <div class="smart-widget-body">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="alert alert-success alert-custom alert-dismissible" role="alert" style="margin-top: 10px;margin-bottom: 0;">
+                       
+                        <i class="fa fa-check-circle m-right-xs"></i><strong>高级设置说明!</strong> 这里展现了各个部位所使用的模板. 切换后立即生效
+                    </div>
+                </div>
+
+                <div class="col-lg-3">
+                    <div class="row">
+                        <label class="col-lg-12 control-label">电脑 用户中心模板</label>
+                        <div class="col-lg-12">
+                            <select onchange="select_view('userview',this)" class="form-control">
+                                {foreach $all_data as $key => $v}
+                                <option value="{$v.value}" {if $conf['userview']==$v['value']}selected{/if}>{$v.value} - {$v.name}</option>
+                                {/foreach}
+                            </select>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="row">
+                        <label class="col-lg-12 control-label">电脑 登陆注册模板</label>
+                        <div class="col-lg-12">
+                            <select onchange="select_view('userview2',this)" class="form-control">
+                                {foreach $all_data as $key => $v}
+                                <option value="{$v.value}" {if $conf['userview2']==$v['value']}selected{/if}>{$v.value} - {$v.name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="row">
+                        <label class="col-lg-12 control-label">电脑 错误提示模板</label>
+                        <div class="col-lg-12">
+                            <select onchange="select_view('messview',this)" class="form-control">
+                                {foreach $all_data as $key => $v}
+                                <option value="{$v.value}" {if $conf['messview']==$v['value']}selected{/if}>{$v.value} - {$v.name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="row">
+                        <label class="col-lg-12 control-label">电脑 搜索页模板</label>
+                        <div class="col-lg-12">
+                            <select onchange="select_view('pc_search',this)" class="form-control">
+                                {foreach $all_data as $key => $v}
+                                <option value="{$v.value}" {if $conf['pc_search']==$v['value']}selected{/if}>{$v.value} - {$v.name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="row">
+                        <label class="col-lg-12 control-label">手机 用户中心模板</label>
+                        <div class="col-lg-12">
+                            <select onchange="select_view('messview',this)" class="form-control">
+                                {foreach $all_data as $key => $v}
+                                <option value="{$v.value}" {if $conf['wapuserview']==$v['value']}selected{/if}>{$v.value} - {$v.name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="row">
+                        <label class="col-lg-12 control-label">手机 登陆注册模板</label>
+                        <div class="col-lg-12">
+                            <select onchange="select_view('wapuserview2',this)" class="form-control">
+                                {foreach $all_data as $key => $v}
+                                <option value="{$v.value}" {if $conf['wapuserview2']==$v['value']}selected{/if}>{$v.value} - {$v.name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="row">
+                        <label class="col-lg-12 control-label">手机 错误提示模板</label>
+                        <div class="col-lg-12">
+                            <select onchange="select_view('wapmessview',this)" class="form-control">
+                                {foreach $all_data as $key => $v}
+                                <option value="{$v.value}" {if $conf['wapmessview']==$v['value']}selected{/if}>{$v.value} - {$v.name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="row">
+                        <label class="col-lg-12 control-label">手机 搜索页模板</label>
+                        <div class="col-lg-12">
+                            <select onchange="select_view('wap_search',this)" class="form-control">
+                                {foreach $all_data as $key => $v}
+                                <option value="{$v.value}" {if $conf['wap_search']==$v['value']}selected{/if}>{$v.value} - {$v.name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+            </div>
+            </div>
+
+
+
+            <div class="modal fade" id="smallModal" data-backdrop="static">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title">上传进度</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="progress progress-striped active">
+                              <div id="jdt" class="progress-bar progress-bar-danger" role="progressbar"  style="width: 0%">
+                                <span class="sr-only">8</span>
+                              </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script type="text/javascript">
+            function select_view(v,obj){
+                var _this = $(obj);
+                _this.attr('disabled','disabled');
+                $.post('{php HYBBS_URL('admin','ajax_edit_view')}',{name:v,value:_this.val()},function(e){
+                    _this.removeAttr('disabled');
+                },'json');
+                //$(obj).val();
+
+            }
+            function fileSelected(id) {
+                var file = document.getElementById(id).files[0];
+                if (file) {
+                    $("#smallModal").modal("show");
+                    $("#jdt").css('width', '0%')  ;
+                    uploadFile(id);
+                
+                }
+              }
+
+              function uploadFile(id) {
+                var fd = new FormData();
+                fd.append("photo", document.getElementById(id).files[0]);
+                var xhr = new XMLHttpRequest();
+                xhr.upload.addEventListener("progress", uploadProgress, false);
+                xhr.addEventListener("load", uploadComplete, false);
+                xhr.open("POST", '{php HYBBS_URL('admin','update_view')}');
+                xhr.send(fd);
+                document.getElementById(id).value = '';
+              }
+
+                function uploadProgress(evt) {
+                    if (evt.lengthComputable) {
+                      var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+                      console.log(percentComplete);
+                      $("#jdt").css('width',percentComplete.toString()+ '%')  ;
+                    }
+                    else {
+                      
+                    }
+              }
+              function uploadComplete(evt) {
+                    $("#smallModal").modal("hide");
+                    var json = eval('('+evt.target.responseText+')');
+                    if(json.error){
+                        swal("上传成功 请手动刷新本页");
+                    }else{
+                        swal(json.data);
+                    }
+
+                    //console.log(json);
+                    //
+                    //window.location.reload();
+                    
+                }
+
+            </script>
+
+
+
+            <form method="post" id="form">
+            <div class="modal fade in" id="normalModal1" aria-hidden="false">
+			  	<div class="modal-dialog">
+			    	<div class="modal-content">
+			      		<div class="modal-header">
+			        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+			        		<h4 class="modal-title" id="zti">新建模板</h4>
+			      		</div>
+			      		<div class="modal-body" id="md1">
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">模板名</label>
+                                        <input type="text" name="name" class="form-control input-sm">
+                                    </div>
+                                </div><!-- /.col -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">英文名</label>
+                                        <input type="text" name="name2" class="form-control input-sm">
+                                    </div>
+                                </div><!-- /.col -->
+                            </div><!-- /.row -->
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">作者名</label>
+                                        <input type="text" name="user" class="form-control input-sm">
+                                    </div>
+                                </div><!-- /.col -->
+                            </div><!-- /.row -->
+                            <div class="form-group">
+                                <label class="control-label">模板描述</label>
+                                <textarea class="form-control" name="mess" placeholder="" rows="3" ></textarea>
+                            </div>
+                            <h4 class="header-text">可选结构 (你可以跳过这步)</h4>
+                            <div class="form-group">
+                                <label class="control-label">必装插件</label>
+                                <div id="lib">
+
+                                    <div class="lib1"></div>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <input type="text" id="text" class="form-control"  placeholder="请输入插件英文名">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-success" type="button" onclick="add_lib()">按插件英文名-添加</button>
+                                </span>
+                            </div>
+                            
+        
+                        
+			      		</div>
+			      		<div class="modal-footer">
+                            <button type="button" class="btn btn-success" onclick="create_viee()">建立</button>
+			        		
+
+			      		</div>
+
+			    	</div>
+			  	</div>
+			</div>
+            </form>
+            
+            <div class="row m-top-md" id="list">
+            {foreach $data as $key => $v}
+            
+                <div class="col-sm-6 col-md-4 col-lg-3 col-xs-12">
+                    <div class="panel">
+                        <div class="panel-body no-padding">
+                            <div class="owl-carousel no-controls owl-theme owl-loaded">
+                                <div class="owl-stage-outer owl-height" style="padding-left: 0px; padding-right: 0px;height: 200px;overflow: hidden; ">
+                               
+                                <span style="background:url('{#WWW}View/{$v}/back.png');display: inline-block;width: 100%;height: 100%;background-position: center 0;background-repeat: no-repeat;background-size: cover;-webkit-background-size: cover;-o-background-size: cover;background-color: #404040;">
+                                    
+                                </span>
+                                    <!-- <img src="{#WWW}View/{$v}/back.png"> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer bg-white">
+                            
+                            <div class="h3 text-success">
+                                {$qj[$key]['name']} - {$v} 
+                            </div>
+                            <span class=" block" style="color: purple;font-size:14px">
+                                作者:{$qj[$key]['user']} <span style="color: darkcyan;">版本:{$qj[$key]['version']}</span>
+                            </span>
+                            <span class=" block" style="margin-top:5px">
+                                {$qj[$key]['mess']}
+                            </span>
+                            {if $qj[$key]['code']}
+                            <hr>
+                            <label>使用模板-必装插件</label>
+                            <div id="lib1">
+                                {foreach (array)explode(",",$qj[$key]['code']) as $vv}
+                                <span class="label label-{if is_plugin_dir($vv)}success{else}danger{/if}">{$vv}</span>
+                                {/foreach}
+                                
+                                <div style="clear: both;"></div>
+                            </div>
+                            {/if}
+                            <hr>
+                            <div class="clearfix">
+                                <div class="btn-group marginTB-xs">
+                                    <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                        将模板应用为 <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="{php HYBBS_URL('admin','view',['edit'=>$v,'type'=>'pc'])}">电脑端模板</a></li>
+                                        <li class="divider"></li>
+                                        <li><a href="{php HYBBS_URL('admin','view',['edit'=>$v,'type'=>'wap'])}">移动端模板</a></li>
+                                        
+                                    </ul>
+                                </div>
+                                {if $conf['theme'] == $v}
+                                <a class="btn btn-danger disabled" disabled>
+                                    <i class="fa fa-tv fa-lg"></i> 已启用为电脑端
+                                </a>
+                                {/if}
+                                {if $conf['wapview'] == $v}
+                                <a class="btn btn-danger disabled" disabled>
+                                    <i class="fa fa-mobile  fa-lg"></i> 已启用为移动端
+                                </a>
+                                {/if}
+
+
+                                {if is_file(VIEW_PATH . $v . '/conf.html')}<a class="btn btn-warning" href="{php HYBBS_URL('admin','view',['op'=>$v])}">配置</a>{/if}
+                          
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {/foreach}
+            </div>
+
+
+        </div>
+    </div>
+
+
+<style type="text/css">
+.lib1{
+        clear: both;
+    }
+    #lib,#lib1{
+        min-height: 30px;
+    border: 1px solid #DDD;
+    padding: 10px;
+    }
+    
+    #lib .label,#lib1 .label{
+        margin-right: 10px;
+        margin-bottom: 10px;
+            float: left;
+    }
+    .lte{
+            font-style: normal;
+    }
+
+
+</style>
+<script type="text/javascript">
+    function add_lib(){
+        if($("#text").val()=='')
+            return;
+        $(".lib1").before('<span class="label label-success"><i class="lte">'+$("#text").val()+'</i> &nbsp;<i class="fa fa-close" onclick="$(this).parent().remove()"></i></span>');
+        $("#text").val('');
+    }
+    function create_viee(){
+        var code = $("#form").serialize();
+        code+="&code=";
+        $("#lib .lte").each(function(){
+            code+=$(this).text()+",";
+        });
+        $.post(window.location.href,code,function(e){
+            if(e.error)
+                window.location.reload()
+            else
+                alert(e.info);
+        },'json');
+    }
+
+</script>
+{include footer}

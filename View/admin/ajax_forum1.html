@@ -1,0 +1,8 @@
+
+<div class="form-group">
+	<label class="control-label">板块用户组权限,管理用户所在用户组在该板块的权限</label>
+	<textarea class="form-control" name="user" rows="3" data-parsley-required="true">{$user}</textarea>
+    <input type="hidden" name="id" value="{$id}">
+    <span class="help-block">例: 填入 1 ,则用户组ID=1的所用用户 就会被禁止所选的权限</span>
+    <span class="help-block">输入多个用户组可以输入 1,2 </span>
+</div>

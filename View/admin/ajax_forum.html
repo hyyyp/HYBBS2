@@ -1,0 +1,8 @@
+
+<div class="form-group">
+	<label class="control-label">版主的用户ID,请在用户管理中得知他的用户ID, 一个板块多个版主请用 (,) 逗号隔开 例如: 1,2</label>
+	<textarea class="form-control" name="user" rows="3" data-parsley-required="true">{$user}</textarea>
+    <input type="hidden" name="id" value="{$id}">
+    <span class="help-block">例: 填入 1,2  则用户ID为1以及2的用户成为该板块的版主</span>
+    <span class="help-block">例: 1  则用户ID为1的用户成为该板块的版主</span>
+</div>

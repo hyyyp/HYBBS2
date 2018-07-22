@@ -1,0 +1,16 @@
+{include header}
+<div class="wrapper">
+    {include header_menu}
+
+    {include left_menu}
+    <div class="main-container">
+        <div class="padding-md">
+            <h1>{$mess}</h1>
+
+            <div class="m-top-md">
+				<a  onClick="javascript :history.back(-1);" class="btn btn-default btn-lg text-upper">返回上一页</a>
+			</div>
+        </div><!-- ENd box  -->
+
+    </div>
+</div>

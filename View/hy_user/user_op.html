@@ -1,0 +1,127 @@
+{include h}
+<div class="dashboard-header">
+<p class="sub-title">{$_LANG['个人资料']}</p>
+<p class="tip">Hi，{$data.user}，{$_LANG['个人资料介绍']}。</p>
+<!-- Page global message -->
+</div>
+<!--{hook t_user_op_1}-->
+<div class="dashboard-wrapper select-profile">
+	<div id="profile">
+		<ul class="user-msg">
+			<li class="tip">{$data.user} {$_LANG['来']} HYBBS {$_LANG['已经']}<?php echo diffBetweenTwoDays($data['atime'],NOW_TIME); ?>{$_LANG['天了']}</li>
+		</ul>
+		<!--{hook t_user_op_11}-->
+		<table id="author-profile">
+		<tbody>
+
+		<tr>
+			<td class="title">
+				{$_LANG['用户名']}:
+			</td>
+			<td>
+				{$data.user}
+			</td>
+		</tr>
+
+		<tr>
+			<td class="title">
+				{$_LANG['个人说明']}:
+			</td>
+    		<td>
+    		</td>
+		</tr>
+		</tbody>
+		</table>
+		<form class="form-horizontal" action="{php echo HYBBS_URL('user','edit');}" method="post">
+			<input type="hidden" name="gn" value="ps">
+            <div class="page-header">
+				<h3 id="info">{$_LANG['修改资料']} <small></small></h3>
+			</div>
+           
+			<div class="form-group">
+				<label for="display_name" class="col-sm-3 control-label">{$_LANG['个性签名']}</label>
+				<div class="col-sm-9">
+					<input class="" type="text" name="ps" value="{$data.ps}"/>
+					<span>{$_LANG['最大支持40个字符']}</span>
+				</div>
+			</div>
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <button type="submit" class="btn btn-success">{$_LANG['保存资料']}</button>
+                </div>
+            </div>
+
+        </form>
+
+		<!--{hook t_user_op_2}-->
+        <form class="form-horizontal" action="{php HYBBS_URL('user','ava');}" method="post" enctype="multipart/form-data">
+            <div class="page-header">
+				<h3 id="info">{$_LANG['修改头像']} <small></small></h3>
+			</div>
+            <div class="form-group">
+				<label class="col-sm-3 control-label">{$_LANG['头像']}</label>
+				<div class="col-sm-9">
+					<div class="radio">
+						<img style="display:block" src="{#WWW}{$data.avatar.a}" class="avatar avatar-80" height="80" width="80"><label>
+
+
+					</div>
+
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="display_name" class="col-sm-3 control-label">{$_LANG['选择头像文件']}</label>
+				<div class="col-sm-9">
+
+					<input class="" type="file" name="photo" />
+
+
+				</div>
+			</div>
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <button type="submit" class="btn btn-success">{$_LANG['上传头像']}</button>
+                </div>
+            </div>
+
+        </form>
+        <!--{hook t_user_op_3}-->
+		<form action="{php HYBBS_URL('user','edit');}" class="form-horizontal" role="form" method="post">
+			<input type="hidden" name="gn" value="pass">
+			<div class="page-header">
+				<h3>{$_LANG['账号安全']} <small>修改登陆密码</small></h3>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">旧密码</label>
+				<div class="col-sm-9">
+					<input type="password" class="form-control" name="pass0">
+					<span class="help-block">请输入当前用户所使用的密码</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">{$_LANG['新密码']}</label>
+				<div class="col-sm-9">
+					<input type="password" class="form-control" name="pass1">
+					<span class="help-block">{$_LANG['新密码提示']}</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">{$_LANG['确认密码']}</label>
+				<div class="col-sm-9">
+					<input type="password" class="form-control" name="pass2">
+					<span class="help-block">{$_LANG['新密码提示A']}</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-3 col-sm-9">
+					<button type="submit" class="btn btn-success">{$_LANG['保存资料']}</button>
+				</div>
+			</div>
+		</form>
+		<!--{hook t_user_op_4}-->
+
+
+
+	</div>
+</div>
+{include f}

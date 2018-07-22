@@ -1,0 +1,58 @@
+.hy-editor{
+	    outline: none;
+    margin: 10px;
+    border-bottom: solid 1px #DDD;
+    padding-bottom: 10px;
+    
+}
+.hy-editor img{
+	max-width: 100%;
+}
+.hy-editor p{
+	        line-height: 1.8;
+}
+.hy-editor-btn{
+	margin-left: 10px;
+	margin-top:0
+}
+.hy-editor-btn img{
+	width: 32px;
+	height:32px;
+}
+#emoji-box img{
+	padding:5px;
+}
+.emoji-box-show{
+	display: block !important;
+}
+.hy-editor-emoji{
+	
+    border: solid 2px #171717;
+    padding: 2px;
+    border-radius: 5px;
+
+}
+
+
+#file-box table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin: 15px 0;
+}
+#file-box table th {
+  background-color: #f9f9f9;
+}
+#file-box table td, #file-box table th {
+  min-width: 40px;
+  height: 30px;
+  border: 1px solid #ccc;
+  vertical-align: top;
+  padding: 2px 4px;
+  text-align: left;
+  box-sizing: border-box;
+}
+ #file-box table td.active, #file-box table th.active {
+  background-color: #ffffee;
+}

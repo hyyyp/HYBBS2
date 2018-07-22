@@ -1,0 +1,2 @@
+删除帖子</a>
+	                    {/if}{if NOW_UID != $v['uid']}<a style="float:right;width:auto;height:auto" href="javascript:void(0);" class=""  onclick="open_post_box(this);edit_app_text('{$v.user}')" ><span class="icon-reply"></span> 回复</a>{/if}

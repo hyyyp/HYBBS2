@@ -1,0 +1,96 @@
+{include header}
+<script type="text/javascript">
+	window.page_id = 1;
+
+</script>
+<div class="wrapper">
+    {include header_menu}
+    {include left_menu}
+    <div class="main-container">
+        <div class="padding-md">
+            <h2 class="header-text">
+                PHP日志
+                <small>最近50条PHP异常记录</small>
+            </h2>
+            
+			<div class="table-responsive">
+				<table class="table table-striped table-bordered m-top-md" style="table-layout:fixed; word-break:break-all; word-wrap:break-word;">
+	            	<thead>
+	            		<tr class="bg-dark-blue">
+		            		<th style="width:30%">错误提示</th>
+		            		<th style="width:20%">发生错误的文件路径</th>
+		            		<th style="width:5%">行数</th>
+		            		<th style="width:10%">时间</th>
+		            		<th style="width:20%">URL</th>
+	            		</tr>
+	            	</thead>
+	            	<tbody>
+		            	<?php
+		            	if(is_file(TMP_PATH.'log.php')){
+			            	$log = file(TMP_PATH.'log.php');
+			            	$log_i = count($log);
+			            	for($i=0;$i<50;$i++){
+			            		if($log_i <= 0)
+			            			break;
+
+			            		echo '<tr>';
+			            		$tmp = explode('#',$log[--$log_i]);
+			            		if(isset($tmp[0]))
+			            			echo '<td>'.$tmp[0].'</td>';
+			            		if(isset($tmp[1]))
+			            			echo '<td>'.$tmp[1].'</td>';
+			            		if(isset($tmp[2]))
+			            			echo '<td>'.$tmp[2].'</td>';
+			            		if(isset($tmp[3]))
+			            			echo '<td>'.$tmp[3].'</td>';
+
+			            		$tmp = explode('##',$log[$log_i]);
+			            		if(isset($tmp[1])){
+			            			echo '<td>'.$tmp[1].'</td>';
+			            		}
+
+			            		echo '</tr>';
+			            	}
+		            	}else{
+		            		echo '你的环境很干净  没有出现PHP错误.';
+		            	}
+
+		            	?>
+	            		
+	            			
+	            		
+	            	</tbody>
+	            </table>
+		
+			</div>
+			
+       
+
+        </div>
+    </div><!-- ENd box  -->
+
+
+<script type="text/javascript">
+	{hook t_admin_log_js}
+	function load_data(i){
+		if(i < 1){
+			window.page_id=1;
+			return;
+		}
+		$("#pageid_text").val('第 '+i+' 页');
+		$.post(window.location.href,{page_id:i,page_size:$("#page-size").val(),user:$("#user-box").val()},function(e){
+			if(!e.error){
+				$("#tbody").html('<tr><td>无数据</td></td>');
+				return;
+			}
+			var html = '';
+			for(o in e.data){
+				html+='<tr><td>'+e.data[o].user+' ['+e.data[o].uid+']</td><td style="color:'+(e.data[o].gold < 0 ? 'red' : 'forestgreen')+'">'+e.data[o].gold+'</td><td style="color:'+(e.data[o].credits < 0 ? 'red' : 'forestgreen')+'">'+e.data[o].credits+'</td><td>'+e.data[o].content+'</td><td>'+e.data[o].time+'</td></tr>'
+			}
+
+			$("#tbody").html(html);
+		},'json');
+	}
+	{hook t_admin_log_js_2}
+</script>
+{include footer}

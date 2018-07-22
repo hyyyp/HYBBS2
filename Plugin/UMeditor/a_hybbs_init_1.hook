@@ -1,0 +1,6 @@
+
+if(!cookie('HYBBS_HEX')){
+	if(isset($_POST['ffmd5']))
+		$_COOKIE['HYBBS_HEX'] = X("post.ffmd5");
+}
+

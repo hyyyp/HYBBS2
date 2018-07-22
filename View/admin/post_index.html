@@ -1,0 +1,3 @@
+
+{hook t_post_index_1}
+{hook t_post_index}

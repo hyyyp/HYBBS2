@@ -1,0 +1,2 @@
+{hook t_thread_index_1}
+{hook t_thread_index}

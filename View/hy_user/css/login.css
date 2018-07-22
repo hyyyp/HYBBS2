@@ -1,0 +1,283 @@
+/*--
+Author: W3layouts
+Author URL: http://w3layouts.com
+License: Creative Commons Attribution 3.0 Unported
+License URL: http://creativecommons.org/licenses/by/3.0/
+--*/
+/* reset */
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,dl,dt,dd,ol,nav ul,nav li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline;}
+article, aside, details, figcaption, figure,footer, header, hgroup, menu, nav, section {display: block;}
+ol,ul{list-style:none;margin:0px;padding:0px;}
+blockquote,q{quotes:none;}
+blockquote:before,blockquote:after,q:before,q:after{content:'';content:none;}
+table{border-collapse:collapse;border-spacing:0;}
+/* start editing from here */
+a{text-decoration:none;}
+.txt-rt{text-align:right;}/* text align right */
+.txt-lt{text-align:left;}/* text align left */
+.txt-center{text-align:center;}/* text align center */
+.float-rt{float:right;}/* float right */
+.float-lt{float:left;}/* float left */
+.clear{clear:both;}/* clear float */
+.pos-relative{position:relative;}/* Position Relative */
+.pos-absolute{position:absolute;}/* Position Absolute */
+.vertical-base{	vertical-align:baseline;}/* vertical align baseline */
+.vertical-top{	vertical-align:top;}/* vertical align top */
+nav.vertical ul li{	display:block;}/* vertical menu */
+nav.horizontal ul li{	display: inline-block;}/* horizontal menu */
+img{max-width:100%;}
+/*end reset*/
+/****-----start-body----****/
+body{
+	    background: #e5efff;
+ 	font: 500 .875em PingFang SC,Lantinghei SC,Microsoft Yahei,Hiragino Sans GB,Microsoft Sans Serif,WenQuanYi Micro Hei,sans;
+
+}
+.login-form {
+	background:#fff;
+	width: 26%;
+	margin:9% auto 4% auto;
+ 	position: relative;
+ 	-webkit-border-radius: 0.4em;
+	-o-border-radius: 0.4em;
+	-moz-border-radius: 0.4em;
+}
+
+.head {
+	position: absolute;
+    top: -15%;
+    width: 100%;
+    text-align: center;
+}
+.head img {
+	width: 120px;
+	height: 120px;
+	border-radius:50%;
+	-webkit-border-radius:50%;
+	-o-border-radius:50%;
+	-moz-border-radius:50%;
+	border:6px solid rgba(255, 255, 255, 0.42)
+}
+.main{
+	position:relative;
+}
+.main h1{
+	
+	color:#676767;
+	font: 500 .875em PingFang SC,Lantinghei SC,Microsoft Yahei,Hiragino Sans GB,Microsoft Sans Serif,WenQuanYi Micro Hei,sans;
+	font-weight:400;
+	padding-top: 19%;
+	text-align: center;
+	font-size:22px;
+}
+.main form {
+	width: 80%;
+	margin: 0 auto;
+	padding: 6% 0 9% 0;
+}
+.main p {
+text-align: center;
+}
+.main form p a {
+	color: #888;
+	font: 500 .875em PingFang SC,Lantinghei SC,Microsoft Yahei,Hiragino Sans GB,Microsoft Sans Serif,WenQuanYi Micro Hei,sans;
+}
+form p a:hover {
+	color:#21A957;
+}
+ input[type="text"], input[type="password"]{
+	text-align:left;
+	position: relative;
+	width:92%;
+	padding:8px;
+	background:#FFF;
+	margin-bottom: 6%;
+	font: 500 .875em PingFang SC,Lantinghei SC,Microsoft Yahei,Hiragino Sans GB,Microsoft Sans Serif,WenQuanYi Micro Hei,sans;
+	color: #000;
+	
+	font-size: 16px;
+	outline: none;
+	border: none;
+	border-radius: 5px;
+	border:1px solid #DED6D6;
+	-webkit-appearance:none;
+}
+ input[type="text"]:hover, input[type="password"]:hover{
+ 	border:1px solid #949494;
+	transition:0.5s;
+	-webkit-transition:0.5s;
+	-moz-transition:0.5s;
+	-o-transition:0.5s;
+	-ms-transition:	0.5s;
+ 	
+ }
+input[type="submit"]{
+	width: 99%;
+	padding: 3%;
+	margin-bottom: 8%;
+	background: #21A957;
+	font: 500 .875em PingFang SC,Lantinghei SC,Microsoft Yahei,Hiragino Sans GB,Microsoft Sans Serif,WenQuanYi Micro Hei,sans;
+	color: #FFF;
+	box-shadow: inset 0px 0px 10px #666464;
+	-webkit-text-shadow: 0px 0px 3px #000;
+	-moz-text-shadow: 0px 0px 3px #000;
+	-o-text-shadow: 0px 0px 3px #000;
+	-ms-text-shadow: 0px 0px 3px #000;
+	font-size: 20px;
+	outline: none;
+	border: none;
+	cursor: pointer;
+	font-weight:500;
+	border-radius: 5px;
+	transition: 0.5s;
+	-webkit-appearance:none;
+	-webkit-transition: 0.5s;
+	-moz-transition: 0.5s;
+	-o-transition: 0.5s;
+	-ms-transition: 0.5s;
+}
+input[type="submit"]:hover{
+	background:#128A42;
+	color:#fff;
+}
+/****************/
+.copy-right {
+	position: absolute;
+	bottom:-19%;
+	left: 43.7%;
+}
+.copy-right p {
+	color: #fff;
+	font-size: 1em;
+	font: 500 .875em PingFang SC,Lantinghei SC,Microsoft Yahei,Hiragino Sans GB,Microsoft Sans Serif,WenQuanYi Micro Hei,sans;	
+	font-weight: 600;
+}
+.copy-right p a {
+	font: 500 .875em PingFang SC,Lantinghei SC,Microsoft Yahei,Hiragino Sans GB,Microsoft Sans Serif,WenQuanYi Micro Hei,sans;	
+	font-size: 1em;
+	color:#21A957;
+	-webkit-transition: all 0.3s ease-out;
+	-moz-transition: all 0.3s ease-out;
+	-ms-transition: all 0.3s ease-out;
+	-o-transition: all 0.3s ease-out;
+	transition: all 0.3s ease-out;
+}
+.copy-right p a:hover{
+	color:#fff;
+}
+/*-----start-responsive-design------*/
+@media (max-width:1440px){
+	.login-form {
+	width:30%;
+	margin: 11% auto 4% auto;
+	}
+	.main h1 {
+	padding-top: 23%;
+	}
+	.copy-right {
+	bottom: -26%;
+	}
+}
+@media (max-width:1366px){
+	.login-form {
+	width: 32%;
+	margin: 10% auto 4% auto;
+	}
+}
+@media (max-width:1280px){
+	.login-form  {
+		margin:8% auto 0;
+		width:34%;
+	
+	}
+	.copy-right {
+	left: 41%;
+	bottom:-18%;
+	}
+}
+@media (max-width:1024px){
+.login-form  {
+		margin:12% auto 0;
+		width:45%;
+	
+	}
+	.copy-right {
+	left: 41%;
+	bottom:-18%;
+	}
+}
+@media (max-width:768px){
+	.login-form  {
+		margin: 16% auto 0;
+		width: 59%;
+	}
+	.copy-right {
+	left:38%;
+	bottom:-14%;
+	}
+}
+@media (max-width:640px){                                  
+	.login-form {
+	margin: 20% auto 0;
+	width: 63%;
+	}
+	.copy-right {
+	left:36%;
+	bottom:-18%;
+	}
+}
+@media (max-width:480px){                                  
+	.login-form {
+	margin: 32% auto 0;
+	width: 74%;
+	
+	}
+	.copy-right {
+	left:30%;
+	bottom:-17%;
+	}
+	.main h1 {
+	font-size: 22px;
+	}
+	.head img {
+	width: 100px;
+    height: 100px;
+	}
+	.head {
+	    top: -16%;
+	}
+	input[type="text"], input[type="password"], input[type="submit"] {
+	font-weight: 600;
+	margin-bottom: 4%;
+	}
+@media (max-width:320px){                                  
+	.login-form  {
+		margin:20% auto 0;
+		width: 85%;
+		
+	
+	}
+	.main h1 {
+	padding-top: 20%;
+	font-size: 20px;
+	}
+	.head img {
+		    width: 88px;
+    height: 88px;
+	}
+	.head {
+	top: -15%;
+	
+	}
+	input[type="text"], input[type="password"],input[type="submit"] {
+	font-weight:600;
+	font-size: 15px;
+	}
+	.main form p a {
+	font-size: 15px;
+	}
+	input[type="submit"] {
+	padding: 4%;
+	}
+		
+}

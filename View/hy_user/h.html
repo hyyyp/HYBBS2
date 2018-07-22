@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--{hook t_header}-->
+	<title>{$title}{$conf.title2}</title>
+	<link href="{#WWW}View/hy_user/css/um.css" rel="stylesheet">
+  <link href="{#WWW}public/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
+  <!--[if (gte IE 9)|!(IE)]><!-->
+  <script src="{#WWW}public/js/jquery.min.js"></script>
+  <!--<![endif]-->
+  <!--[if lte IE 8 ]>
+  <script src="{#WWW}public/js/jquery1.11.3.min.js"></script>
+  <![endif]-->
+  
+
+    <!--{hook t_user_header}-->
+    <script>
+    var www = "{#WWW}{#RE}";
+    var WWW = "{#WWW}";
+    
+    var exp = "{#EXP}";
+
+    </script>
+	</head>
+  <body>
+      <div class="bj"></div>
+      <div id="main-wrap" class="content page dashboard space centralnav">
+      	<div id="author-page" class="primary bd clx" role="main">
+      		{include left_menu}
+
+      		<div class="area">
+      			<div class="page-wrapper">
+      				<div class="dashboard-main">

@@ -1,0 +1,436 @@
+{include header}
+<div class="wrapper">
+    {include header_menu}
+    {include left_menu}
+    <style>
+    .gallery-list .gallery-item {
+        position: relative;
+        display: inline-block;
+        width: 33%;
+        padding: 2px;
+    }
+    .gallery-list .gallery-item .gallery-wrapper .gallery-title.action{
+        background-color: #2baab1;
+    }
+    .gallery-list .gallery-item .gallery-wrapper .gallery-overlay .gallery-action.action {
+        background-color: #2baab1;
+    }
+    </style>
+    <div class="main-container">
+        <div class="padding-md">
+            <h2 class="header-text no-margin">
+				外观 & 模板
+			</h2>
+            <div class="gallery-filter m-top-md">
+				<ul class="clearfix">
+					<li><a href="{php HYBBS_URL('admin','view')}">我的模板</a></li>
+					<li class="active"><a href="{php HYBBS_URL('admin','viewol')}">线上模板 & 下载模板</a></li>
+				</ul>
+			</div>
+            <div class="row m-top-md" id="list">
+            </div>
+        </div>
+    </div>
+    <script>
+    var json = ({$qj});
+    //console.log(json);
+    
+    function re1(obj,name){
+        swal({
+              title: "必看警告!",
+              text: "更新模板会覆盖掉旧模板,如果你有修改的过该旧模板,请备份后再升级!",
+              type: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#DD6B55",
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              closeOnConfirm: true
+            }).then(
+                function(){
+                    re(obj,name)
+                },
+                function(){
+                    
+                }
+            );
+    }
+    function re(obj,name){
+        var _this = $(obj);
+        _this.attr('disabled','disabled');
+        _this.html('<i class="fa fa-refresh  fa-spin fa-fw"></i> 下载中...');
+        _this.removeClass('btn-success').addClass('btn-primary');
+        $.ajax({
+            url:'{php HYBBS_URL('admin','viewol')}',
+            type:'post',
+            data:{
+                down:name,
+                gn:'update'
+            },
+            dataType:'json',
+            success:function(e){
+                if(!e.error){
+                    _this.removeAttr('disabled');
+                    _this.html('<i class="fa fa-download fa-lg"></i> 下载');
+                    _this.removeClass('btn-primary').addClass('btn-success');
+                    return swal({title:'安装失败',text:e.data,html: true,type:'error'});
+                }
+                //_this.removeAttr('disabled');
+                _this.html('<i class="fa fa-check fa-lg"></i> 已下载');
+                _this.removeClass('btn-primary').addClass('btn-danger');
+            },error:function(e){
+                return swal('安装失败','本地服务器访问失败','error');
+            }
+        })
+    }
+
+    function down(obj,name){
+        var _this = $(obj);
+        _this.attr('disabled','disabled');
+        _this.html('<i class="fa fa-refresh  fa-spin fa-fw"></i> 下载中...');
+        _this.removeClass('btn-success').addClass('btn-primary');
+        $.ajax({
+            url:'{php HYBBS_URL('admin','viewol')}',
+            type:'post',
+            data:{
+                down:name
+            },
+            dataType:'json',
+            success:function(e){
+                if(!e.error){
+                    _this.removeAttr('disabled');
+                    _this.html('<i class="fa fa-download fa-lg"></i> 下载');
+                    _this.removeClass('btn-primary').addClass('btn-success');
+                    return swal({title:'安装失败',text:e.data,html: true,type:'error'});
+                }
+                //_this.removeAttr('disabled');
+                _this.html('<i class="fa fa-check fa-lg"></i> 已下载');
+                _this.removeClass('btn-primary').addClass('btn-danger');
+            },error:function(e){
+                return swal('安装失败','本地服务器访问失败','error');
+            }
+        })
+    }
+    function get_jsonp(){
+        var html= '';
+        $.getJSON("{php HYBBS_URL('admin','get_theme_json')}",function(e){
+            if(!e.error)
+                return swal('错误',e.data,'error');
+            e = e.data;
+            for(o in e){
+                var tmp = '<a title="下载" onclick="down(this,\''+e[o].name2+'\')" class="btn btn-success btn-block"><i class="fa fa-download fa-lg"></i> 下载</a>';
+                e[o].yv = '未下载';
+                for(oo in json){
+                    if(json[oo].name2 == e[o].name2){
+                        if(e[o].version != json[oo].version)
+                        tmp = '<a title="更新" onclick="re1(this,\''+e[o].name2+'\')" class="btn btn-info btn-block" ><i class="fa fa-refresh fa-lg"></i> 更新</a>';
+                            else
+                        tmp = '<a title="已下载" class="btn btn-danger btn-block disabled" disabled><i class="fa fa-download fa-lg"></i> 已下载</a>';
+                        e[o].yv = json[oo].version;
+                    }
+                }
+                
+
+
+                html = '<div class="col-xs-12 col-sm-4 col-md-3 col-lg-3"><div class="item-panel panel b-a">'+(e[o].user=='admin' ? '<div class="ribbon ribbon-info"><span>官方应用</span></div>':'')+'<div class="item m-l-n-xxs m-r-n-xxs"><div class="pos-rlt"><a href="{#APP_WWW}app/'+e[o].id+'"><img src="{#APP_WWW}app/'+e[o].name2+'/'+e[o].image+'" class="img-full"></a> <div class="gallery-overlay"><a href="{#APP_WWW}app/'+e[o].id+'" class="gallery-action animation-dalay" target="_blank"><i class="fa fa-link fa-lg"></i> 应用主页</a></div></div></div>';
+
+                html+='<div class="clearfix item-listing-title"><a href="{#APP_WWW}app/'+e[o].id+'" class="pull-left m-l-sm m-t-sm m-r-sm thumb-md m-r"><img src="{#APP_WWW}app/'+e[o].name2+'/'+e[o].icon+'" class="img-rounded"></a><div class="clear"><div class=" m-r-sm text-md font-bold"><a href="{#APP_WWW}app/'+e[o].id+'"><h2 class="text-md font-bold m-t-sm">'+e[o].name+'</h2></a></div></div></div>';
+
+                html+='<div class="row no-gutter item-listing-desc"><div class="m-l-sm m-b-xs m-r-sm m-t-xs ">'+e[o].ab+'</div></div>';
+
+                html+='<div class="row no-gutter"><div class="m-l-sm m-t-sm m-b-xs pull-left text-sm" style="    position: absolute;"><span class="m-l-xs m-b-sm text-muted"><a class="text-muted" href="{#APP_WWW}app/'+e[o].id+'" title=""><i class=" fa fa-puzzle-piece"></i> 最新版本 '+e[o].version+'</a></span></div>';
+
+                html+='<div class="m-r-sm m-t-sm m-b-xs pull-right text-sm"><span class="m-l-xs m-b-sm text-muted"><a class="text-muted" href="{#APP_WWW}app/'+e[o].id+'" title=""><i class=" fa fa-arrow-circle-down"></i> '+e[o].downs +' 次</a></span></div></div>';
+
+                html+='<div class="row no-gutter"><div class="m-l-sm m-t-sm m-b-xs pull-left text-sm" style="    position: absolute;"><span class="m-l-xs m-b-sm text-muted"><a class="text-muted" href="{#APP_WWW}app/'+e[o].id+'" title=""><i class=" fa fa-info-circle"></i> 本地版本 '+e[o].yv+'</a></span></div>';
+
+                html+='<div class="m-r-sm m-t-sm m-b-xs pull-right text-sm"><span class="m-l-xs m-b-sm text-muted" '+(e[o].rmb == 0 ? 'style="text-decoration: line-through;"' : '')+'><a class="text-muted" href="{#APP_WWW}app/'+e[o].id+'" title="" '+(e[o].rmb != 0 ? 'style="color: peru;"' : '')+'><i class=" fa fa-rmb"></i> '+e[o].rmb+'</a></span></div></div>';
+
+                html+='<div class="row no-gutter"><div class="m-r-sm m-l-sm m-t-sm m-b-xs text-sm">'+tmp+'</div></div></div></div></div>';
+
+
+                $("#list").append(html);
+            }
+            $('.owl-carousel').owlCarousel({
+			    items:1,
+			    loop:true,
+			    autoplay:true,
+				autoplayTimeout:2000,
+				autoplayHoverPause:true,
+			    stagePadding:0,
+			    smartSpeed:450,
+			    dots: false,
+                autoHeight : true,
+
+                singleItem:true
+			});
+        });
+    }
+    window.onload = function(){
+        {if APP_KEY == ''}
+                return swal('授权失败','请在 后台-全局设置-授权码,输入授权KEY','error');
+                {/if}
+        get_jsonp();
+    }
+    function mod(title,image,mess,name,user){
+        var arr = image.split(',');
+        var html = '';
+        for(o in arr){
+            html+='<div class="col-xs-6 col-md-4"><a href="#" class="thumbnail"><img src="'+arr[o]+'" alt=""></a></div>';
+        }
+        $("#ms").text(mess)
+        $("#image").html(html);
+        $(".modal-p1").text(title);
+        $("#name").val(name);
+    }
+    </script>
+    <style>
+    .owl-carousel .animated{-webkit-animation-duration:1000ms;animation-duration:1000ms;-webkit-animation-fill-mode:both;animation-fill-mode:both}.owl-carousel .owl-animated-in{z-index:0}.owl-carousel .owl-animated-out{z-index:1}.owl-carousel .fadeOut{-webkit-animation-name:fadeOut;animation-name:fadeOut}@-webkit-keyframes fadeOut{0%{opacity:1}100%{opacity:0}}@keyframes fadeOut{0%{opacity:1}100%{opacity:0}}.owl-height{-webkit-transition:height 500ms ease-in-out;-moz-transition:height 500ms ease-in-out;-ms-transition:height 500ms ease-in-out;-o-transition:height 500ms ease-in-out;transition:height 500ms ease-in-out}.owl-carousel{display:none;width:100%;-webkit-tap-highlight-color:transparent;position:relative;z-index:1}.owl-carousel .owl-stage{position:relative;-ms-touch-action:pan-Y}.owl-carousel .owl-stage:after{content:".";display:block;clear:both;visibility:hidden;line-height:0;height:0}.owl-carousel .owl-stage-outer{position:relative;overflow:hidden;-webkit-transform:translate3d(0px,0,0)}.owl-carousel .owl-controls .owl-dot,.owl-carousel .owl-controls .owl-nav .owl-next,.owl-carousel .owl-controls .owl-nav .owl-prev{cursor:pointer;cursor:hand;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.owl-carousel.owl-loaded{display:block}.owl-carousel.owl-loading{opacity:0;display:block}.owl-carousel.owl-hidden{opacity:0}.owl-carousel .owl-refresh .owl-item{display:none}.owl-carousel .owl-item{position:relative;min-height:1px;float:left;-webkit-backface-visibility:hidden;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.owl-carousel .owl-item img{display:block;width:100%;-webkit-transform-style:preserve-3d}.owl-carousel.owl-text-select-on .owl-item{-webkit-user-select:auto;-moz-user-select:auto;-ms-user-select:auto;user-select:auto}.owl-carousel .owl-grab{cursor:move;cursor:-webkit-grab;cursor:-o-grab;cursor:-ms-grab;cursor:grab}.owl-carousel .owl-rtl{direction:rtl}.owl-carousel .owl-rtl .owl-item{float:right}.no-js .owl-carousel{display:block}.owl-carousel .owl-item .owl-lazy{opacity:0;-webkit-transition:opacity 400ms ease;-moz-transition:opacity 400ms ease;-ms-transition:opacity 400ms ease;-o-transition:opacity 400ms ease;transition:opacity 400ms ease}.owl-carousel .owl-item img{transform-style:preserve-3d}.owl-carousel .owl-video-wrapper{position:relative;height:100%;background:#000}.owl-carousel .owl-video-play-icon{position:absolute;height:80px;width:80px;left:50%;top:50%;margin-left:-40px;margin-top:-40px;background:url(owl.video.play.png) no-repeat;cursor:pointer;z-index:1;-webkit-backface-visibility:hidden;-webkit-transition:scale 100ms ease;-moz-transition:scale 100ms ease;-ms-transition:scale 100ms ease;-o-transition:scale 100ms ease;transition:scale 100ms ease}.owl-carousel .owl-video-play-icon:hover{-webkit-transition:scale(1.3,1.3);-moz-transition:scale(1.3,1.3);-ms-transition:scale(1.3,1.3);-o-transition:scale(1.3,1.3);transition:scale(1.3,1.3)}.owl-carousel .owl-video-playing .owl-video-play-icon,.owl-carousel .owl-video-playing .owl-video-tn{display:none}.owl-carousel .owl-video-tn{opacity:0;height:100%;background-position:center center;background-repeat:no-repeat;-webkit-background-size:contain;-moz-background-size:contain;-o-background-size:contain;background-size:contain;-webkit-transition:opacity 400ms ease;-moz-transition:opacity 400ms ease;-ms-transition:opacity 400ms ease;-o-transition:opacity 400ms ease;transition:opacity 400ms ease}.owl-carousel .owl-video-frame{position:relative;z-index:1}
+    .item-panel {
+    padding-bottom: 10px;
+}
+.b-a {
+    border: 1px solid #dee5e7;
+}
+.panel {
+    border-radius: 2px;
+}
+.panel {
+    margin-bottom: 20px;
+    background-color: #fff;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+}
+.m-r-n-xxs {
+    margin-right: -1px;
+}
+.m-l-n-xxs {
+    margin-left: -1px;
+}
+.item {
+    position: relative;
+}
+
+.pos-rlt {
+    position: relative;
+}
+.img-full {
+    width: 100%;
+}
+img {
+    vertical-align: middle;
+        border: 0;
+}
+.item-listing-title {
+    height: 85px;
+}
+.thumb-md {
+    display: inline-block;
+    width: 64px;
+}
+.m-r {
+    margin-right: 15px;
+}
+.m-t-sm {
+    margin-top: 10px;
+}
+.m-l-sm {
+    margin-left: 10px;
+}
+.pull-left {
+    float: left !important;
+}
+.thumb-md img {
+    height: auto;
+    max-width: 100%;
+    vertical-align: middle;
+    border-radius: 6px;
+}
+.clear {
+    display: block;
+    overflow: hidden;
+}
+.m-r-sm {
+    margin-right: 10px;
+}
+.text-md {
+    font-size: 16px;
+}
+.font-bold {
+    font-weight: 700;
+}
+.text-md {
+    font-size: 16px;
+}
+.row.no-gutter {
+    margin-right: 0;
+    margin-left: 0;
+}
+.item-listing-desc {
+    height: 80px;
+}
+.m-b-xs {
+    margin-bottom: 5px;
+}
+.m-r-sm {
+    margin-right: 10px;
+}
+.m-t-xs {
+    margin-top: 5px;
+}
+.m-l-sm {
+    margin-left: 10px;
+}
+.row.no-gutter {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.item-listing-extra {
+    height: 40px;
+}
+.text-sm {
+    font-size: 13px;
+}
+.pos-rlt{
+    overflow: hidden;
+}
+.pos-rlt a img{
+        max-width: 100%;
+    display: block;
+    transition: all .7s ease;
+    -webkit-transition: all .7s ease;
+    -moz-transition: all .7s ease;
+    -ms-transition: all .7s ease;
+    -o-transition: all .7s ease;
+}
+.item-panel:hover img{
+        transform: scale(1.4) rotate(15deg);
+    -webkit-transform: scale(1.4) rotate(15deg);
+    -moz-transform: scale(1.4) rotate(15deg);
+    -ms-transform: scale(1.4) rotate(15deg);
+    -o-transform: scale(1.4) rotate(15deg);
+    transition: all .7s ease;
+    -webkit-transition: all .7s ease;
+    -moz-transition: all .7s ease;
+    -ms-transition: all .7s ease;
+    -o-transition: all .7s ease;
+}
+.gallery-overlay{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    background-color: rgba(0,0,0,.4);
+    text-align: center;
+    transition: all .5s ease;
+    -webkit-transition: all .5s ease;
+    -moz-transition: all .5s ease;
+    -ms-transition: all .5s ease;
+    -o-transition: all .5s ease;
+}
+
+.item-panel:hover .gallery-overlay {
+    opacity: 1;
+    transition: all .5s ease;
+    -webkit-transition: all .5s ease;
+    -moz-transition: all .5s ease;
+    -ms-transition: all .5s ease;
+    -o-transition: all .5s ease;
+}
+.gallery-action {
+    display: inline-block;
+    border-radius: 50em;
+    -moz-border-radius: 50em;
+    -webkit-border-radius: 50em;
+    width: 98px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    background-color: #000;
+    outline: 0;
+    color: #fff;
+    opacity: 0;
+    text-decoration: none;
+    transform: translate(0,100px);
+    -webkit-transform: translate(0,100px);
+    -moz-transform: translate(0,100px);
+    -ms-transform: translate(0,100px);
+    -o-transform: translate(0,100px);
+    transition: all .4s ease;
+    -webkit-transition: all .4s ease;
+    -moz-transition: all .4s ease;
+    -ms-transition: all .4s ease;
+    -o-transition: all .4s ease;
+}
+.item-panel:hover .gallery-overlay .gallery-action {
+    opacity: 1;
+    transform: translate(0,50px);
+    -webkit-transform: translate(0,50px);
+    -moz-transform: translate(0,50px);
+    -ms-transform: translate(0,50px);
+    -o-transform: translate(0,50px);
+    transition: all .4s ease;
+    -webkit-transition: all .4s ease;
+    -moz-transition: all .4s ease;
+    -ms-transition: all .4s ease;
+    -o-transition: all .4s ease;
+}
+.ribbon {
+    position: absolute;
+    right: -5px;
+    top: -3px;
+    z-index: 1;
+    overflow: hidden;
+    width: 75px;
+    height: 75px;
+    text-align: right;
+}
+.ribbon span {
+    font-size: 10px;
+    font-weight: bold;
+    color: #FFF;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 20px;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    width: 80px;
+    display: block;
+    background: #79A70A;
+    background: linear-gradient(#9BC90D 0%, #79A70A 100%);
+    box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 12px;
+    right: -18px;
+}
+
+
+.ribbon-info span {
+    color: #FFF;
+    background: #1faad4;
+    background: linear-gradient(#28b9e3 0%, #1faad4 100%);
+}
+.ribbon span::after {
+    content: "";
+    position: absolute;
+    right: 0px;
+    top: 100%;
+    z-index: -1;
+    border-left: 3px solid transparent;
+    border-right: 3px solid #79A70A;
+    border-bottom: 3px solid transparent;
+    border-top: 3px solid #79A70A;
+}
+.ribbon-info span::after {
+    border-right: 3px solid #1faad4;
+    border-top: 3px solid #1faad4;
+}
+    </style>
+
+
+{include footer}
+<script src="{#WWW}public/admin/js/owl.carousel.min.js"></script>

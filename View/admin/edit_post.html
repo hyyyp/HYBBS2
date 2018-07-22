@@ -1,0 +1,2 @@
+{hook t_post_edit_1}
+{hook t_post_edit}

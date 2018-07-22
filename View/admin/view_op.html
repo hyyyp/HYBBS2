@@ -1,0 +1,45 @@
+{include header}
+<div class="wrapper">
+    {include header_menu}
+
+    {include left_menu}
+    <div class="main-container">
+        <div class="padding-md">
+            <h2 class="header-text no-margin">
+                模板配置
+              
+            </h2>
+            <div class="smart-widget" style="margin-top:20px">
+                <div class="smart-widget-header">
+                    编辑配置 - {php echo X("get.op")}
+                </div>
+                <div class="smart-widget-inner">
+                    <div class="smart-widget-body">
+                        <form method="post" class="form-horizontal no-margin form-border">
+                            <div id="load">
+                                加载中
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-offset-2 col-lg-10">
+                                    <button type="submit" class="btn btn-success btn-sm">保存</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div><!-- ./smart-widget-inner -->
+            </div>
+       
+
+        </div>
+    </div><!-- ENd box  -->
+
+
+
+
+<script type="text/javascript">
+    window.onload= function(){
+        $("#load").load("{php HYBBS_URL('admin','get_view_inc',['name'=>X('get.op')])}");
+        
+    }
+</script>
+{include footer}

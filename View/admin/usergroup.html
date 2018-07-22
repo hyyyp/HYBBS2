@@ -1,0 +1,318 @@
+{include header}
+<div class="wrapper">
+    {include header_menu}
+
+    {include left_menu}
+    <div class="main-container">
+        <div class="padding-md">
+            <h2 class="header-text no-margin">
+                用户组 管理
+            </h2>
+            <div class="gallery-filter m-top-md m-bottom-md">
+                <ul class="clearfix">
+                    <li class="active"><a href="javascript:void(0)" data-toggle="modal" data-target="#normalModal"><i class="fa fa-plus"></i> 添加用户组</a></li>
+                </ul>
+            </div>
+            
+            <script>
+            (function(){
+
+            });
+            function del_group(id,obj){
+                if(!confirm("确定删除? 删除不能恢复的哦")){
+                    return;
+                }
+                $.post('{php HYBBS_URL('admin','usergroup')}',{id:id,gn:4},function(e){
+                    
+                    if(e.error){
+                        $(obj).parent().parent().remove();
+                    }
+
+                },'json');
+
+            }
+            function edit_forum(obj){
+                var _this = $(obj);
+                $('#edit-iid').val(_this.data('gid'));
+                $('#edit-id').val(_this.data('gid'));
+                $('#edit-name').val(_this.data('name'));
+                $('#edit-credits').val(_this.data('credits'));
+                $('#edit-credits-max').val(_this.data('credits-max'));
+                $('#edit-space-size').val(_this.data('space-size'));
+                $('#edit-chat-size').val(_this.data('chat-size'));
+
+                $('#normalModal1').modal('show')
+            }
+            function edit_user(obj,id,type,b){
+
+
+
+                $.post('{php HYBBS_URL('admin','usergroup')}',{gn:3,id:id,b:b,type:type},function(e){
+                    if(e.error){
+                        var bb = b ? 0 : 1;
+                        if(b){
+                            $(obj).attr('onclick',"edit_user(this,"+id+",'"+type+"',"+ bb +")");
+                            $(obj).text("禁止");
+                            $(obj).removeClass('btn-success').addClass('btn-danger');
+                        }else{
+                            $(obj).attr('onclick',"edit_user(this,"+id+",'"+type+"',"+ bb +")");
+                            $(obj).text("允许");
+                            $(obj).removeClass('btn-danger').addClass('btn-success');
+                        }
+
+                    }
+                },'json')
+            }
+
+            </script>
+            <div class="alert alert-success alert-custom alert-dismissible" role="alert">
+                <i class="fa fa-times-circle m-right-xs"></i> <strong>积分段说明:</strong> 用户的积分处于用户组什么积分段则使用什么用户>
+            </div>
+            <div class="alert alert-danger alert-custom alert-dismissible" role="alert">
+                <i class="fa fa-times-circle m-right-xs"></i> <strong>特殊说明:</strong> &lt;管理员&gt;&lt;新用户&gt;&lt;游客&gt; 这3个是HYBBS必须使用的用户组. 请勿删除!
+            </div>
+            <div class="table-responsive">
+            <table class="table table-striped table-bordered m-top-md" id="dataTable" >
+				<thead>
+					<tr class="bg-dark-blue">
+						<th>用户组</th>
+                        <th>积分段</th>
+                        <th>空间</th>
+                        <th>发帖</th>
+                        <th>评论</th>
+                        <th>@按特</th>
+                        <th>上传图片</th>
+                        <th>删除帖子</th>
+                        <th>下载附件</th>
+                        <th>上传附件</th>
+                        <th>隐藏帖子</th>
+                        <th>帖子收费</th>
+                        <th>免金币购买</th>
+                        <th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+                    {foreach $data as $v}
+                    <tr>
+                        <td>
+                        <p>GID：{$v.gid}</p>
+                        <p>名称：{$v.name}</p>
+                        </td>
+                        
+                        <td>
+
+                            {$v.credits} ~ {$v.credits_max}
+                        </td>
+                        <td>
+                            <p>上传文件：{$v.space_size}(Kb)</p>
+                            <p>聊天储存：{$v.chat_size}(b)</p>
+                        </td>
+                        
+                        <td>
+                        {if !in_array($v['gid'],array(3))}
+                        <button type="button" onclick="edit_user(this,{$v.gid},'thread',{$v['json']['thread'] ? 1 : 0})" class="btn btn-{if $v['json']['thread']}success btn-xs">允许{else}danger btn-xs">禁止{/if}</button>
+                        {/if}
+                        </td>
+                        <td>
+                        {if !in_array($v['gid'],array(3))}
+                        <button type="button" onclick="edit_user(this,{$v.gid},'post',{$v['json']['post'] ? 1 : 0})" class="btn btn-{if $v['json']['post']}success btn-xs">允许{else}danger btn-xs">禁止{/if}</button>
+                        {/if}
+                        </td>
+                        <td>
+                        {if !in_array($v['gid'],array(3))}
+                        <button type="button" onclick="edit_user(this,{$v.gid},'mess',{$v['json']['mess'] ? 1 : 0})" class="btn btn-{if $v['json']['mess']}success btn-xs">允许{else}danger btn-xs">禁止{/if}</button>
+                        {/if}
+                        </td>
+                        <td>
+                        {if !in_array($v['gid'],array(3))}
+                        <button type="button" onclick="edit_user(this,{$v.gid},'upload',{$v['json']['upload'] ? 1 : 0})" class="btn btn-{if $v['json']['upload']}success btn-xs">允许{else}danger btn-xs">禁止{/if}</button>
+                        {/if}
+                        </td>
+                        <td>
+                        {if !in_array($v['gid'],array(3))}
+                        <button type="button" onclick="edit_user(this,{$v.gid},'del',{$v['json']['del'] ? 1 : 0})" class="btn btn-{if $v['json']['del']}success btn-xs">允许{else}danger btn-xs">禁止{/if}</button>
+                        {/if}
+                        </td>
+                        <td>
+                        
+                            <button type="button" onclick="edit_user(this,{$v.gid},'down',{$v['json']['down'] ? 1 : 0})" class="btn btn-{if $v['json']['down']}success btn-xs">允许{else}danger btn-xs">禁止{/if}</button>
+                        
+                        </td>
+                        <td>
+                            {if !in_array($v['gid'],array(3))}
+                            <button type="button" onclick="edit_user(this,{$v.gid},'uploadfile',{$v['json']['uploadfile'] ? 1 : 0})" class="btn btn-{if $v['json']['uploadfile']}success btn-xs">允许{else}danger btn-xs">禁止{/if}</button>
+                            {/if}
+                        </td>
+                         <td>
+                            {if !in_array($v['gid'],array(3))}
+                            <button type="button" onclick="edit_user(this,{$v.gid},'thide',{$v['json']['thide'] ? 1 : 0})" class="btn btn-{if $v['json']['thide']}success btn-xs">允许{else}danger btn-xs">禁止{/if}</button>
+                            {/if}
+                        </td>
+                         <td>
+                            {if !in_array($v['gid'],array(3))}
+                            <button type="button" onclick="edit_user(this,{$v.gid},'tgold',{$v['json']['tgold'] ? 1 : 0})" class="btn btn-{if $v['json']['tgold']}success btn-xs">允许{else}danger btn-xs">禁止{/if}</button>
+                            {/if}
+                        </td>
+                        
+                        <td>
+                            {if !in_array($v['gid'],array(3))}
+                            <button type="button" onclick="edit_user(this,{$v.gid},'nogold',{$v['json']['nogold'] ? 1 : 0})" class="btn btn-{if $v['json']['nogold']}success btn-xs">允许{else}danger btn-xs">禁止{/if}
+                            </button>
+                            {/if}
+                            </td>
+                        <td>
+                            <button data-gid="{$v.gid}" data-name="{$v.name}" data-credits="{$v.credits}" data-credits-max="{$v.credits_max}" data-space-size="{$v.space_size}" data-chat-size="{$v.chat_size}" type="button" onclick="edit_forum(this)" class="btn btn-success btn-xs">编辑</button>
+                            {if !in_array($v['gid'],array(1,2,3))}
+                            <button type="button" onclick="del_group({$v.gid},this)" class="btn btn-danger btn-xs">删除</button>
+                            {/if}
+                        </td>
+                    </tr>
+                    {/foreach}
+
+
+				</tbody>
+			</table>
+            </div>
+           
+            
+
+        </div><!-- ENd box  -->
+
+    </div>
+
+<!-- Modal -->
+    <form method="post">
+    <div class="modal fade" id="normalModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">添加分类</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="gn" value="1">
+                    <div class="form-group">
+                        <label for="">用户组 ID</label>
+                        <input type="text" name="id" class="form-control" value="<?php $i=-1; foreach ($usergroup as $v) {
+                                if($v['gid'] > $i)
+                                    $i = $v['gid'];
+                            }echo $i+1; ?>">
+                        <span>如果这个ID与上面的出现重复,请自行修改 , 请勿使用 0 </span>
+                    </div>
+                    <div class="form-group">
+                        <label for="">用户组 名称</label>
+                        <input type="text" name="name" class="form-control" >
+
+                    </div>
+                    <div class="row">
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="">积分所处(最低)</label>
+                                <input type="text" name="credits" class="form-control" value="-1">
+                                <span></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="">积分所处(最高)</label>
+                                <input type="text" name="credits_max" class="form-control" value="-1">
+                                <span></span>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            
+                            <div class="alert alert-info alert-custom alert-dismissible" role="alert">
+                                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                                <i class="fa fa-exclamation-circle m-right-xs"></i><strong>升级积分说明!</strong> 最低处写：0 最高处写：49 . 用户如果积分在 0 ~ 49 中 则使用该用户组。 如果最低 最高 任意一项填写 -1 都代表无法升级该用户组
+                            </div>
+
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="">文件空间大小(kb) 注意单位</label>
+                        <input type="text" name="space_size" class="form-control" value="51200">
+                        <span>"1024" 代表只有 "1M的上传储存空间大小", "1024*(N) = M" 给予多大的空间 . 建议: "51200", 也就是50M </span>
+                    </div>
+                    <div class="form-group">
+                        <label for="">聊天记录储存空间大小(b) 注意单位</label>
+                        <input type="text" name="chat_size" class="form-control" value="4294967295">
+                        <span>填入 "1024" 代表 1KB, "4294967295" (4G)为最大</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+
+    <form method="post">
+    <div class="modal fade" id="normalModal1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">修改分类</h4>
+                </div>
+                <div class="modal-body">
+                   <input type="hidden" name="gn" value="2">
+                    <input type="hidden" name="iid" id="edit-iid">
+
+                    <div class="form-group">
+                        <label for="">用户组 ID</label>
+                        <input name="id" id="edit-id" type="text" class="form-control" >
+                    </div>
+                    <div class="form-group">
+                        <label for="">用户组 名称</label>
+                        <input name="name" id="edit-name" type="text" class="form-control" >
+                    </div>
+                    <div class="row">
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="">积分所处(最低)</label>
+                                <input type="text" id="edit-credits" name="credits" class="form-control" value="-1">
+                                <span></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="">积分所处(最高)</label>
+                                <input type="text" id="edit-credits-max" name="credits_max" class="form-control" value="-1">
+                                <span></span>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            
+                            <div class="alert alert-info alert-custom alert-dismissible" role="alert">
+                                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                                <i class="fa fa-exclamation-circle m-right-xs"></i><strong>升级积分说明!</strong> 最低处写：0 最高处写：49 . 用户如果积分在 0 ~ 49 中 则使用该用户组。 如果最低 最高 任意一项填写 -1 都代表无法升级该用户组
+                            </div>
+
+                        </div>
+                    </div>
+                    <span>输入 -1 代表该用户组是无法通过积分升级的!</span>
+                    <div class="form-group">
+                        <label for="">文件空间大小</label>
+                        <input name="space_size" id="edit-space-size" type="text" class="form-control" >
+                    </div>
+                    <div class="form-group">
+                        <label for="">聊天记录储存空间大小</label>
+                        <input name="chat_size" id="edit-chat-size" type="text" class="form-control" >
+                    </div>
+                
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+    <!-- !Modal -->
+{include footer}

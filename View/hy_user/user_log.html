@@ -1,0 +1,73 @@
+{include h}
+<div class="dashboard-header">
+    <style type="text/css">
+    .filelist{
+        width: 100%;
+        margin-top: 30px
+    }
+    .filelist li{
+    float: left;
+        float: left;
+    width: 100px;
+    height: 150px;
+        text-align: center;
+        margin-right: 10px
+    }
+    .filelist li i{
+        font-size: 74px;
+    }
+    .filelist li i{
+        margin-bottom: 5px;
+    }
+    </style>
+    <div style="clear:both"></div>
+</div>
+<div class="dashboard-wrapper select-message">
+    <h2>账户流水记录 <span class="label label-default"></span></h2>
+    <table width="100%" border="0" cellspacing="0" class="table table-bordered orders-table">
+        <thead>
+            <tr>
+                <th scope="col">金币</th>
+                <th scope="col">积分</th>
+                <th scope="col">变动原因</th>
+                <th scope="col">时间</th>
+                
+            </tr>
+        </thead>
+        <tbody class="the-list">
+            {foreach $log_data as $v}
+            <tr>
+              <td style="color:{if $v['gold'] < 0}red{else}forestgreen{/if}">{$v.gold}</td>
+              <td style="color:{if $v['credits'] < 0}red{else}forestgreen{/if}">{$v.credits}</td>
+              <td>{$v.content}</td>
+              <td>{php echo date('Y-m-d H:is',$v['atime'])}</td>
+            </tr>
+            {/foreach}
+        </tbody>
+    </table>
+    <div class="pagination">
+        {if $pageid!=1}
+        <span class="pg-item">
+
+            <a class="page-numbers" href="{php HYBBS_URL('my',$data['user'],['log'=>$pageid-1]);}">{$_LANG['上一页']}</a>
+        </span>
+        {/if}
+        <?php $tmp = ($count%10) ?(intval($count/10)+1) : intval($count/10) ; ?>
+        {for $i=($pageid-5 < 1) ? 1 : $pageid -5; $i< (($pageid + 5 > $tmp) ? $tmp+1 : $pageid + 5) ; $i++}
+
+
+        <span class="pg-item ">
+            <{if $pageid == $i}span{else}a{/if} class="page-numbers {if $pageid == $i}current{/if}" href="{php HYBBS_URL('my',$data['user'],['log'=>$i]);}">
+                {$i}
+            </{if $pageid == $i}span{else}a{/if}>
+        </span>
+        {/for}
+        {if $pageid!=$page_count}
+        <span class="pg-item" {if $pageid==1}disabled{/if}>
+            <a class="next page-numbers" href="{php HYBBS_URL('my',$data['user'],['log'=>$pageid+1]);}">{$_LANG['下一页']}</a>
+        </span>
+        {/if}
+    </div>
+
+</div>
+{include f}

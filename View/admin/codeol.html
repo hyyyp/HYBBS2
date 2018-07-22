@@ -1,0 +1,588 @@
+{include header}
+<div class="wrapper">
+    {include header_menu}
+
+    {include left_menu}
+    <div class="main-container">
+        <div class="padding-md">
+            <h2 class="header-text no-margin">
+				插件 
+			</h2>
+            <div class="gallery-filter m-top-md" style="margin:10px 0">
+				<ul class="clearfix">
+					<li><a href="{php HYBBS_URL('admin','code');}">我的插件</a></li>
+					<li class="active"><a id="gg" href="{php HYBBS_URL('admin','codeol');}">线上插件 & 下载插件</a></li>
+                    <li><a href="{php HYBBS_URL('admin','code_op');}">插件优先级 (调整插件位置)</a></li>
+                    
+				</ul>
+			</div>
+          
+            <h2 class="header-text no-margin" style="margin-bottom: 10px !important;">
+                待更新
+            </h2>
+            <div id="list2" class="row">
+                
+            </div>
+            <h2 class="header-text no-margin" style="margin-bottom: 10px !important;">
+                新插件
+            </h2>
+            <div id="list1" class="row">
+        
+            </div>
+            <h2 class="header-text no-margin" style="margin-bottom: 10px !important;">
+                已下载
+            </h2>
+            <div id="list" class="row">
+
+            </div>
+            <script>
+            var json = ({$data});
+            window.jsonx = null;
+            function get_jsonp(){
+                var obj = '#list';
+                var html= '';
+                $.get("{php HYBBS_URL('admin','get_code_json');}",function(e){
+                    if(e==''){
+                        swal('获取失败','你的主机无法远程获取APP中心信息!','error');
+                    }
+                    console.log(e.error);
+                    if(!e.error){
+                        swal('错误',e.data,'error');
+                        return;
+                    }
+                    e = e.data;
+                    window.jsonx = e;
+
+                    
+                    $("#gg").text("线上插件量 ("+e.length+")");
+
+                    for(o in e){
+                        //window.json_e = e[o];
+
+                        var tmp = '<a href="javascript:;" onclick="mod('+o+',true)" class="gallery-action enlarged-photo" data-toggle="modal" data-target="#normalModal"><i class="fa fa-download fa-lg"></i> 下载</a>';
+                        
+
+                        for(oo in json){
+                            e[o].yv = '未安装';
+                            obj = "#list1";
+                            if(json[oo].name == e[o].name2){
+                                
+                                tmp = '<a href="javascript:;" class="gallery-action enlarged-photo" disabled><i class="fa fa-download fa-lg"></i> 已下载</a>';
+                                e[o].yv = json[oo].version;
+                                
+                                obj = "#list";
+                                if(json[oo].version != e[o].version){
+
+                                    obj = "#list2";
+                                    tmp = '<a href="javascript:;" class="gallery-action enlarged-photo" onclick="mod('+o+',false)"  data-toggle="modal" data-target="#normalModal" onclick="$(\'#name2\').val(\''+e[o].name2+'\')"><i class="fa fa-recycle fa-lg"></i> 更新插件</a>';
+
+
+                                }
+                                break;
+                                
+                            }
+
+                            
+                        }
+                        
+
+                        html = '<div class="col-xs-12 col-sm-4 col-md-3 col-lg-3"><div class="item-panel panel b-a">'+(e[o].user=='admin' ? '<div class="ribbon ribbon-info"><span>官方应用</span></div>':'')+'<div class="item m-l-n-xxs m-r-n-xxs"><div class="pos-rlt"><a href="{#APP_WWW}app/'+e[o].id+'"><img src="{#APP_WWW}app/'+e[o].name2+'/'+e[o].image+'" class="img-full"></a> <div class="gallery-overlay">'+tmp+' <a href="{#APP_WWW}app/'+e[o].id+'" class="gallery-action animation-dalay" target="_blank"><i class="fa fa-link fa-lg"></i> 应用主页</a></div></div></div>';
+
+                        html+='<div class="clearfix item-listing-title"><a href="{#APP_WWW}app/'+e[o].id+'" class="pull-left m-l-sm m-t-sm m-r-sm thumb-md m-r"><img src="{#APP_WWW}app/'+e[o].name2+'/'+e[o].icon+'" class="img-rounded"></a><div class="clear"><div class=" m-r-sm text-md font-bold"><a href="{#APP_WWW}app/'+e[o].id+'"><h2 class="text-md font-bold m-t-sm">'+e[o].name+'</h2></a></div></div></div>';
+
+                        html+='<div class="row no-gutter item-listing-desc"><div class="m-l-sm m-b-xs m-r-sm m-t-xs ">'+e[o].ab+'</div></div>';
+
+                        html+='<div class="row no-gutter"><div class="m-l-sm m-t-sm m-b-xs pull-left text-sm" style="    position: absolute;"><span class="m-l-xs m-b-sm text-muted"><a class="text-muted" href="{#APP_WWW}app/'+e[o].id+'" title=""><i class=" fa fa-puzzle-piece"></i> 最新版本 '+e[o].version+'</a></span></div>';
+
+                        html+='<div class="m-r-sm m-t-sm m-b-xs pull-right text-sm"><span class="m-l-xs m-b-sm text-muted"><a class="text-muted" href="{#APP_WWW}app/'+e[o].id+'" title=""><i class=" fa fa-arrow-circle-down"></i> '+e[o].downs +' 次</a></span></div></div>';
+
+                        html+='<div class="row no-gutter"><div class="m-l-sm m-t-sm m-b-xs pull-left text-sm" style="    position: absolute;"><span class="m-l-xs m-b-sm text-muted"><a class="text-muted" href="{#APP_WWW}app/'+e[o].id+'" title=""><i class=" fa fa-info-circle"></i> 本地版本 '+e[o].yv+'</a></span></div>';
+
+                        html+='<div class="m-r-sm m-t-sm m-b-xs pull-right text-sm"><span class="m-l-xs m-b-sm text-muted" '+(e[o].rmb == 0 ? 'style="text-decoration: line-through;"' : '')+'><a class="text-muted" href="{#APP_WWW}app/'+e[o].id+'" title="" '+(e[o].rmb != 0 ? 'style="color: peru;"' : '')+'><i class=" fa fa-rmb"></i> '+e[o].rmb+'</a></span></div></div></div></div>';
+
+
+                        $(obj).append(html);
+
+                                
+
+
+
+                    }
+
+                },'json');
+            }
+            function add_text(a){
+                window.pre.append(a+"\r\n");
+            }
+            
+
+            window.onload = function(){
+                {if APP_KEY == ''}
+                return swal('授权失败','请在 后台-全局设置-授权码,输入授权KEY','error');
+                {/if}
+                get_jsonp();
+                $("#re").click(function(){
+                    window.pre = $('<pre id="code" style="width: 100%;padding: 10px;display: block;background: #000;color: chartreuse;font-size: 16px;white-space: pre-wrap; /* css-3 */ white-space: -moz-pre-wrap; /* Mozilla, since 1999 */ white-space: -pre-wrap; /* Opera 4-6 */ white-space: -o-pre-wrap; /* Opera 7 */ word-wrap: break-word; /* Internet Explorer 5.5+ */ "></pre>')
+                    $("#tmpimg").html(window.pre);
+                    add_text("更新插件 : "+$("#name2").text());
+                    $.ajax({
+                        url:'{php HYBBS_URL('admin','codeol');}',
+                        type:'post',
+                        data:{
+                            gn:'get_down',
+                            name:$("#name").val()
+                        },
+                        dataType:'json',
+                        success:function(e){
+                            if(e.error){
+                                add_text("成功获取插件下载地址.");
+                                add_text("正在尝试下载...");
+                                $.ajax({
+                                    url:'{php HYBBS_URL('admin','codeol');}',
+                                    type:'post',
+                                    data:{
+                                        gn:'update',
+                                        name:$("#name").val(),
+                                        www:e.data
+                                    },
+                                    dataType:'json',
+                                    success:function(e){
+                                        if(e.error){
+                                            add_text("插件更新完成");
+                                            setTimeout(function(){
+                                                window.location.reload()
+                                            },1000)
+                                        }else{
+                                            add_text("终止安装, 原因: " +e.data);
+                                        }
+                                    },
+                                    error:function(){
+                                        add_text("终止安装, 原因: 本地服务器出错 Error = 2");
+                                    }
+                                });
+
+
+                            }else{
+                                add_text("终止安装, 原因: " +e.data);
+                            }
+                        },
+                        error:function(){
+                            add_text("终止安装, 原因: 本地服务器出错 Error = 1");
+                        }
+                    });
+
+
+
+                });
+                $("#down").click(function(){
+                    window.pre = $('<pre id="code" style="width: 100%;padding: 10px;display: block;background: #000;color: chartreuse;font-size: 16px;white-space: pre-wrap; /* css-3 */ white-space: -moz-pre-wrap; /* Mozilla, since 1999 */ white-space: -pre-wrap; /* Opera 4-6 */ white-space: -o-pre-wrap; /* Opera 7 */ word-wrap: break-word; /* Internet Explorer 5.5+ */ "></pre>')
+                    $("#tmpimg ").html(window.pre);
+
+
+                    add_text("下载插件 : "+$("#name2").text());
+                    $.ajax({
+                        url:'{php HYBBS_URL('admin','codeol');}',
+                        type:'post',
+                        data:{
+                            gn:'get_down',
+                            name:$("#name").val()
+                        },
+                        dataType:'json',
+                        success:function(e){
+                            if(e.error){
+                                add_text("成功获取插件下载地址.");
+                                add_text("正在尝试下载...");
+                                $.ajax({
+                                    url:'{php HYBBS_URL('admin','codeol');}',
+                                    type:'post',
+                                    data:{
+                                        gn:'down',
+                                        name:$("#name").val(),
+                                        www:e.data
+                                    },
+                                    dataType:'json',
+                                    success:function(e){
+                                        if(e.error){
+                                            add_text("插件安装完成");
+                                            setTimeout(function(){
+                                                window.location.reload()
+                                            },1000)
+                                        }else{
+                                            add_text("终止安装, 原因: " +e.data);
+                                        }
+                                    },
+                                    error:function(){
+                                        add_text("终止安装, 原因: 本地服务器出错 Error = 2");
+                                    }
+                                });
+
+
+                            }else{
+                                add_text("终止安装, 原因: " +e.data);
+                            }
+                        },
+                        error:function(){
+                            add_text("终止安装, 原因: 本地服务器出错 Error = 1");
+                        }
+                    });
+                    
+
+                });
+            }
+            //bool = false ;更新 or 下载
+            function mod(oo,bool){
+                //var arr = image.split(',');
+                var html = '';
+                if(bool){
+                    $("#tmpimg").html('<div title="图片尺寸与真实不一致!" id="image" class="owl-carousel no-controls"></div>');
+                    
+                    for(var o in window.jsonx[oo].image_list){
+                        html+='<div class="item" style="height:300px"><img style="width: 100%;height: 100%;" src="{#APP_WWW}app/'+jsonx[oo].name2+'/'+jsonx[oo].image_list[o]+'" alt=""></div>';
+                    }
+                    $("#down").show();
+                    $("#re").hide();
+                }else{
+                    $("#down").hide();
+                    $("#re").show();
+                    var tmp = $('<div id="previre"></div>');
+
+                    
+                    tmp.html(jsonx[oo].description)
+                    tmp.css('height',"200px");
+                    tmp.css('overflow-y',"scroll");
+                    tmp.css('padding',"10px");
+                    $("#tmpimg").html(tmp);
+                    
+                }
+                console.log(jsonx[oo]);
+
+                $("#down_icon").attr('src','{#APP_WWW}app/'+jsonx[oo].name2+'/'+jsonx[oo].icon);
+                $("#ms").text(jsonx[oo].ab);
+                $("#image").html(html);
+                $(".modal-p1,#name2").text(jsonx[oo].name);
+                $("#name").val(jsonx[oo].name2);
+                $("#suser").text("作者: "+jsonx[oo].user);
+
+                $('.owl-carousel').owlCarousel({
+				    items:1,
+				    loop:true,
+				    autoplay:true,
+					autoplayTimeout:2000,
+					autoplayHoverPause:true,
+				    stagePadding:0,
+				    smartSpeed:450,
+				    dots: false
+				});
+
+            }
+
+            </script>
+
+
+            
+            <input type="hidden" name="name"  value="" id="name">
+            <input type="hidden" name="name2" value="" id="name2">
+            <div class="modal fade in" id="normalModal" aria-hidden="false">
+			  	<div class="modal-dialog">
+			    	<div class="modal-content">
+			      		<div class="modal-header">
+			        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+			        		<h4 class="modal-title" id="zti">下载插件 - <span class="modal-p1"></span></h4>
+			      		</div>
+			      		<div class="modal-body" id="md1">
+                            <div class="panel">
+                            <div class="panel-body">
+                            	<a href="#" class="pull-left m-right-sm">
+                                    <img id="down_icon" width="50" height="50">
+
+                                </a>
+                            	<div class=" m-left-sm">
+                            		<strong class="font-14 block modal-p1" ></strong><small class="text-muted"  id="suser"></small>
+                            		<div class="seperator">
+                            		</div>
+                            		<p class="m-bottom-none" id="ms">
+                            			
+                            		</p>
+                            	</div>
+                            </div>
+                            </div>
+
+
+                            <div id="tmpimg">
+                            <div id="image" class="owl-carousel no-controls">
+
+                            </div>
+                            </div>
+
+
+
+
+			      		</div>
+			      		<div class="modal-footer">
+			        		<button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+			        		<button type="submit" class="btn btn-success" id="down">确定下载</button>
+                            <button type="submit" class="btn btn-success" id="re" style="display:none">更新</button>
+			      		</div>
+			    	</div>
+			  	</div>
+			</div>
+            
+
+
+        </div>
+    </div><!-- ENd box  -->
+
+
+
+
+<style>
+.owl-carousel .animated{-webkit-animation-duration:1000ms;animation-duration:1000ms;-webkit-animation-fill-mode:both;animation-fill-mode:both}.owl-carousel .owl-animated-in{z-index:0}.owl-carousel .owl-animated-out{z-index:1}.owl-carousel .fadeOut{-webkit-animation-name:fadeOut;animation-name:fadeOut}@-webkit-keyframes fadeOut{0%{opacity:1}100%{opacity:0}}@keyframes fadeOut{0%{opacity:1}100%{opacity:0}}.owl-height{-webkit-transition:height 500ms ease-in-out;-moz-transition:height 500ms ease-in-out;-ms-transition:height 500ms ease-in-out;-o-transition:height 500ms ease-in-out;transition:height 500ms ease-in-out}.owl-carousel{display:none;width:100%;-webkit-tap-highlight-color:transparent;position:relative;z-index:1}.owl-carousel .owl-stage{position:relative;-ms-touch-action:pan-Y}.owl-carousel .owl-stage:after{content:".";display:block;clear:both;visibility:hidden;line-height:0;height:0}.owl-carousel .owl-stage-outer{position:relative;overflow:hidden;-webkit-transform:translate3d(0px,0,0)}.owl-carousel .owl-controls .owl-dot,.owl-carousel .owl-controls .owl-nav .owl-next,.owl-carousel .owl-controls .owl-nav .owl-prev{cursor:pointer;cursor:hand;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.owl-carousel.owl-loaded{display:block;padding: 5px;    background: #DDD;}.owl-carousel.owl-loading{opacity:0;display:block}.owl-carousel.owl-hidden{opacity:0}.owl-carousel .owl-refresh .owl-item{display:none}.owl-carousel .owl-item{position:relative;min-height:1px;float:left;-webkit-backface-visibility:hidden;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.owl-carousel .owl-item img{display:block;width:100%;-webkit-transform-style:preserve-3d}.owl-carousel.owl-text-select-on .owl-item{-webkit-user-select:auto;-moz-user-select:auto;-ms-user-select:auto;user-select:auto}.owl-carousel .owl-grab{cursor:move;cursor:-webkit-grab;cursor:-o-grab;cursor:-ms-grab;cursor:grab}.owl-carousel .owl-rtl{direction:rtl}.owl-carousel .owl-rtl .owl-item{float:right}.no-js .owl-carousel{display:block}.owl-carousel .owl-item .owl-lazy{opacity:0;-webkit-transition:opacity 400ms ease;-moz-transition:opacity 400ms ease;-ms-transition:opacity 400ms ease;-o-transition:opacity 400ms ease;transition:opacity 400ms ease}.owl-carousel .owl-item img{transform-style:preserve-3d}.owl-carousel .owl-video-wrapper{position:relative;height:100%;background:#000}.owl-carousel .owl-video-play-icon{position:absolute;height:80px;width:80px;left:50%;top:50%;margin-left:-40px;margin-top:-40px;background:url(owl.video.play.png) no-repeat;cursor:pointer;z-index:1;-webkit-backface-visibility:hidden;-webkit-transition:scale 100ms ease;-moz-transition:scale 100ms ease;-ms-transition:scale 100ms ease;-o-transition:scale 100ms ease;transition:scale 100ms ease}.owl-carousel .owl-video-play-icon:hover{-webkit-transition:scale(1.3,1.3);-moz-transition:scale(1.3,1.3);-ms-transition:scale(1.3,1.3);-o-transition:scale(1.3,1.3);transition:scale(1.3,1.3)}.owl-carousel .owl-video-playing .owl-video-play-icon,.owl-carousel .owl-video-playing .owl-video-tn{display:none}.owl-carousel .owl-video-tn{opacity:0;height:100%;background-position:center center;background-repeat:no-repeat;-webkit-background-size:contain;-moz-background-size:contain;-o-background-size:contain;background-size:contain;-webkit-transition:opacity 400ms ease;-moz-transition:opacity 400ms ease;-ms-transition:opacity 400ms ease;-o-transition:opacity 400ms ease;transition:opacity 400ms ease}.owl-carousel .owl-video-frame{position:relative;z-index:1}
+
+.item-panel {
+    padding-bottom: 10px;
+}
+.b-a {
+    border: 1px solid #dee5e7;
+}
+.panel {
+    border-radius: 2px;
+}
+.panel {
+    margin-bottom: 20px;
+    background-color: #fff;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+}
+.m-r-n-xxs {
+    margin-right: -1px;
+}
+.m-l-n-xxs {
+    margin-left: -1px;
+}
+.item {
+    position: relative;
+}
+
+.pos-rlt {
+    position: relative;
+}
+.img-full {
+    width: 100%;
+}
+img {
+    vertical-align: middle;
+        border: 0;
+}
+.item-listing-title {
+    height: 85px;
+}
+.thumb-md {
+    display: inline-block;
+    width: 64px;
+}
+.m-r {
+    margin-right: 15px;
+}
+.m-t-sm {
+    margin-top: 10px;
+}
+.m-l-sm {
+    margin-left: 10px;
+}
+.pull-left {
+    float: left !important;
+}
+.thumb-md img {
+    height: auto;
+    max-width: 100%;
+    vertical-align: middle;
+    border-radius: 6px;
+}
+.clear {
+    display: block;
+    overflow: hidden;
+}
+.m-r-sm {
+    margin-right: 10px;
+}
+.text-md {
+    font-size: 16px;
+}
+.font-bold {
+    font-weight: 700;
+}
+.text-md {
+    font-size: 16px;
+}
+.row.no-gutter {
+    margin-right: 0;
+    margin-left: 0;
+}
+.item-listing-desc {
+    height: 80px;
+}
+.m-b-xs {
+    margin-bottom: 5px;
+}
+.m-r-sm {
+    margin-right: 10px;
+}
+.m-t-xs {
+    margin-top: 5px;
+}
+.m-l-sm {
+    margin-left: 10px;
+}
+.row.no-gutter {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.item-listing-extra {
+    height: 40px;
+}
+.text-sm {
+    font-size: 13px;
+}
+.pos-rlt{
+    overflow: hidden;
+}
+.pos-rlt a img{
+        max-width: 100%;
+    display: block;
+    transition: all .7s ease;
+    -webkit-transition: all .7s ease;
+    -moz-transition: all .7s ease;
+    -ms-transition: all .7s ease;
+    -o-transition: all .7s ease;
+}
+.item-panel:hover img{
+        transform: scale(1.4) rotate(15deg);
+    -webkit-transform: scale(1.4) rotate(15deg);
+    -moz-transform: scale(1.4) rotate(15deg);
+    -ms-transform: scale(1.4) rotate(15deg);
+    -o-transform: scale(1.4) rotate(15deg);
+    transition: all .7s ease;
+    -webkit-transition: all .7s ease;
+    -moz-transition: all .7s ease;
+    -ms-transition: all .7s ease;
+    -o-transition: all .7s ease;
+}
+.gallery-overlay{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    background-color: rgba(0,0,0,.4);
+    text-align: center;
+    transition: all .5s ease;
+    -webkit-transition: all .5s ease;
+    -moz-transition: all .5s ease;
+    -ms-transition: all .5s ease;
+    -o-transition: all .5s ease;
+}
+
+.item-panel:hover .gallery-overlay {
+    opacity: 1;
+    transition: all .5s ease;
+    -webkit-transition: all .5s ease;
+    -moz-transition: all .5s ease;
+    -ms-transition: all .5s ease;
+    -o-transition: all .5s ease;
+}
+.gallery-action {
+    display: inline-block;
+    border-radius: 50em;
+    -moz-border-radius: 50em;
+    -webkit-border-radius: 50em;
+    width: 98px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    background-color: #000;
+    outline: 0;
+    color: #fff;
+    opacity: 0;
+    text-decoration: none;
+    transform: translate(0,100px);
+    -webkit-transform: translate(0,100px);
+    -moz-transform: translate(0,100px);
+    -ms-transform: translate(0,100px);
+    -o-transform: translate(0,100px);
+    transition: all .4s ease;
+    -webkit-transition: all .4s ease;
+    -moz-transition: all .4s ease;
+    -ms-transition: all .4s ease;
+    -o-transition: all .4s ease;
+}
+.item-panel:hover .gallery-overlay .gallery-action {
+    opacity: 1;
+    transform: translate(0,50px);
+    -webkit-transform: translate(0,50px);
+    -moz-transform: translate(0,50px);
+    -ms-transform: translate(0,50px);
+    -o-transform: translate(0,50px);
+    transition: all .4s ease;
+    -webkit-transition: all .4s ease;
+    -moz-transition: all .4s ease;
+    -ms-transition: all .4s ease;
+    -o-transition: all .4s ease;
+}
+.ribbon {
+    position: absolute;
+    right: -5px;
+    top: -3px;
+    z-index: 1;
+    overflow: hidden;
+    width: 75px;
+    height: 75px;
+    text-align: right;
+}
+.ribbon span {
+    font-size: 10px;
+    font-weight: bold;
+    color: #FFF;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 20px;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    width: 80px;
+    display: block;
+    background: #79A70A;
+    background: linear-gradient(#9BC90D 0%, #79A70A 100%);
+    box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 12px;
+    right: -18px;
+}
+
+
+.ribbon-info span {
+    color: #FFF;
+    background: #1faad4;
+    background: linear-gradient(#28b9e3 0%, #1faad4 100%);
+}
+.ribbon span::after {
+    content: "";
+    position: absolute;
+    right: 0px;
+    top: 100%;
+    z-index: -1;
+    border-left: 3px solid transparent;
+    border-right: 3px solid #79A70A;
+    border-bottom: 3px solid transparent;
+    border-top: 3px solid #79A70A;
+}
+.ribbon-info span::after {
+    border-right: 3px solid #1faad4;
+    border-top: 3px solid #1faad4;
+}
+
+</style>
+{include footer}
+<script src="{#WWW}public/admin/js/owl.carousel.min.js"></script>

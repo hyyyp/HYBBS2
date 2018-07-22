@@ -1,0 +1,169 @@
+{include h}
+<!-- 好友系统资源文件 -->
+  <link href="{#WWW}public/css/friend.css?var={#HYBBS_V}" rel="stylesheet">
+  <script src="{#WWW}public/js/friend.js?var={#HYBBS_V}"></script>
+
+  <script src="{#WWW}public/js/sweet-alert.min.js"></script>
+  <link href="{#WWW}public/css/alert.css" rel="stylesheet">
+  
+<div class="dashboard-header">
+	<p class="sub-title">
+		{$_LANG['用户中心']} - HYBBS
+	</p>
+	
+</div>
+<div class="dashboard-wrapper select-index">
+	<div class="briefly">
+		<ul>
+			<!--{hook t_user_index_1}-->
+			<li class="post">
+			<div class="visual">
+				<i class="fa fa-tasks"></i>
+			</div>
+			<div class="number">
+				{$data.threads}<span>{$_LANG['文章作品']}</span>
+			</div>
+			<div class="more">
+				<a href="{php HYBBS_URL('my',$data['user'],'thread');}">{$_LANG['查看更多']}<i class="fa fa-arrow-circle-right"></i></a>
+			</div>
+			</li>
+			<li class="photo">
+			<div class="visual">
+				<i class="fa fa-heart"></i>
+			</div>
+			<div class="number">
+				0<span>{$_LANG['我的收藏']}</span>
+			</div>
+			<div class="more">
+				<a href="{php HYBBS_URL('my',$data['user'],'thread');}">{$_LANG['查看更多']}<i class="fa fa-arrow-circle-right"></i></a>
+			</div>
+			</li>
+			<li class="credit">
+			<div class="visual">
+				<i class="fa fa-money"></i>
+			</div>
+			<div class="number">
+				{$data.gold}<span>{$_LANG['我的金钱']}</span>
+			</div>
+			<div class="more">
+				<a href="{php HYBBS_URL('my',$data['user'],'thread');}">{$_LANG['查看更多']}<i class="fa fa-arrow-circle-right"></i></a>
+			</div>
+			</li>
+			<li class="comments">
+			<div class="visual">
+				<i class="fa fa-comments"></i>
+			</div>
+			<div class="number">
+				{$data.posts}<span>{$_LANG['评论留言']}</span>
+			</div>
+			<div class="more">
+				<a href="{php HYBBS_URL('my',$data['user'],'post');}">{$_LANG['查看更多']}<i class="fa fa-arrow-circle-right"></i></a>
+			</div>
+			</li>
+			<!--{hook t_user_index_2}-->
+		</ul>
+	</div>
+	<!--{hook t_user_index_3}-->
+	<div class="summary">
+		<div class="box">
+			<div class="title">
+				{$_LANG['最近发布']}
+			</div>
+			<ul>
+                {foreach $thread_data as $v}
+				<li><a href="{php HYBBS_URL('thread',$v['tid']);}" target="_blank">{$v.title}</a></li>
+                {/foreach}
+
+			</ul>
+		</div>
+		<div class="box">
+			<div class="title">
+				{$_LANG['最近评论']}
+			</div>
+			<ul>
+                {foreach $post_data as $v}
+				<li><a href="{php HYBBS_URL('thread',$v['tid']);}" target="_blank">{$v.content}</a></li>
+                {/foreach}
+
+			</ul>
+		</div>
+	</div>
+	<!--{hook t_user_index_4}-->
+	<div class="fast-navigation">
+		<div class="nav-title">
+			{$_LANG['快捷菜单']}
+		</div>
+		<ul>
+			<!--{hook t_user_index_5}-->
+			{if IS_LOGIN}
+			{if NOW_UID != $data['uid']}
+			<li><a href="javascript:void(0);" onclick="new_chat('{$data.user}','',444,465,{$data.uid},'{$data.user}','{$data.avatar.b}','{$data.ps}')" style="color:#368bbf"><i class="fa fa-send"></i>{$_LANG['聊天']}</a></li>
+			<li><a href="javascript:void(0);" onclick="friend({$data.uid},this)" style="color:#c12397"><i class="fa fa-{if $data['friend_state']}star{else}star-o{/if}"></i><span id="star">{if $data['friend_state']}{$_LANG['取消关注']}{else}{$_LANG['关注']}{/if}</span></a></li>
+			{/if}
+			{if NOW_GID == C("ADMIN_GROUP")}
+			<li><a href="{php HYBBS_URL('admin');}"><i class="fa fa-tachometer"></i>{$_LANG['管理后台']}</a></li>
+			{/if}
+			{/if}
+			<li><a href="{#WWW}"><i class="fa fa-home"></i>{$_LANG['网站首页']}</a></li>
+
+			<li>
+			<a href="{php HYBBS_URL('post');}">
+			<i class="fa fa-pencil-square-o"></i>{$_LANG['发布文章']}</a></li>
+
+			{if NOW_UID == $data['uid']}
+			<li><a href="{php HYBBS_URL('my',$data['user'],'file');}"><i class="fa fa-file-o"></i>{$_LANG['我的文件']}</a></li>
+			<li><a href="{php HYBBS_URL('my',$data['user'],'op');}"><i class="fa fa-cog"></i>{$_LANG['修改资料']}</a></li>
+			
+			<li><a href="{php HYBBS_URL('user','out');}"><i class="fa fa-power-off"></i>{$_LANG['注销登录']}</a></li>
+			{/if}
+			<!--{hook t_user_index_6}-->
+		</ul>
+	</div>
+	<!--{hook t_user_index_5}-->
+</div>
+
+<script type="text/javascript">
+function friend(uid,obj){
+    friend_state(uid,function(b,m){
+        
+        if(m){
+        	$(".fa-star-o").addClass("fa-star");
+            $(".fa-star-o").removeClass("fa-star-o");
+        	
+            
+            $("#star").text("{$_LANG['取消关注']}");
+        }
+        else{
+
+            $(".fa-star").addClass("fa-star-o");
+            $(".fa-star").removeClass("fa-star");
+            $("#star").text("{$_LANG['关注']}");
+        }
+    })
+}
+function friend_state(uid,callback){
+	$.ajax({
+		url: '{php HYBBS_URL('friend','friend_state');}',
+		type:"POST",
+		cache: false,
+		data:{
+			uid:uid,
+		},
+		dataType: 'json'
+	}).then(function(e) {
+		callback(e.error,e.id);
+	}, function() {
+		swal("{$_LANG['失败']}", "{$_LANG['请尝试重新提交']}", "error");
+	});
+}
+</script>
+
+
+{include hy_friend::index}
+	<style type="text/css">
+	.lt-dlg-box *{
+		    font: 500 .875em PingFang SC,Lantinghei SC,Microsoft Yahei,Hiragino Sans GB,Microsoft Sans Serif,WenQuanYi Micro Hei,sans;
+	}
+	</style>
+
+{include f}

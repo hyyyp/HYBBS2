@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{$_LANG['忘记密码']} {$conf.title2}</title>
+
+<link href="{#WWW}View/hy_user/css/login.css" rel="stylesheet">
+<link href="{#WWW}public/css/alert.css" rel="stylesheet">
+<!--[if (gte IE 9)|!(IE)]><!-->
+	<script src="{#WWW}public/js/jquery.min.js"></script>
+	<!--<![endif]-->
+	<!--[if lte IE 8 ]>
+	<script src="{#WWW}public/js/jquery1.11.3.min.js"></script>
+	<![endif]-->
+<script src="{#WWW}public/js/sweet-alert.min.js"></script>
+<!--{hook t_user_repass_header}-->
+</head>
+<body>
+
+	<div class="main">
+		<div class="login-form">
+			<h1 style="padding-top:30px">{$_LANG['忘记密码']}</h1>
+
+			<form id="form">
+				<!--{hook t_user_login_8}-->
+				<label for="email">{$_LANG['邮箱']}</label>
+				<input type="text" id="email" name="email" class="text" value="" placeholder="{$_LANG['注册所填邮箱']}"/>
+				<label for="code">{$_LANG['邮箱验证码']} <small><button onclick="send_code(this)" href="javascript:void(0)" style="color: #46699E;border: none;background: transparent;font-weight: bold;">{$_LANG['点击获取验证码']}</button></small></label>
+				<input type="text" id="code" name="code" class="text" value="" placeholder="{$_LANG['邮箱验证码']}"/>
+				<label for="pass">{$_LANG['新密码']}</label>
+				<input type="password" name="pass1" value=""/>
+				<label for="pass">{$_LANG['确认密码']}</label>
+				<input type="password" name="pass2" value="" />
+				<!--{hook t_user_login_9}-->
+				<div class="submit">
+					<input id="repass" type="submit" value="{$_LANG['提交修改']}" >
+				</div>
+				<!--{hook t_user_login_10}-->
+
+				<p><a href="{php HYBBS_URL('user','login')}">{$_LANG['返回登录']}</a></p>
+			</form>
+		</div>
+	</div>
+<script>
+var send_b = false;
+function send_code(obj){
+	// if(send_b)
+	// 	return ;
+	 var _this = $(obj);
+	// send_b=true;
+	
+	
+	_this.attr("disabled","disabled").css("color","#757575").text('正在发送中...');
+	
+	$.ajax({
+		url: '{php HYBBS_URL('user','recode')}',
+		type:'POST',
+		cache: false,
+		data:{
+			email:$('#email').val(),
+			<!--{hook t_user_repass_js_1}-->
+		},
+		dataType: 'json'
+	}).then(function(e) {
+		<!--{hook t_user_repass_js_2}-->
+		_this.removeAttr("disabled","disabled").css("color","#46699E").text('{$_LANG['点击获取验证码']}');
+		
+		if(e.error){
+			swal("{$_LANG['发送成功']}","{$_LANG['请到你的']}"+$("#email").val()+"{$_LANG['查看验证码']},{$_LANG['可能垃圾邮件']}",'success');
+		}else{
+			swal('{$_LANG['发送失败']}',e.info,'error');
+		}
+		<!--{hook t_user_repass_js_3}-->
+	}, function() {
+		_this.removeAttr("disabled","disabled").css("color","#46699E").text('{$_LANG['点击获取验证码']}');
+	 swal("{$_LANG['发送失败']}",'{$_LANG['服务器繁忙']}');
+	});
+    
+}
+$(function(){
+    $('#form').submit(function() {return false;});
+    $("#repass").click(function(){
+        var postdata = $('#form').serialize();
+        <!--{hook t_user_repass_js_4}-->
+        $.post("{php HYBBS_URL('user','recode2')}", postdata,  function(e){
+        	<!--{hook t_user_repass_js_5}-->
+            if(e.error){
+                swal("{$_LANG['修改成功']}","{$_LANG['密码修改成功']}",'success');
+            }else{
+            	swal("{$_LANG['修改失败']}", e.info, "error");
+            }
+            <!--{hook t_user_repass_js_6}-->
+        },'json');
+        <!--{hook t_user_repass_js_7}-->
+    })
+
+
+
+});
+</script>
+</body>
+</html>

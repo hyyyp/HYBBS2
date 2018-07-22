@@ -1,0 +1,138 @@
+<div class="form-group">
+    <label for="input1" class="col-lg-2 control-label">导航LOGO标题</label>
+    <div class="col-lg-10">
+        <input class="form-control" name="logo" value="{php echo view_form('hybbs','logo')}">
+        <span class="help-block"></span>
+    </div>
+</div>
+<div class="form-group">
+    <label for="inputEmail1" class="col-lg-2 control-label">顶部导航条悬浮</label>
+    <div class="col-lg-10">
+        <div class="radio inline-block">
+            <div class="custom-radio m-right-xs">
+                <input type="radio" id="inlineRadio1" {if view_form('hybbs','menu_fix')}checked=""{/if} name="menu_fix" value="1">
+                <label for="inlineRadio1"></label>
+            </div>
+            <div class="inline-block vertical-top">开启</div>
+        </div>
+        <div class="radio inline-block">
+            <div class="custom-radio m-right-xs">
+                <input type="radio" id="inlineRadio2" {if !view_form('hybbs','menu_fix')}checked=""{/if} name="menu_fix" value="0">
+                <label for="inlineRadio2"></label>
+            </div>
+            <div class="inline-block vertical-top">关闭</div>
+        </div>
+    </div>
+
+</div>
+<div class="form-group">
+    <label for="input1" class="col-lg-2 control-label">顶部导航列出板块</label>
+    <div class="col-lg-10">
+        <div class="radio inline-block">
+            <div class="custom-radio m-right-xs">
+                <input type="radio" id="inlineRadio3" {if view_form('hybbs','menu_forum')}checked=""{/if} name="menu_forum" value="1">
+                <label for="inlineRadio3"></label>
+            </div>
+            <div class="inline-block vertical-top">开启</div>
+        </div>
+        <div class="radio inline-block">
+            <div class="custom-radio m-right-xs">
+                <input type="radio" id="inlineRadio4" {if !view_form('hybbs','menu_forum')}checked=""{/if} name="menu_forum" value="0">
+                <label for="inlineRadio4"></label>
+            </div>
+            <div class="inline-block vertical-top">关闭</div>
+        </div>
+    </div>
+</div>
+
+
+<div class="form-group">
+    <label for="inputEmail1" class="col-lg-2 control-label">板块列表显示描述</label>
+    <div class="col-lg-10">
+        <div class="radio inline-block">
+            <div class="custom-radio m-right-xs">
+                <input type="radio" id="inlineRadio7" {if view_form('hybbs','forum_html_on')}checked=""{/if} name="forum_html_on" value="1">
+                <label for="inlineRadio7"></label>
+            </div>
+            <div class="inline-block vertical-top">开启</div>
+        </div>
+        <div class="radio inline-block">
+            <div class="custom-radio m-right-xs">
+                <input type="radio" id="inlineRadio8" {if !view_form('hybbs','forum_html_on')}checked=""{/if} name="forum_html_on" value="0">
+                <label for="inlineRadio8"></label>
+            </div>
+            <div class="inline-block vertical-top">关闭</div>
+        </div>
+    </div>
+
+</div>
+
+<div class="form-group">
+    <label for="input1" class="col-lg-2 control-label">顶部导航自定义链接</label>
+    <div class="col-lg-10">
+        <textarea class="form-control" name="diy_link">{php echo view_form('hybbs','diy_link')}</textarea>
+        <span class="help-block">使用样例: 输入 http://bbs.hyphp.cn,名称,1</span>
+        <span class="help-block">值为: 链接,名称,是否新页面打开1=是 0=当前页面打开</span>
+        <span class="help-block">http://bbs.hyphp.cn,名称,1</span>
+        <span class="help-block">上面这条意思: 自定义链接名称, 跳转http://bbs.hyphp.cn/ 并且新页面打开</span>
+        <span class="help-block">多个链接, 换行输入即可</span>
+
+    </div>
+</div>
+<div class="form-group">
+    <label for="input1" class="col-lg-2 control-label">模板宽度</label>
+    <div class="col-lg-10">
+        <input class="form-control" name="width" value="{php echo view_form('hybbs','width')}">
+        <span class="help-block">默认: 1080px  (注意后面必须加上px 或者% 单位)</span>
+        
+
+    </div>
+</div>
+<div class="form-group">
+    <label for="input1" class="col-lg-2 control-label">自定义CSS</label>
+    <div class="col-lg-10">
+        <textarea class="form-control" name="css">{php echo view_form('hybbs','css')}</textarea>
+        <span class="help-block">在此加入额外的CSS代码</span>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="inputEmail1" class="col-lg-2 control-label">侧边栏 分类列表</label>
+    <div class="col-lg-10">
+        <div class="radio inline-block">
+            <div class="custom-radio m-right-xs">
+                <input type="radio" id="forum_right1" {if view_form('hybbs','forum_right')}checked=""{/if} name="forum_right" value="1">
+                <label for="forum_right1"></label>
+            </div>
+            <div class="inline-block vertical-top">开启</div>
+        </div>
+        <div class="radio inline-block">
+            <div class="custom-radio m-right-xs">
+                <input type="radio" id="forum_right2" {if !view_form('hybbs','forum_right')}checked=""{/if} name="forum_right" value="0">
+                <label for="forum_right2"></label>
+            </div>
+            <div class="inline-block vertical-top">关闭</div>
+        </div>
+    </div>
+
+</div>
+<div class="form-group">
+    <label for="inputEmail1" class="col-lg-2 control-label">显示程序运行耗时以及内存</label>
+    <div class="col-lg-10">
+        <div class="radio inline-block">
+            <div class="custom-radio m-right-xs">
+                <input type="radio" id="show_sleep1" {if view_form('hybbs','show_sleep')}checked=""{/if} name="show_sleep" value="1">
+                <label for="show_sleep1"></label>
+            </div>
+            <div class="inline-block vertical-top">开启</div>
+        </div>
+        <div class="radio inline-block">
+            <div class="custom-radio m-right-xs">
+                <input type="radio" id="show_sleep2" {if !view_form('hybbs','show_sleep')}checked=""{/if} name="show_sleep" value="0">
+                <label for="show_sleep2"></label>
+            </div>
+            <div class="inline-block vertical-top">关闭</div>
+        </div>
+    </div>
+
+</div>

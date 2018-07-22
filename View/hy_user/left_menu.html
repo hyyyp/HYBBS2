@@ -1,0 +1,64 @@
+<div class="aside">
+    <div class="user-avatar">
+        <a href="{if IS_LOGIN}{if $data['uid'] == $user['uid']}{php HYBBS_URL('my',$data['user'],'op');}{else}javascript:;{/if}{else}javascript:;{/if}">
+            <img src="{#WWW}{$data.avatar.a}" class="avatar avatar-200" height="200" width="200"></a>
+        <h2>{$data.user}</h2>
+        <div id="num-info">
+            <!--{hook t_user_left_menu_3}-->
+            <div>
+                <span class="num">{$data.follow}</span><span class="text">{$_LANG['关注数量']}</span>
+            </div>
+            <div>
+                <span class="num">{$data.fans}</span><span class="text">{$_LANG['粉丝数量']}</span>
+            </div>
+            <div>
+                <span class="num">{$data.threads}</span><span class="text">{$_LANG['文章数量']}</span>
+            </div>
+            <!--{hook t_user_left_menu_4}-->
+        </div>
+        <div class="clear">
+        </div>
+    </div>
+    <div class="menus">
+        <ul>
+
+            <!--{hook t_user_left_menu_1}-->
+            <li class="tab-index {$menu_action.index}">
+
+            <a href="{php HYBBS_URL('my',$data['user']);}"><i class="fa fa-tachometer"></i>{$_LANG['首页中心']}</a>
+            </li>
+            <li class="tab-post {$menu_action.thread}">
+            <a href="{php HYBBS_URL('my',$data['user'],'thread');}"><i class="fa fa-cube"></i>{$_LANG['我的文章']}</a>
+            </li>
+            <li class="tab-comment {$menu_action.post}">
+            <a href="{php HYBBS_URL('my',$data['user'],'post');}"><i class="fa fa-comments"></i>{$_LANG['帖子评论']}</a>
+            </li>
+            {if IS_LOGIN}
+            {if $data['uid'] == $user['uid']}
+            <li class="tab-profile {$menu_action.log}">
+            <a href="{php HYBBS_URL('my',$data['user'],'log');}"><i class="fa fa-money"></i>流水记录</a>
+            </li>
+            <li class="tab-profile {$menu_action.op}">
+            <a href="{php HYBBS_URL('my',$data['user'],'op');}"><i class="fa fa-cog"></i>{$_LANG['编辑资料']}</a>
+            </li>
+            <li class="tab-message {$menu_action.file}">
+            <a href="{php HYBBS_URL('my',$data['user'],'file');}"><i class="fa fa-file"></i>{$_LANG['我的文件']}</a>
+            </li>
+            {/if}
+            {if NOW_GID == C("ADMIN_GROUP")}
+            <li class="tab-message">
+            <a href="{php HYBBS_URL('admin');}"><i class="fa fa-tachometer"></i>{$_LANG['管理后台']}</a>
+            </li>
+            {/if}
+            {/if}
+            <!--{hook t_user_left_menu_2}-->
+        </ul>
+    </div>
+    <a href="{#WWW}" style="
+     bottom: 0;
+    position: absolute;
+    font-size: 16px;
+    padding: 10px;
+    left: 0;
+"><i class="fa fa-sign-out"></i> {$_LANG['返回网站首页']}</a>
+</div>

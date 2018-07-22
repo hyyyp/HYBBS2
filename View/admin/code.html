@@ -1,0 +1,352 @@
+{include header}
+<div class="wrapper">
+    {include header_menu}
+    {include left_menu}
+    <div class="main-container">
+        <div class="padding-md">
+            <h2 class="header-text no-margin">
+				插件
+                <form action="{php HYBBS_URL('admin');}" method="post" style="display:inline-block" class="form-horizontal no-margin form-border">
+                <input name="one1" type="hidden" value="on">
+                <button class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 清理缓存</button>
+                </form>
+			</h2>
+
+            <div class="gallery-filter m-top-md" style="margin:10px 0">
+				<ul class="clearfix">
+					<li class="active"><a href="{php HYBBS_URL('admin','code');}">我的插件 ({php echo count($data)})</a></li>
+					<li><a href="{php HYBBS_URL('admin','codeol');}">线上插件 & 下载插件</a></li>
+                    <li><a href="{php HYBBS_URL('admin','code_op');}">插件优先级 (调整插件位置)</a></li>
+                    <li class="pull-right active"><a href="#" onclick="$('#gn1').val('add');$('#md1').html($('#text1').text());$('#zti').text('新建插件')" data-toggle="modal" data-target="#normalModal1"><i class="fa fa-plus"></i> 制作插件</a></li>
+
+                    <li class="pull-right active"  data-toggle="tooltip" data-placement="bottom" title="如果已有相同插件,会被覆盖! 慎重上传. (HTML5上传 请勿使用IE低版本上传)">
+                        <a style="background-color: #9d4141;" href="#" >
+                            <label for="upload_zip" style="display: inherit;font-weight: 400;cursor: pointer;">
+                                <i class="fa fa-upload"></i> 上传插件.zip
+                            </label>
+                        </a>
+                    </li> 
+
+                    <input type="file" id="upload_zip" name="upload_zip" onchange="fileSelected('upload_zip');" style="display:none">
+				</ul>
+			</div>
+
+            <div class="modal fade" id="smallModal" data-backdrop="static">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title">上传进度</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="progress progress-striped active">
+                              <div id="jdt" class="progress-bar progress-bar-danger" role="progressbar"  style="width: 0%">
+                                <span class="sr-only">8</span>
+                              </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script type="text/javascript">
+            function fileSelected(id) {
+                var file = document.getElementById(id).files[0];
+                if (file) {
+                    $("#smallModal").modal("show");
+                    $("#jdt").css('width', '0%')  ;
+                    uploadFile(id);
+                
+                }
+              }
+
+              function uploadFile(id) {
+                var fd = new FormData();
+                fd.append("photo", document.getElementById(id).files[0]);
+                var xhr = new XMLHttpRequest();
+                xhr.upload.addEventListener("progress", uploadProgress, false);
+                xhr.addEventListener("load", uploadComplete, false);
+                xhr.open("POST", '{php HYBBS_URL('admin','update_code');}');
+                
+
+                xhr.send(fd);
+                document.getElementById(id).value = '';
+              }
+
+                function uploadProgress(evt) {
+                    if (evt.lengthComputable) {
+                      var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+                      console.log(percentComplete);
+                      $("#jdt").css('width',percentComplete.toString()+ '%')  ;
+                    }
+                    else {
+                      
+                    }
+              }
+              function uploadComplete(evt) {
+                    $("#smallModal").modal("hide");
+                    var json = eval('('+evt.target.responseText+')');
+                    if(json.error){
+                        swal("上传成功 请手动刷新本页");
+                    }else{
+                        swal(json.data);
+                    }
+
+                    //console.log(json);
+                    //
+                    //window.location.reload();
+                    
+                }
+                //submit from 
+                function save_op(){
+                    var data = $("#save_op").serialize();
+                    $.ajax({
+                        url:window.location.href,
+                        type:'post',
+                        data:data,
+                        dataType:'json',
+                        success:function(e){
+                            if(e.error){
+                                swal('成功','修改插件配置成功.','success');
+                            }
+                            else{
+                                swal('错误','修改插件配置失败. 可能丢失了参数','error');
+                            }
+                        },
+                        error:function(){
+                            swal('失败','访问本地服务器出错.','error');
+                        }
+
+                    })
+                    return false;
+                }   
+
+            </script>
+
+
+            <div class="row">
+            {foreach $data as $key => $v}
+            <div class="col-sm-12">
+                <div class="panel">
+    				<div class="panel-body">
+    					<a href="#" class="pull-left m-right-sm">
+    						<!-- <i class="fa fa-<?php echo $conf[$key]['icon']; ?> fa-3x"></i> -->
+                            <img width="50" height="50" src="{#WWW}Plugin/{$v}/icon.png" onerror="this.onerror='';this.src='{#APP_WWW}app/{$v}/icon.png'">
+    					</a>
+
+    					<div class=" m-left-sm">
+    						<strong class="font-14 block"><?php echo $conf[$key]['name']; ?>  <label class="badge badge-success">{$v}</label></strong>
+    						<small style="color: purple" class="text-muted">作者: <?php echo $conf[$key]['user']; ?> <strong style="color: darkcyan;"> &nbsp;版本:{$conf[$key]['version']}</strong></small>
+    						<div class="seperator"></div>
+                            <p class="m-bottom-none">
+								<?php echo $conf[$key]['mess']; ?>
+							</p>
+                            
+    						{php $tmp = false;}
+                            {if is_plugin_function($v) && !isset($conf[$key]['on'])}
+                                {if !get_plugin_install_state($v)}
+                                    {php $tmp = true;}
+                                {/if}
+                            {/if}
+                            {if !$tmp}
+                            
+                            <input class='tgl tgl-skewed' id='cb{$key}' type='checkbox' onclick="update(this)" data-name="{$v}" data-state="{if isset($conf[$key]['on'])}on{else}off{/if}" {if isset($conf[$key]['on'])}checked{/if}>
+                            <label class='tgl-btn' data-tg-off='已关闭' data-tg-on='开启中' for='cb{$key}'></label>
+
+                            {/if}
+                            
+
+
+                            {if is_plugin_function($v)}
+    						{if !get_plugin_install_state($v)}
+                            <a class="btn btn-sm btn-success" onclick="$('#gn1').val('install');$('#pluginname1').val('{$v}');$('#md1').load('{php HYBBS_URL('admin','code',['name'=>$v,'gn'=>'install']);}');$('.modal-p1').text('<?php echo $conf[$key]['name']; ?>')" data-toggle="modal" data-target="#normalModal1">安装</a>
+                            
+                            {else}
+                            <a class="btn btn-sm btn-danger" onclick="$('#gn1').val('uninstall');$('#pluginname1').val('{$v}');$('#md1').load('{php HYBBS_URL('admin','code',['name'=>$v,'gn'=>'uninstall']);}');$('.modal-p1').text('<?php echo $conf[$key]['name']; ?>')" data-toggle="modal" data-target="#normalModal1">卸载</a>
+                            {/if}
+
+                            {/if}
+                            {if get_plugin_inc($v)}
+                            <a class="btn btn-sm btn-warning" onclick="$('#gn').val('op');$('#pluginname').val('{$v}');$('#md').load('{php HYBBS_URL('admin','code',['name'=>$v,'gn'=>'op']);}');$('.modal-p').text('<?php echo $conf[$key]['name']; ?>')" data-toggle="modal" data-target="#normalModal">配置</a>
+                            {/if}
+
+                            <button class="btn btn-sm btn-danger" onclick="$('#gn1').val('del');$('#pluginname1').val('{$v}');$('#md1').html('<h1>删除插件目录文件,而且不执行卸载函数</h1>');$('.modal-p1').text('<?php echo $conf[$key]['name']; ?>')" data-toggle="modal" data-target="#normalModal1" {if is_plugin_on($v) || (is_plugin_function($v) && get_plugin_install_state($v))}title="需要关闭，卸载插件后 才能删除!" disabled{/if}>删除插件</button>
+                            
+    					</div>
+
+    				</div>
+    			</div>
+			</div>
+
+
+            {/foreach}
+            </div>
+            <form method="post" id="save_op" onsubmit="return save_op();">
+                <input type="hidden" id="pluginname" name="name" value="" >
+                <input type="hidden" id="gn" name="gn" value="" >
+                <div class="modal fade in" id="normalModal" aria-hidden="false">
+    			  	<div class="modal-dialog">
+    			    	<div class="modal-content">
+    			      		<div class="modal-header">
+    			        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+    			        		<h4 class="modal-title">插件配置 - <span class="modal-p"></span></h4>
+    			      		</div>
+    			      		<div class="modal-body" id="md">
+
+    			      		</div>
+    			      		<div class="modal-footer">
+    			        		<button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+    			        		<button type="submit" class="btn btn-success">保存配置</button>
+    			      		</div>
+    			    	</div>
+    			  	</div>
+    			</div>
+            </form>
+            <textarea id="text1" style="display:none">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">插件名</label>
+                            <input type="text" name="name" class="form-control input-sm">
+                        </div>
+                    </div><!-- /.col -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">英文名</label>
+                            <input type="text" name="name2" class="form-control input-sm">
+                        </div>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">作者名</label>
+                            <input type="text" name="user" class="form-control input-sm">
+                        </div>
+                    </div><!-- /.col -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">图标</label>
+                            <p class="form-control-static">创建插件后在插件目录放入icon.png即可</p>
+                        </div>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+                <div class="form-group">
+					<div class="custom-checkbox">
+						<input name="inc" type="checkbox" id="chk1">
+						<label for="chk1"></label>
+					</div>
+					支持配置 (inc.php & conf.html)
+					<div id="errorMessageArea1"></div>
+				</div>
+                <div class="form-group">
+					<div class="custom-checkbox">
+						<input name="fun" type="checkbox" id="chk2">
+						<label for="chk2"></label>
+					</div>
+					支持安装&卸载函数执行 (function.php plugin_install & uninstall)
+					<div id="errorMessageArea2"></div>
+				</div>
+
+                <div class="form-group">
+                    <label class="control-label">插件描述</label>
+                    <textarea class="form-control" name="mess" placeholder="在这里描述你的插件" rows="3" ></textarea>
+                </div><!-- /form-group -->
+
+            </textarea>
+
+            <form method="post" >
+            <input type="hidden" id="pluginname1" name="name" value="" >
+            <input type="hidden" id="gn1" name="gn" value="" >
+            <div class="modal fade in" id="normalModal1" aria-hidden="false">
+			  	<div class="modal-dialog">
+			    	<div class="modal-content">
+			      		<div class="modal-header">
+			        		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+			        		<h4 class="modal-title" id="zti">插件配置 - <span class="modal-p1"></span></h4>
+			      		</div>
+			      		<div class="modal-body" id="md1">
+
+
+			      		</div>
+			      		<div class="modal-footer">
+			        		<button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+			        		<button type="submit" class="btn btn-success">确定执行</button>
+			      		</div>
+			    	</div>
+			  	</div>
+			</div>
+            </form>
+
+            <script>
+                function update(obj){
+                    var _this = $(obj);
+                    var name = _this.data('name');
+                    var state= _this.data('state');
+
+                    $.post(window.location.href,{update:name,state:state},function(e){
+                        if(e.error){
+                            if(state=='on'){
+                                
+                                _this.removeAttr("checked"); 
+                                _this.data('state','off');
+                            }else{
+                                
+                                _this.attr("checked",true);
+                                _this.data('state','on');
+                            }
+                        }else{
+                            swal('开启失败',e.data,'error');
+                        }
+
+                    },'json');
+                    return false;
+                }
+            </script>
+
+
+        </div>
+    
+
+
+
+<style type="text/css">
+    #md:after{
+        display: table;
+        content: " ";
+        clear: both;
+    }
+</style>
+  <!-- <h2>Toggle it!</h2>
+  <ul class='tg-list'>
+  <li class='tg-list-item'>
+    <h4>Light</h4>
+    <input class='tgl tgl-light' id='cb1' type='checkbox'>
+    <label class='tgl-btn' for='cb1'></label>
+  </li>
+  <li class='tg-list-item'>
+    <h4>iOS 7</h4>
+    <input class='tgl tgl-ios' id='cb2' type='checkbox'>
+    <label class='tgl-btn' for='cb2'></label>
+  </li>
+  <li class='tg-list-item'>
+    <h4>Skewed</h4>
+    <input class='tgl tgl-skewed' id='cb3' type='checkbox'>
+    <label class='tgl-btn' data-tg-off='OFF' data-tg-on='ON' for='cb3'></label>
+  </li>
+  <li class='tg-list-item'>
+    <h4>Flat</h4>
+    <input class='tgl tgl-flat' id='cb4' type='checkbox'>
+    <label class='tgl-btn' for='cb4'></label>
+  </li>
+  <li class='tg-list-item'>
+    <h4>Flip</h4>
+    <input class='tgl tgl-flip' id='cb5' type='checkbox'>
+    <label class='tgl-btn' data-tg-off='Nope' data-tg-on='Yeah!' for='cb5'></label>
+  </li>
+  </ul> -->
+{include footer}

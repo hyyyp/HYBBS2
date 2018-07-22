@@ -1,0 +1,10 @@
+{$v.nos}</span>
+                </a>
+                {if IS_LOGIN}
+                {if NOW_UID != $v['uid']}
+                <span class="grey">|</span>
+                <a href="javascript:void(0);" class="" onclick="ue.setContent('@{$v.user} &nbsp; ',true);window.location.href = '#post_post'">
+                    回复
+                </a>
+                {/if}
+                {/if}

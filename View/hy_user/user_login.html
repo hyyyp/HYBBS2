@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{$_LANG['登录']} {$conf.title2}</title>
+
+<link href="{#WWW}View/hy_user/css/login.css" rel="stylesheet">
+<link href="{#WWW}public/css/alert.css" rel="stylesheet">
+<!--[if (gte IE 9)|!(IE)]><!-->
+	<script src="{#WWW}public/js/jquery.min.js"></script>
+	<!--<![endif]-->
+	<!--[if lte IE 8 ]>
+	<script src="{#WWW}public/js/jquery1.11.3.min.js"></script>
+	<![endif]-->
+<script src="{#WWW}public/js/sweet-alert.min.js"></script>
+<!--{hook t_user_login_header}-->
+</head>
+<body>
+
+	<div class="main">
+		<div class="login-form">
+			<h1>{$_LANG['用户登录']}</h1>
+			<div class="head"><img id="img" src="{#WWW}View/hy_user/css/user.png" alt=""/></div>
+			
+			<form id="form">
+				<!--{hook t_user_login_1}-->
+				<label for="user" style="margin-top:0">{$_LANG['账户']}</label>
+				<input type="text" id="user" name="user" class="text" value=""/>
+				<label for="pass" style="margin-top:0">{$_LANG['密码']}</label>
+				<input type="password" id="pass" name="pass" value=""/>
+				<!--{hook t_user_login_2}-->
+				<div class="submit">
+					<input id="login" type="submit" value="{$_LANG['登录']}" >
+				</div>
+				<!--{hook t_user_login_3}-->
+				<p><a href="{php HYBBS_URL('user','add');}">{$_LANG['跳转注册']} | </a> <a href="{php HYBBS_URL('user','repass');}">{$_LANG['忘记密码']}?</a></p>
+				<!--{hook t_user_login_4}-->
+			</form>
+		</div>
+
+	</div>
+
+
+<script>
+$(function(){
+
+	$("#user").blur(function(){
+
+		$.get("{php HYBBS_URL('ajax','useravatar');}",{user:$(this).val()},function(e){
+			$("#img").attr('src',"{#WWW}"+e.b)
+		},'json');
+	});
+    $('#form').submit(function() {return false;});
+    $("#login").click(function(){
+        var postdata = $('#form').serialize();
+        <!--{hook t_user_login_js_1}-->
+        $.post("{php HYBBS_URL('user','login');}", postdata,  function(e){
+        	<!--{hook t_user_login_js_2}-->
+            if(e.error){
+                if(e.url !='' && e.url != 'NULL' && e.url != 'null')
+                    window.location.href=e.url;
+                else
+                    window.location.href="{#WWW}";
+            }else{
+            	swal(e.error ? "{$_LANG['登录成功']}" : "{$_LANG['登录失败']}", e.info, e.error ? "success" : "error");
+            }
+            <!--{hook t_user_login_js_3}-->
+        },'json');
+        <!--{hook t_user_login_js_4}-->
+    })
+
+
+
+
+});
+</script>
+</body>
+</html>
