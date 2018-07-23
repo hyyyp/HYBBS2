@@ -13,7 +13,6 @@ define('PLUGIN_MORE_LANG_ON',true);
 
 require  'HY/HYPHP.php';
 /*
-
 优化 - 后台管理页面丰富各种数据搜索
 优化 - 后台插件 增加强制 安装卸载函数 勾选
 
