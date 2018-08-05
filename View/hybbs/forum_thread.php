@@ -70,8 +70,8 @@
 		</div>
 		<div class="wrap-box">
 			<!--{hook t_forum_thread_page_top}-->
-			<a href="{if $pageid==1}javascript:void(0);{else}{php echo HYBBS_URL($type,$pageid-1);}{/if}"  class="btn btn-primary {if $pageid==1}disabled{/if}" >上一页</a>
-			<a  href="{if $pageid==$page_count}javascript:void(0);{else}{php echo HYBBS_URL($type,$pageid+1);}{/if}" class="btn btn-primary pull-right {if $pageid==$page_count}disabled{/if}" >下一页</a>
+			<a href="{if $pageid==1}javascript:void(0);{else}{php HYBBS_URL('forum',$fid,[$type=>$pageid-1]);}{/if}"  class="btn btn-primary {if $pageid==1}disabled{/if}" >上一页</a>
+			<a  href="{if $pageid==$page_count}javascript:void(0);{else}{php HYBBS_URL('forum',$fid,[$type=>$pageid+1]);}{/if}" class="btn btn-primary pull-right {if $pageid==$page_count}disabled{/if}" >下一页</a>
 			<!--{hook t_forum_thread_page_bottom}-->
 		</div>
 	</div>

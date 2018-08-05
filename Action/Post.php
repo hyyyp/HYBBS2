@@ -23,6 +23,7 @@ class Post extends HYBBS {
 
 		}
 		
+		
 	}
 	//发表评论
 	public function Post(){
@@ -195,12 +196,14 @@ class Post extends HYBBS {
 
 
 			//获取提交数据
-            $forum = intval(X("post.forum"));
+            $forum = X("post.forum",'-1'); if(empty($forum))$forum=-1;
             $title = trim(X("post.title"));
             $title = htmlspecialchars($title);
             $tgold = intval(X("post.tgold"));
             $thide = intval(X("post.thide"));
             
+
+
             //{hook a_post_index_44}
             if(!$UsergroupLib->read(NOW_GID,'thide',$this->_usergroup)){
             	if($thide)
@@ -240,7 +243,7 @@ class Post extends HYBBS {
 			if(mb_strlen($title) > $this->conf['titlesize'])
 				return $this->json(array('error'=>false,'info'=>'标题长度不能大于'.$this->conf['titlesize'].'个字符'));
 			if($forum < 0 ){
-				return $this->json(array('error'=>false,'info'=>'请选择一个分类,板块'));
+				return $this->json(array('error'=>false,'info'=>'请选择一个分类'));
 			}
 			//{hook a_post_index_7}
 			//用户组在分类下的权限判断
@@ -280,7 +283,6 @@ class Post extends HYBBS {
 
 			//{hook a_post_index_10}
 			
-
 			
 			//主题数据
             $Thread = S("Thread");
