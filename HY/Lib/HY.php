@@ -92,6 +92,7 @@ class HY
         $agrs =count($info);
         if ($info[0] == 'Model') {
             \HY\Lib\Hook::$include_file[]=$filePath;
+            \HY\Lib\hook::$file_type = 'Model';
             if (PLUGIN_ON) {
                 $cache_filePath = TMP_PATH . $info[1] . '_' . MD5('Model/' . $info[1]) . C("tmp_file_suffix");
                 \HY\Lib\Plugin::run($filePath,$cache_filePath,$class);
@@ -99,6 +100,7 @@ class HY
             }
         } elseif ($info[0] == 'Action') {
             \HY\Lib\Hook::$include_file[]=$filePath;
+            \HY\Lib\hook::$file_type = 'Action';
             if (PLUGIN_ON) {
                 $cache_filePath = TMP_PATH . $info[1] . '_' . MD5('Action/' . $info[1]) . C("tmp_file_suffix");
                 \HY\Lib\Plugin::run($filePath,$cache_filePath,$class);

@@ -60,11 +60,57 @@ dl,pre{
         ?>
       </font>
     </div>
+    
+
     <div><b>发生错误文件:</b> <?php echo $file; ?> </div>
+    <div><b>出错行数:</b> <?php echo $line; ?> </div>
+   
   </div>
+
+  <?php 
+  $file_data = file($file);
+  $plugin_info = [];
+  $plugin_type = '';
+  for($i=$line;$i>=0;$i--){
+    if(!isset($file_data[$i])) break;
+    if(preg_match('/\/\/Hook ##(.+)##(.+)##/',$file_data[$i],$matches)){
+      if(isset($matches[1]) && isset($matches[2])){
+        //if($matches[1] == 'END')//插件结束
+        //  break;
+
+        $plugin_type = $matches[1];
+        $plugin_info = unserialize($matches[2]);
+        break;
+      }
+      
+    }
+  }
+  ?>
+
+  <?php if(!empty($plugin_type)): ?>
+  <div class="box" style="margin-top:10px">
+    <h3><?php if($plugin_type == 'END'): ?>插件报错诊断（最后运行的插件，非精准报告）<?php else: ?>插件报错诊断<?php endif; ?></h3>
+    <div>
+      <b style="width:100px">插件名:</b>
+      <font color="red"><?php echo $plugin_info['plugin_name']; ?></font>
+    </div>
+
+    <div>
+      <b style="width:100px">插件目录名:</b>
+      <font color="red"><?php echo $plugin_info['dir_name']; ?></font>
+    </div>
+
+    <div>
+      <b style="width:100px">报错文件路径:</b>
+      <font color="red"><?php echo $plugin_info['path']; ?></font>
+    </div>
+  </div>
+  <?php endif; ?>
+
+
   <?php if(substr_count(str_replace(array('/','\\'),array('/','/'),$file),str_replace(array('/','\\'),array('/','/'),TMP_PATH)) == 1): ?>
   <div class="box" style="margin-top:10px">
-  出现错误的地方是 编译缓存文件. 你修正它是无效的. 你可能需要找到他的源文件.
+  出现错误的文件为编译缓存文件.你修正它是无效的.你需要找到他的源文件进行修复！
   <!-- <p>例如: 上面出现了 XXXXX\HYBBS\Tmp\Admin_f96ff8be27366a346ce77875ceace8c8.php</p>
   <p>如果你去修正Admin_f96ff8be27366a346ce77875ceace8c8.php 这个文件, 是没用的.</p>
   <p>而它的源文件是 \XXXXX\HYBBS\Action\Admin.php .它可能是Action的Admin.php文件</p> -->

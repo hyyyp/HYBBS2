@@ -20,7 +20,7 @@ class Plugin{
             /*if(PLUGIN_MORE_LANG_ON){
                 static $more_lang_lib = null;
                 if($more_lang_lib == null){
-                    $more_lang_lib = new Lib\more_lang_lib;
+                    $more_lang_lib = new more_lang_lib;
                 }
                 $code = $more_lang_lib->decode($code);
             }

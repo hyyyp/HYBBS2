@@ -8,6 +8,7 @@ class hook {
     static public $include_file =array();
     static public $re_php = array();
     static public $i=0;
+    static public $file_type = '';
     static public function init_file(){
         
         self::tree(PLUGIN_PATH);
@@ -55,7 +56,7 @@ class hook {
                     if(is_file(PATH . $key1) && is_file(PATH . $value)){
                         $code = str_replace(
                             file_get_contents(PATH . $key1),
-                            file_get_contents(PATH . $value),
+                            self::set_plugin_name(PATH . $value).file_get_contents(PATH . $value).self::set_plugin_name(null),
                             $code
                         );
 
@@ -74,7 +75,7 @@ class hook {
                                 if(is_file(PATH . $key1) && is_file(PATH . $value)){
                                     $code = str_replace(
                                         file_get_contents(PATH . $key1),
-                                        file_get_contents(PATH . $value),
+                                        self::set_plugin_name(PATH . $value).file_get_contents(PATH . $value).self::set_plugin_name(null),
                                         $code
                                     );
 
@@ -90,9 +91,34 @@ class hook {
             
 
         }
-        return $code;
+        return $code;       
+    }
+    static public function set_plugin_name($file_path){
+        if($file_path === null){
+            if(!isset($GLOBALS['PREV_RUN_PLUGIN_INFO']))
+                $GLOBALS['PREV_RUN_PLUGIN_INFO']='';
+            $info = $GLOBALS['PREV_RUN_PLUGIN_INFO'];
+            if(self::$file_type=='Tpl'){
+                return "\r\n<?php //Hook ##END##{$info}## ?>\r\n";
+            }elseif(self::$file_type=='Action' || self::$file_type=='Model'){
+                return "\r\n//Hook ##END##{$info}##\r\n";
+            }
+        }
+        if(empty($file_path)) return false;
 
-            
+        $plugin_name = str_replace(PLUGIN_PATH,'',$file_path);
+        $pos = strpos_array($plugin_name,['/','\\']);
+        $dir_name = substr($plugin_name, 0, $pos);
+        $plugin_name = get_plugin_conf_v($dir_name,'name');
+        
+        $info = serialize(['plugin_name'=>$plugin_name,'dir_name'=>$dir_name,'path'=>$file_path]);
+        $GLOBALS['PREV_RUN_PLUGIN_INFO']=$info;
+        if(self::$file_type=='Tpl'){
+            return "\r\n<?php //Hook ##START##{$info}## ?>\r\n";
+        }elseif(self::$file_type=='Action' || self::$file_type=='Model'){
+            return "\r\n//Hook ##START##{$info}##\r\n";
+        }
+        //echo self::$file_type.'<br>';
     }
     static public function encode($code){ //code contents
         //echo $code;
@@ -110,7 +136,7 @@ class hook {
         $content='';
         if(isset(self::$file[$tag])){
             foreach (self::$file[$tag] as $v) {
-                $content.=file_get_contents($v);
+                $content.=self::set_plugin_name($v).file_get_contents($v).self::set_plugin_name(null);
             }
         }
         $content = preg_replace_callback('/\/\/{hook (.+?)}/is','self::parseTag',$content);

@@ -104,7 +104,7 @@ class exception {
 			$codelist = $arr['codelist'];
 			$message = $arr['message'];
 			$backtracelist = $arr['backtracelist'];
-
+			ob_get_clean();
 			ob_start();
 
 			include HY_PATH . 'View/exec.php';

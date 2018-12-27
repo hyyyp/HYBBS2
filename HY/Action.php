@@ -80,6 +80,7 @@ abstract class Action
             
             $content = file_get_contents($tpl_path);
             Lib\hook::$include_file[]=$tpl_path;
+            Lib\hook::$file_type = 'Tpl';
 
             //获取 模板文件
             $this->Tpl = new \HY\Tpl();

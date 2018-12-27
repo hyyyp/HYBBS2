@@ -298,3 +298,28 @@ function ip(){
         return $_SERVER['REMOTE_ADDR'];
     }
 }
+function set_now_run_plugin($info){
+    $GLOBALS['NOW_RUN_PLUGIN'] = $info;
+}
+function get_now_run_plugin(){
+    if(!isset($GLOBALS['NOW_RUN_PLUGIN']))
+        $GLOBALS['NOW_RUN_PLUGIN']=[];
+    if(empty($GLOBALS['NOW_RUN_PLUGIN'])) return false;
+    return $GLOBALS['NOW_RUN_PLUGIN'];
+}
+function strpos_array($haystack, $needles) {
+    if ( is_array($needles) ) {
+        foreach ($needles as $str) {
+            if ( is_array($str) ) {
+                $pos = strpos_array($haystack, $str);
+            } else {
+                $pos = strpos($haystack, $str);
+            }
+            if ($pos !== FALSE) {
+                return $pos;
+            }
+        }
+    } else {
+        return strpos($haystack, $needles);
+    }
+}

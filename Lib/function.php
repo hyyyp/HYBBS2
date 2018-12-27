@@ -46,6 +46,27 @@ function get_plugin_inc($plugin_name){
   if($file[1]=='{}') $file['1'] = '{"hy_plugin":"on"}';
 	return json_decode($file[1],true);
 }
+//获取插件配置 某个值
+function get_plugin_inc_v($plugin_name,$name){
+    $inc = get_plugin_inc($plugin_name);
+    if(!$inc) return false;
+
+    if(!isset($inc[$name]))
+        return false;
+    return $inc[$name];
+}
+function get_plugin_conf_v($plugin_name,$name){
+    $conf_path = PLUGIN_PATH.$plugin_name.'/conf.php';
+
+    if(!is_file($conf_path)) return false;
+
+
+    $conf = include $conf_path;
+
+    if(!isset($conf[$name]))
+        return false;
+    return $conf[$name];
+}
 //获取插件安装状态
 function get_plugin_install_state($plugin_name){
 	if(!is_file(PLUGIN_PATH . "{$plugin_name}/install"))
