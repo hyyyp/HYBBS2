@@ -1,0 +1,85 @@
+{include h}
+{include user_header}
+{include user_menu}
+<!--{hook t_m_user_post_1}-->
+{foreach $post_data as $v}
+<div class="hy-box" style="width: 100%;">
+    <div class="thread">
+        <!--{hook t_m_user_post_2}-->
+        <a href="{php HYBBS_URL('thread',$v['tid']);}" class="title1"  ajax="true" pos="right">{$v.content}</a>
+        <ul class="hy-lable-group">
+            <li style="word-spacing: -0.35em;">
+                <a href="" class="hy-lable hy-lable-success">{php echo forum($forum,$v['fid'],'name');}</a>
+            </li>
+            <li>
+                <a href="{php HYBBS_URL('thread',$v['tid']);}" class="hy-lable hy-lable-zz" ajax="true" pos="right">{$v.title}</a>
+            </li>
+            <li>
+                <span class="icon-reply"></span> {$_LANG['发表于']} {php echo humandate($v['atime']);}
+            </li>
+        </ul>
+        
+        <!--{hook t_m_user_post_3}-->
+    </div>
+</div>
+{/foreach}
+<!--{hook t_m_user_post_4}-->
+<div class="hy-box" style="padding:10px">
+<!--{hook t_m_user_post_5}-->
+	{if $pageid!=1}
+    <span class="pg-item" disabled>
+        <a class="hy-btn hy-btn-danger" href="{php HYBBS_URL('my',$data['user'],['post'=>$pageid-1]);}">{$_LANG['上一页']}</a>
+    </span>
+    {/if}
+    <!--{hook t_m_user_post_6}-->
+    <?php $tmp = ($data['posts']%10) ?(intval($data['posts']/10)+1) : intval($data['posts']/10) ; ?>
+    {for $i=($pageid-5 < 1) ? 1 : $pageid -5; $i< (($pageid + 5 > $tmp) ? $tmp+1 : $pageid + 5) ; $i++}
+<!--{hook t_m_user_post_7}-->
+
+    <span class="pg-item ">
+        <{if $pageid == $i}span{else}a{/if} class="hy-btn hy-btn-danger {if $pageid == $i}disabled{/if}" href="{php HYBBS_URL('my',$data['user'],['post'=>$i]);}">
+            {$i}
+        </{if $pageid == $i}span{else}a{/if}>
+    </span>
+    {/for}
+    <!--{hook t_m_user_post_8}-->
+    {if $pageid!=$page_count}
+    <span class="pg-item" >
+        <a class="next hy-btn hy-btn-danger" href="{php HYBBS_URL('my',$data['user'],['post'=>$pageid+1]);}">{$_LANG['下一页']}</a>
+    </span>
+    {/if}
+    <!--{hook t_m_user_post_9}-->
+</div>
+<script type="text/javascript">
+	$(function(){
+		$(window).scroll(function(){
+            <!--{hook t_m_user_post_10}-->
+			if(this.scrollY > 100  ){
+                $(".hy-header").css('background','#Fff');
+                $(".hy-header").addClass('header_shadow');
+                $(".hy-header-title,.hy-header .icon").css("cssText","color: #0d7dbb !important");
+                    
+
+            }else{
+                $(".hy-header").css('background','rgba(0, 0, 0, 0)');
+                $(".hy-header").removeClass('header_shadow');
+                $(".hy-header-title,.hy-header .icon").css("cssText","color: #fff");
+                    
+            }
+            <!--{hook t_m_user_post_11}-->
+		});
+        <!--{hook t_m_user_post_12}-->
+
+	})
+</script>
+<style type="text/css">
+	.hy-btn{
+		    padding: 4px 8px;
+		    font-size: 12px;
+	}
+    .thread{
+        padding:10px;
+        
+    }
+</style>
+{include f}

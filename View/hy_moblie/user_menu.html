@@ -1,0 +1,40 @@
+<!--{hook t_m_user_menu_1}-->
+<div class="user-index-top">
+	<div>
+		<img src="{#WWW}{$data.avatar.a}">
+        <p style="margin-top: 14px;color: rgba(255, 255, 255, 0.91);font-size: 14px;"><span>{$_LANG['关注']} {$data.follow}</span> <span style="margin:0 10px;color:#bdbdbd">|</span> <span>{$_LANG['粉丝']} {$data.fans}</span></p>
+        <!--{hook t_m_user_menu_2}-->
+        
+	</div>
+</div>
+<!--{hook t_m_user_menu_3}-->
+<div class="hy-cent-list">
+  <ul>
+  <!--{hook t_m_user_menu_4}-->
+    <li class="{$menu_action.index}"><a href="{php HYBBS_URL('my',$data['user']);}">{$_LANG['空间']}</a></li>
+    <!--{hook t_m_user_menu_5}-->
+    <li class="{$menu_action.thread}"><a href="{php HYBBS_URL('my',$data['user'],'thread');}">{$_LANG['主题']}</a></li>
+    <!--{hook t_m_user_menu_6}-->
+    <li class="{$menu_action.post}"><a href="{php HYBBS_URL('my',$data['user'],'post');}">{$_LANG['帖子']}</a></li>
+    <!--{hook t_m_user_menu_7}-->
+    
+    <!--{hook t_m_user_menu_8}-->
+  </ul>
+</div>
+<!--{hook t_m_user_menu_9}-->
+<style type="text/css">
+	.hy-header{
+		background: rgba(0, 0, 0, 0);
+        color: #FFF;
+        border-bottom:none;
+	}
+    .hy-header .icon{
+        color: #FFF !important;
+    }
+    .hy-header-title{
+        color: #FFF !important;
+    }
+
+
+
+</style>

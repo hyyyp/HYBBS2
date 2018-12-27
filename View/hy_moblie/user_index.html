@@ -1,0 +1,90 @@
+{include h}
+{include user_header}
+{include user_menu}
+<!--{hook t_m_user_index_1}-->
+
+<div class="hy-list" style="    ">
+<!--{hook t_m_user_index_2}-->
+    {if IS_LOGIN}
+    {if $data['uid'] != NOW_UID}
+    <a href="javascript:void(0)" >
+        
+        <button type="button"  style="margin-right:10px" class="hy-btn hy-btn-{if $data['friend_state']}danger{else}primary{/if} " onclick="friend({$data.uid},this)">{if $data['friend_state']}{$_LANG['取消关注']}{else}{$_LANG['关注']}{/if}</button>
+        <button style="float:right" type="button" class="hy-btn hy-btn-success" onclick="open_lt('{$data.user}',{$data.uid},'{$data.avatar.b}');ys_header();">聊天</button>
+        <script type="text/javascript">
+        function ys_header(){
+            setTimeout(function(){
+                $("#lt-{$data.uid} header").css({color:'#000',background:'#FFF'})
+                $("#lt-{$data.uid} header a,#lt-{$data.uid} header h1").css("cssText","color:#000!important");
+            },500)
+            
+        }
+        
+        
+    
+
+        </script>
+    </a>
+    {/if}
+    {/if}
+    <a href="javascript:;">
+        <span class="icon icon-bubbles4"></span>
+        <span class="title">{$_LANG['主题数']}</span>
+        <span class="hy-lable hy-lable-success">{$data.threads}</span>
+    </a>
+    <!--{hook t_m_user_index_3}-->
+    <a href="javascript:;">
+        <span class="icon icon-pencil2"></span>
+        <span class="title">{$_LANG['帖子数']}</span>
+        <span class="hy-lable hy-lable-danger">{$data.posts}</span>
+    </a>
+    <!--{hook t_m_user_index_4}-->
+    {if $data['uid'] == NOW_UID}
+    <a href="javascript:;">
+        <span class="icon icon-coin-dollar"></span>
+        <span class="title">{$_LANG['财富']}</span>
+        <span class="hy-lable hy-lable-warning">{$data.gold}</span>
+    </a>
+    {/if}
+    <!--{hook t_m_user_index_5}-->
+    <a href="javascript:;">
+        <span class="icon icon-accessibility "></span>
+        <span class="title">{$_LANG['加入时间']}</span>
+        <span class="hy-lable hy-lable-purple">{php echo date("Y-m-d",$data['atime']);}</span>
+    </a>
+    <!--{hook t_m_user_index_6}-->
+    {if $data['uid'] == NOW_UID}
+    <a href="{php HYBBS_URL('my',$user['user'],'op');}">
+        <span class="icon icon-cog "></span>
+        <span class="title">{$_LANG['个人设置']}</span>
+    </a>
+    {/if}
+    <!--{hook t_m_user_index_7}-->
+    {if $data['uid'] == NOW_UID}
+    <a href="{php HYBBS_URL('user','out')}">
+    <span class="icon icon-exit "></span>
+        <span class="title">{$_LANG['注销账号']}</span>
+    </a>
+    {/if}
+    <!--{hook t_m_user_index_8}-->
+</div>
+<script type="text/javascript">
+    $(function(){
+        $(window).scroll(function(){
+            
+            if(this.scrollY > 100  ){
+                $(".hy-header").css('background','#Fff');
+                $(".hy-header").addClass('header_shadow');
+                $(".hy-header-title,.hy-header .icon").css("cssText","color: #0d7dbb !important");
+            }else{
+                $(".hy-header").css('background','rgba(0, 0, 0, 0)');
+                $(".hy-header").removeClass('header_shadow');
+                $(".hy-header-title,.hy-header .icon").css("cssText","color: #fff");
+                    
+            }
+            
+        });
+    });
+</script>
+<!--{hook t_m_user_index_9}-->
+{include f}

@@ -1,0 +1,30 @@
+{include h}
+<!--{hook t_m_message_1}-->
+<header class="hy-header hy-fix-t">
+<!--{hook t_m_message_2}-->
+<a href="javascript:history.back(-1)" class="hy-header-nav hy-header-left icon icon-chevron-small-left" ></a>
+<!--{hook t_m_message_3}-->
+<h1 class="hy-header-title">{$_LANG['提示信息']}</h1>
+<!--{hook t_m_message_4}-->
+{if ACTION_NAME != 'User'}
+<a class="hy-header-nav hy-header-right icon icon-menu" onclick="$.hy.canvas_show1('right')"></a>
+{/if}
+<!--{hook t_m_message_5}-->
+</header>
+<!--{hook t_m_message_6}-->
+<!--{hook t_m_message_7}-->
+<section class="body">
+	<div class="hy-box" style="margin-top:10px;padding:10px;text-align: center;">
+	<p class="hy-font-danger" style="font-size:18px;font-weight: bold;margin-bottom: 10px;">{$title}</p>
+	<!--{hook t_m_message_8}-->
+	<span style="font-size:16px">{$msg}</span>
+	</div>
+	<div class="hy-box" style="margin-top:10px;padding:10px">
+		<!--{hook t_m_message_9}-->
+		<button type="button" class="hy-btn hy-btn-danger " onclick="window.location.href='{#WWW}'">{$_LANG['前往论坛']}</button>
+		<button type="button" class="hy-btn hy-btn-danger r hy-btn-outlined" onclick="window.location.href=document.referrer">{$_LANG['返回上一页']}</button>
+		<!--{hook t_m_message_10}-->
+	</div>
+</section>
+<!--{hook t_m_message_11}-->
+{include f}

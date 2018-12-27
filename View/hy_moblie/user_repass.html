@@ -1,0 +1,96 @@
+{include h}
+{include user_header1}
+<section class="body" id="user_repass_body">
+<div>
+	<form id="user-repass-form" method="post" onsubmit="return user_repass()">
+		<div class="hy-box" style="margin-top:20px">
+			<!--{hook t_m_user_repass_1}-->
+		    <div class="hy-input-box">
+		        <input type="text" id="email" name="email" placeholder="{$_LANG['你注册账号所填的邮箱']}">
+		    </div>
+		    <!--{hook t_m_user_repass_2}-->
+		    <div class="hy-input-box">
+			<a class="hy-btn hy-btn-success" onclick="send_code(this)" href="javascript:void(0)" style="color: ;">{$_LANG['点击获取验证码']}</a>
+			</div>
+		    <div class="hy-input-box">
+		        <input type="text" id="code" name="code" placeholder="{$_LANG['你邮箱接收到的验证码']}">
+		    </div>
+		    <!--{hook t_m_user_repass_3}-->
+		    <div class="hy-input-box">
+		        <input type="password" name="pass1" placeholder="{$_LANG['更改密码']}">
+		    </div>
+		    <!--{hook t_m_user_repass_4}-->
+		    <div class="hy-input-box">
+		        <input type="password" name="pass2" placeholder="{$_LANG['确认密码']}">
+		    </div>
+		    <!--{hook t_m_user_repass_5}-->
+		</div>
+		<!--{hook t_m_user_repass_55}-->
+		<div style="padding:10px;    text-align: center;">
+			<button id="repass" type="submit" class="hy-btn hy-btn-danger hy-btn-block" style="padding: 8px 0;">{$_LANG['修改密码提交']}</button>
+			<a href="{php HYBBS_URL('user','login')}" ajax="true" pos="right" rgb="#f1f4f9" type="button" class="hy-btn hy-btn-link" style="color: #a2a2a2;">
+	                    {$_LANG['返回登录']}
+	        </a>
+	        
+		</div>
+		<div style="height:40px"></div>
+	</form>
+</div>
+</section>
+<script>
+var send_b = false;
+function send_code(obj){
+	// if(send_b)
+	// 	return ;
+	 var _this = $(obj);
+	// send_b=true;
+	
+	
+	//_this.attr("disabled","disabled");
+	//_this.css("color","#757575");
+	$.ajax({
+		url: '{php HYBBS_URL('user','recode')}',
+		type:"POST",
+		cache: false,
+		data:{
+			email:$("#email").val(),
+			<!--{hook t_m_user_repass_js_1}-->
+		},
+		dataType: 'json'
+	}).then(function(e) {
+		<!--{hook t_m_user_repass_js_2}-->
+		if(e.error){
+			swal("{$_LANG['发送成功']}","{$_LANG['请到你的']}"+$("#email").val()+"{$_LANG['找回密码提示语']}",'success');
+		}else{
+			swal('{$_LANG['发送失败']}',e.info,'error');
+		}
+		<!--{hook t_m_user_repass_js_3}-->
+	}, function() {
+	 swal("{$_LANG['发送失败']}",'{$_LANG['服务器繁忙']}');
+	});
+    
+}
+function user_repass(){
+	var postdata = $('#user-repass-form').serialize();
+    <!--{hook t_m_user_repass_js_4}-->
+    $.post("{php HYBBS_URL('user','recode2')}", postdata,  function(e){
+    	<!--{hook t_m_user_repass_js_5}-->
+        if(e.error){
+            swal("{$_LANG['修改成功']}","{$_LANG['密码修改成功提示']}",'success');
+        }else{
+        	swal("{$_LANG['修改失败']}", e.info, "error");
+        }
+        <!--{hook t_m_user_repass_js_6}-->
+    },'json');
+    <!--{hook t_m_user_repass_js_7}-->
+	return false;
+}
+</script>
+{if !IS_AJAX}
+<style type="text/css">
+    body{
+        background: rgb(241, 244, 249);
+    }
+</style>
+{/if}
+{include f}

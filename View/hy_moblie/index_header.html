@@ -1,0 +1,15 @@
+<!--{hook t_m_index_header_1}-->
+<header class="hy-header hy-fix-t">
+<!--{hook t_m_index_header_2}-->
+<a href="javascript:void(0)" class="hy-header-nav hy-header-left icon icon-menu" onclick="$.hy.canvas_show('left')"></a>
+<!--{hook t_m_index_header_3}-->
+<h1 class="hy-header-title" >{$title}</h1>
+<!--{hook t_m_index_header_4}-->
+{if ACTION_NAME != 'User'}
+<a class="hy-header-nav hy-header-right icon icon-pencil2" href="{if IS_LOGIN}{php HYBBS_URL('post')}{else}{php HYBBS_URL('user','login')}{/if}" ajax="true" pos="right" rgb="#f1f4f9"></a>
+{/if}
+<!--{hook t_m_index_header_5}-->
+</header>
+<!--{hook t_m_index_header_6}-->
+
+{include iframe_forum}

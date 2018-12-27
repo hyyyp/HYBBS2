@@ -1,0 +1,45 @@
+<!--{hook t_m_r_menu_0}-->
+<div class="hy-canvas-right">
+<!--{hook t_m_r_menu_1}-->
+  <div class="img">
+  <!--{hook t_m_r_menu_2}-->
+    <a href="{if IS_LOGIN}{php HYBBS_URL('my',$user['user'],'op');}{else}{php HYBBS_URL('user','login')}{/if}">
+      <img src="{if IS_LOGIN}{#WWW}{$user.avatar.b}{else}{#WWW}public/images/user.gif{/if}" class="avatar">
+    </a>
+    <!--{hook t_m_r_menu_3}-->
+    <h3>{if IS_LOGIN}{$user.user}{else}游客{/if}</h3>
+    <!--{hook t_m_r_menu_4}-->
+    {if !IS_LOGIN}
+    <p>
+      <a href="{php HYBBS_URL('user','login')}">登录</a>
+    </p>
+    {else}
+    <p>
+      <a href="javascript:;"><span class="hy-lable hy-lable-danger">{php echo $usergroup[NOW_GID]['name']}</span></a>
+    </p>
+    {/if}
+    <!--{hook t_m_r_menu_5}-->
+  </div>
+  <!--{hook t_m_r_menu_6}-->
+  <div class="menu">
+  <!--{hook t_m_r_menu_7}-->
+    <ul id="sidearea">
+    <!--{hook t_m_r_menu_8}-->
+      {if IS_LOGIN}
+      <li><a href="{php HYBBS_URL('my',$user['user']);}"><h4><span class="icon icon-user2" ></span>个人中心</h4><p class="size_12 cg">User</p></a></li>
+      {/if}
+      <!--{hook t_m_r_menu_9}-->
+      <li><a href="{#WWW}"><h4><span class="icon icon-home-outline"></span>论坛</h4><p class="size_12 cg">Home</p></a></li>
+      <!--{hook t_m_r_menu_10}-->
+      <li><a href="{php HYBBS_URL('forum')}"><h4><span class="icon icon-grid2"></span>版块</h4><p class="size_12 cg">Forum</p></a></li>
+      <!--{hook t_m_r_menu_11}-->
+      {if IS_LOGIN}
+      <li><a href="{php HYBBS_URL('user','out')}"><h4><span class="icon icon-exit"></span>注销</h4><p class="size_12 cg">UserOut</p></a></li>
+      {/if}
+      <!--{hook t_m_r_menu_12}-->
+    </ul>
+    <!--{hook t_m_r_menu_13}-->
+  </div>
+  <!--{hook t_m_r_menu_14}-->
+</div>
+<!--{hook t_m_r_menu_15}-->

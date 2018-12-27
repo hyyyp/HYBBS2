@@ -1,0 +1,19 @@
+<!--{hook t_m_forum_thread_header_1}-->
+<header class="hy-header hy-fix-t hy-bo-b" style="background:#FFF;">
+<!--{hook t_m_forum_thread_header_2}-->
+<a class="hy-header-nav hy-header-left icon icon-menu" onclick="$.hy.canvas_show('left')"></a>
+<!--{hook t_m_forum_thread_header_3}-->
+<h1 class="hy-header-title">{$title}</h1>
+<!--{hook t_m_forum_thread_header_4}-->
+<a class="hy-header-nav hy-header-right icon icon-pencil2" href="{if IS_LOGIN}{php HYBBS_URL('post','index',['fid'=>$fid])}{else}{php HYBBS_URL('user','login')}{/if}" ajax="true" pos="right" rgb="#f1f4f9"></a>
+<!--{hook t_m_forum_thread_header_5}-->
+</header>
+<!--{hook t_m_forum_thread_header_6}-->
+{include iframe_forum}
+<style type="text/css">
+  .icon-chevron-small-left, .icon {
+    color: #337ab7 !important;
+}
+
+</style>
+<!--{hook t_m_forum_thread_header_7}-->

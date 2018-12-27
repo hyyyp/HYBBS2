@@ -1,0 +1,74 @@
+{include h}
+{include index_header}
+<!--{hook t_m_index_index_1}--> 
+<section class="body" id="index_body">
+<div style="padding-bottom: 5px;position: relative;">
+<!--{hook t_m_index_index_2}--> 
+
+  <!--{hook t_m_index_index_3}--> 
+	<span class="Select">
+		<select class="Select-input FormControl">
+			<option value="{#WWW}" {if isset($_GET['HY_URL'][0])}{if $_GET['HY_URL'][0] != 'btime'}selected{/if}{/if}>{$_LANG['最新主题']}</option>
+			<option value="{php HYBBS_URL('btime');}" {if isset($_GET['HY_URL'][0])}{if $_GET['HY_URL'][0] == 'btime'}selected{/if}{/if}>{$_LANG['最新回复']}</option>
+      <!--{hook t_m_index_index_4}--> 
+		</select>
+        <script type="text/javascript">
+        $(".FormControl").change(function(){
+            window.location.href = $(this).val();
+        })
+        </script>
+        <!--{hook t_m_index_index_5}--> 
+		<img src="{#WWW}View/hy_moblie/sort.png" class="Select-caret">
+
+	</span>
+  <!--{hook t_m_index_index_6}--> 
+  <div class="rebtn bor" >
+    <form action="{php HYBBS_URL('search')}" method="get">
+    <input type="hidden" name="s" value="search">
+    <input type="text" name="key">
+    </form>
+    <button class="icon-search" onclick="$('.rebtn').toggleClass('active')"></button>
+  </div>
+  <!--{hook t_m_index_index_7}--> 
+
+  
+	<!--{hook t_m_index_index_thread_list_top}--> 
+	{foreach $top_list as $v}
+	{include thread_list}
+	{/foreach}
+<list id="index-list">
+	{foreach $thread_list as $v}
+	{include thread_list}
+	{/foreach}
+</list>
+ 
+	<!--{hook t_m_index_index_thread_list_bottom}-->
+	
+  <div class="hy-box hy-bo-t" style="padding:10px;text-align: center;">
+    <a href="{if $pageid==1}javascript:void(0);{else}{php HYBBS_URL($type,$pageid-1);}{/if}" class="hy-btn hy-btn-blu1 l {if $pageid==1}disabled{/if}">{$_LANG['上一页']}</a>
+    <span class="Select" style="    margin: 0 auto;">
+    <?php $tmp = ($hy_count['thread']%$conf['homelist']) ?(intval($hy_count['thread']/$conf['homelist'])+1) : intval($hy_count['thread']/$conf['homelist']) ; ?>
+      <select class="Select-input FormControl">
+        {for $i=($pageid-5 < 1) ? 1 : $pageid -5; $i< (($pageid + 5 > $tmp) ? $tmp+1 : $pageid + 5) ; $i++}
+          <option value="{php HYBBS_URL($type,$i);}" {if $pageid == $i}selected{/if}>第 {$i} 页</option>
+
+        {/for}
+      </select>
+          <script type="text/javascript">
+          $(".FormControl").change(function(){
+              window.location.href = $(this).val();
+          })
+          </script>
+          
+      <img src="{#WWW}View/hy_moblie/sort.png" class="Select-caret">
+    </span>
+    <a href="{if $pageid==$page_count}javascript:void(0);{else}{php HYBBS_URL($type,$pageid+1);}{/if}" class="hy-btn hy-btn-blu1 r {if $pageid==$page_count}disabled{/if}">{$_LANG['下一页']}</a>
+    <div style="clear: both;"></div>
+  </div>
+
+</div>
+
+</section>
+
+{include b_menu}
+{include f}

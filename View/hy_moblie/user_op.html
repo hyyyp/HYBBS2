@@ -1,0 +1,88 @@
+{include h}
+{include user_header}
+<style type="text/css">
+	body{
+		background: #f1f4f9;
+	}
+</style>
+<section class="body" style="overflow:auto" onscroll="gd_b(this)">
+	<!--{hook t_m_user_op_1}-->
+	<div class="hy-box user-index-list" >
+	<!--{hook t_m_user_op_2}-->
+		<img src="{#WWW}{$user.avatar.c}">
+		<div class="user">
+			{#NOW_USER}
+		</div>
+		<div class="upavatar">
+			<form class="form-horizontal" action="{php HYBBS_URL('user','ava');}" method="post" enctype="multipart/form-data">
+			<input type="file" class="icon icon-image" style="outline: 0;border: none;width: 26px;height: 22px;" onchange="$(this).parent().submit();" name="photo">
+			</form>
+		</div>
+		<!--{hook t_m_user_op_3}-->
+	</div>
+
+	<div class="hy-list">
+	<!--{hook t_m_user_op_4}-->
+	    <a href="{php HYBBS_URL('my',$user['user']);}">
+	        <span class="icon icon-user"></span>
+	        <span class="title">{$_LANG['个人中心']}</span>
+	        <span class="icon icon-chevron-right"></span>
+	    </a>
+	    <!--{hook t_m_user_op_5}-->
+	    <a href="javascript:;">
+	        <span class="icon icon-key"></span>
+	        <span class="title">{$_LANG['更换密码']}</span>
+	        <span class="icon icon-chevron-right"></span>
+	    </a>
+	    <!--{hook t_m_user_op_6}-->
+	    
+	</div>
+	<div class="hy-box" style="margin-top:20px">
+	<!--{hook t_m_user_op_7}-->
+		<form action="{php HYBBS_URL('user','edit');}" class="form-horizontal" role="form" method="post">
+		<input type="hidden" name="gn" value="ps">
+		<!--{hook t_m_user_op_8}-->
+			<div class="hy-input-box">
+				<h3>{$_LANG['个性签名']}</h3>
+			</div>
+			<!--{hook t_m_user_op_9}-->
+		    <div class="hy-input-box">
+		        <input type="text" name="ps" value="{$data.ps}" placeholder="在此输入">
+		    </div>
+		   <!--{hook t_m_user_op_10}-->
+		    <div class="hy-input-box">
+		    <button type="submit" class="hy-btn hy-btn-danger hy-btn-block" style="padding: 8px 0;">{$_LANG['修改']}</button>
+		    </div>
+		    <!--{hook t_m_user_op_11}-->
+	    </form>
+	</div>
+	<!--{hook t_m_user_op_12}-->
+	<div class="hy-box" style="margin-top:20px">
+		<form class="form-horizontal" action="{php HYBBS_URL('user','edit');}" method="post">
+		<input type="hidden" name="gn" value="pass">
+		<!--{hook t_m_user_op_13}-->
+			<div class="hy-input-box">
+				<h3>{$_LANG['修改密码']}</h3>
+			</div>
+			<div class="hy-input-box">
+		        <input type="text" name="pass0" placeholder="{$_LANG['旧密码']}">
+		    </div>
+			<!--{hook t_m_user_op_14}-->
+		    <div class="hy-input-box">
+		        <input type="password" name="pass1" placeholder="{$_LANG['新密码']}">
+		    </div>
+		    <!--{hook t_m_user_op_15}-->
+		    <div class="hy-input-box">
+		        <input type="password" name="pass2" placeholder="{$_LANG['确认新密码']}">
+		    </div>
+		    <!--{hook t_m_user_op_16}-->
+		    <div class="hy-input-box">
+		    <button type="submit" class="hy-btn hy-btn-danger hy-btn-block" style="padding: 8px 0;">{$_LANG['提交修改密码']}</button>
+		    </div>
+		   <!--{hook t_m_user_op_17}-->
+	    </form>
+	</div>
+	<!--{hook t_m_user_op_18}-->
+
+</section>
+{include f}

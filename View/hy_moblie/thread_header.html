@@ -1,0 +1,77 @@
+<!--{hook t_m_thread_header_1}-->
+<header class="hy-header hy-fix-t hy-bo-b" style="background:#FFF;">
+<!--{hook t_m_thread_header_2}-->
+<a onclick="url_back()" class="hy-header-nav hy-header-left icon icon-chevron-small-left" style="color:#000"></a>
+<!--{hook t_m_thread_header_3}-->
+<h1 class="hy-header-title" onclick="$.hy.popover_bottom_show()">{$_LANG['帖子菜单']}<span class="icon icon-circle-down" style="font-size: 17px;padding: 8px;" ></span></h1>
+<!--{hook t_m_thread_header_4}-->
+
+{if ACTION_NAME != 'User'}
+<a class="hy-header-nav hy-header-right icon icon-dots-two-horizontal" style="font-size: 34px;padding: 7px;" onclick="$.hy.popover_bottom_show()"></a>
+{/if}
+<!--{hook t_m_thread_header_5}-->
+</header>
+<!--{hook t_m_thread_header_6}-->
+
+<style type="text/css">
+  .icon-chevron-small-left, .icon {
+    color: #337ab7 !important;
+}
+
+</style>
+<!--{hook t_m_thread_header_7}-->
+<!-- 滑动 -->
+<div class="hy-popover-bottom">
+    <!--{hook t_m_thread_header_8}-->
+    <ul class="hy-table-view">
+    <!--{hook t_m_thread_header_9}-->
+        {if IS_LOGIN }
+            {if NOW_GID == C("ADMIN_GROUP")}
+            <li class="hy-table-view-cell">
+            	{if $thread_data['top'] == 2}
+                <a class="hy-font-danger" onclick="thread_top({$thread_data.tid},'off',2)">{$_LANG['取消全站置顶']} </a>
+                {else}
+                <a onclick="thread_top({$thread_data.tid},'on',2)">{$_LANG['全站置顶']} </a>
+                {/if}
+            </li>
+            {/if}
+            {if NOW_GID == C("ADMIN_GROUP") || is_forumg($forum,NOW_UID,$thread_data['fid'])}
+            <li class="hy-table-view-cell">
+            	{if $thread_data['top'] == 1}
+                <a class="hy-font-danger" onclick="thread_top({$thread_data.tid},'off',1)">{$_LANG['取消板块置顶']} </a>
+                {else}
+                <a onclick="thread_top({$thread_data.tid},'on',1)">{$_LANG['板块置顶']} </a>
+                {/if}
+            </li> 
+            {/if}
+            {if $thread_data['uid'] == NOW_UID || NOW_GID == C("ADMIN_GROUP") || is_forumg($forum,NOW_UID,$thread_data['fid'])}
+            <li class="hy-table-view-cell">
+                <a class="hy-font-purple" href="{php HYBBS_URL('post','edit',['id'=>$post_data['pid']]); }">{$_LANG['编辑文章']} </a>
+            </li>
+            <li class="hy-table-view-cell">
+                <a class="hy-font-warning" onclick="set_state({$thread_data.tid},{$thread_data.state})">{if $thread_data['state']}{$_LANG['解锁帖子']}{else}{$_LANG['锁定帖子']}{/if} </a>
+            </li>
+            
+            <li class="hy-table-view-cell">
+                <a class="hy-font-danger" onclick="del_thread({$thread_data.tid},'thread')" >{$_LANG['删除帖子']} </a>
+            </li>
+            {/if}
+        {/if}
+        <!--{hook t_m_thread_header_10}-->
+    </ul> 
+    <!--{hook t_m_thread_header_11}-->
+    <ul class="hy-table-view">
+        <!--{hook t_m_thread_header_12}-->
+    	<li class="hy-table-view-cell">
+    		<a href="{php HYBBS_URL('thread',$thread_data['tid'])}?order=desc">{$_LANG['最新评论']} {if X("get.order") == 'desc'}<span class="hy-lable hy-lable-success">{$_LANG['当前']}</span>{/if}</a>
+    	</li>
+    	<li class="hy-table-view-cell">
+    		<a href="{php HYBBS_URL('thread',$thread_data['tid'])}">{$_LANG['最早评论']} {if X("get.order") != 'desc'}<span class="hy-lable hy-lable-success">{$_LANG['当前']}</span>{/if}</a>
+    	</li>
+        <!--{hook t_m_thread_header_13}-->
+    	
+    </ul>
+    
+    <!--{hook t_m_thread_header_14}-->
+</div>
+<!--{hook t_m_thread_header_15}-->

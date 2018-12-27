@@ -1,0 +1,101 @@
+{include h}
+{include user_header1}
+<section class="body" id="user_body">
+<div>	  
+    <form id="user-login-form" method="post" onsubmit="return user_login()">
+        <div class="hy-box" style="margin-top:20px"> 
+        <!--{hook t_m_user_login_1}-->
+	    <div class="hy-input-box">
+	        <input type="text" name="user" placeholder="{$_LANG['请输入用户名']}">
+	    </div>
+        <!--{hook t_m_user_login_2}-->
+	    <div class="hy-input-box">
+	        <input type="password" name="pass" placeholder="{$_LANG['请输入密码']}">
+	    </div>
+        <!--{hook t_m_user_login_3}-->
+        </div>
+        <!--{hook t_m_user_login_33}-->
+    	<div style="padding:10px;    text-align: center;">
+    		<button id="login" type="submit" class="id-login hy-btn hy-btn-danger hy-btn-block" style="padding: 8px 0;">{$_LANG['登录']}</button>
+    		<a href="{php HYBBS_URL('user','add')}"  ajax="true" pos="right" rgb="#f1f4f9"  type="button" class="hy-btn hy-btn-link" style="color: #a2a2a2;">
+                {$_LANG['注册新账号']}
+            </a>
+            <a href="{php HYBBS_URL('user','repass')}"  ajax="true" pos="right" rgb="#f1f4f9" type="button" class="hy-btn hy-btn-link" style="color: #a2a2a2;">{$_LANG['忘记密码']}?</a>
+            <hr style="
+        border-top: 1px solid #d4d4d4;
+        margin: 10px 0;">
+    {if is_plugin_on('hy_qq_login')}
+            <a href="{php HYBBS_URL('user','qqlogin')}" class="icon icon-qq" style="
+        -moz-border-radius: 50%;
+        -webkit-border-radius: 50%;
+        border-radius: 50%;
+        display: inline-block;
+        font-size: 40px;
+        background: #FFF;
+        padding: 12px 12px 12px 12px;
+        color: #3cf;
+        border: solid 1px #DDD;
+        {if is_plugin_on('hy_weibo_login')}
+            margin-right: 40px;
+           {/if}
+    "></a>
+    {/if}
+    {if is_plugin_on('hy_weibo_login')}
+            <a href="{php HYBBS_URL('user','weibologin')}" class="icon icon-weibo" style="
+        -moz-border-radius: 50%;
+        -webkit-border-radius: 50%;
+        border-radius: 50%;
+        display: inline-block;
+        font-size: 40px;
+        background: #FFF;
+        padding: 12px 12px 12px 12px;
+        color: #f33;
+        border: solid 1px #DDD;
+    "></a>
+    {/if}
+        <div style="height:40px"></div>
+    	</div>
+    </form>
+</div>
+</section>
+<!--{hook t_m_user_login_js}-->
+<script>
+function user_login(){
+    var postdata = $('#user-login-form').serialize();
+    $(".id-login").attr('disabled','disabled').text('正在登录中...');
+    <!--{hook t_user_login_js_1}-->
+    $.ajax({
+        url:"{php HYBBS_URL('user','login')}",
+        type:'post',
+        data:postdata,
+        dataType:'json',
+        success:function(e){
+            <!--{hook t_user_login_js_2}-->
+            $(".id-login").removeAttr('disabled').text('{$_LANG['登录']}');
+            if(e.error){
+                if(e.url !='')
+                    window.location.href=e.url;
+                else
+                    window.location.href="{#WWW}";
+            }else{
+                $.hy.warning(e.info);
+            }
+            <!--{hook t_user_login_js_3}-->
+        },
+        error:function(e){
+            <!--{hook t_user_login_js_33}-->
+            $(".id-login").removeAttr('disabled').text('{$_LANG['登录']}');
+        }
+    });
+    <!--{hook t_user_login_js_4}-->
+    return false;
+}
+</script>
+{if !IS_AJAX}
+<style type="text/css">
+    body{
+        background: rgb(241, 244, 249);
+    }
+</style>
+{/if}
+{include f}

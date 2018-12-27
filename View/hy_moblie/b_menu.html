@@ -1,0 +1,27 @@
+<!--{hook t_m_b_menu_0}-->
+<div class="hy-fix-b hy-bo-t hy-footer-nav">
+    <!--<!--{hook t_m_b_menu_1}-->-->
+    <a href="{#WWW}" iframe="true" ajax="true"  {if ACTION_NAME=='Index' || ACTION_NAME=='New' || ACTION_NAME=='Btime'} class="a"{/if}>
+        <span class="icon icon-yahoo2"></span>{$_LANG['论坛']}
+    </a>
+    <!--<!--{hook t_m_b_menu_2}-->-->
+    <a href="{php HYBBS_URL('forum')}" iframe="true" ajax="true"  {if ACTION_NAME=='Forum'} class="a"{/if}>
+        <span class="icon icon-grid2"></span>{$_LANG['板块']}
+    </a>
+    <!--{hook t_m_b_menu_3}-->
+    <a class="" {if IS_LOGIN}href="{php HYBBS_URL('post')}"{else}href="{php HYBBS_URL('user','login')}" {/if}ajax="true" pos="right" rgb="#f1f4f9" style="    position: relative;display: block;top: -18px;">
+        <span class="hy-footer-c icon icon-plus" style="display: inline-block;    box-shadow: 0px 0px 1px #496676;"></span>
+    </a>
+    <!--{hook t_m_b_menu_4}-->
+    <a href="{if IS_LOGIN}javascript:void(0);{else}{php HYBBS_URL('user','login')}{/if}" {if IS_LOGIN}onclick="tog_friend_box()"{else} ajax="true" pos="right" rgb="#f1f4f9"{/if}>
+        <span class="icon icon-users" ></span>{$_LANG['好友']}{if IS_LOGIN}{if $user['mess']}<i id="hy-mess">(<em class="hy-font-warning">{$user.mess}</em>)</i>{/if}{/if}
+    </a>
+    <!--{hook t_m_b_menu_5}-->
+    <a {if !IS_LOGIN}onclick="$.hy.canvas_show('left')"{else}href="{php HYBBS_URL('my',$user['user']);}"{/if}>
+        <span class="icon icon-star" ></span>{$_LANG['我的']}
+    </a>
+    <!--{hook t_m_b_menu_6}-->
+</div>
+
+
+<!--{hook t_m_b_menu_7}-->

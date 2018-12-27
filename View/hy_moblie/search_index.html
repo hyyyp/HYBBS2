@@ -1,0 +1,48 @@
+{include h}
+{include index_header}
+<!--{hook t_m_search_index_1}-->
+<section class="body" id="index_body">
+<div style="padding-bottom: 5px;position: relative;">
+<!--{hook t_m_search_index_2}-->
+
+<!--{hook t_m_search_index_3}-->
+  <div style="height:36px"></div>
+  <div class="rebtn bor active" style="margin-left: 15px;left: 0;">
+    <form action="{php HYBBS_URL('search')}" method="get">
+    <input type="hidden" name="s" value="search">
+    <input type="text" name="key" value="{$search_key}">
+    </form>
+    <button class="icon-search"></button>
+  </div>
+<!--{hook t_m_search_index_4}-->
+  {if empty($data)}
+    
+    <p style="    margin: 17px;
+    padding: 47px 10px;
+    text-align: center;
+    background: #e7edf3;
+    color: #667d99;
+    font: 16px/1.8 Microsoft YaHei, Helvetica, sans-serif;
+    border-radius: 4px;">{$_LANG['找不到']} "{$search_key}" {$_LANG['内容']}</p>
+    
+  {/if}
+	<list id="forum-list">
+	{foreach $data as $v}
+	<!--{hook t_m_search_index_5}-->
+	{include thread_list}
+	<!--{hook t_m_search_index_6}-->
+	{/foreach}
+	</list>
+  <!--{hook t_m_search_index_7}-->
+<div class="hy-box hy-bo-t" style="padding:10px;text-align: center;">
+    <a href="{if $pageid==1}javascript:void(0);{else}{php HYBBS_URL('search',$pageid-1);}?key={$search_key}{/if}" class="hy-btn hy-btn-blu1 l {if $pageid==1}disabled{/if}">{$_LANG['上一页']}</a>
+    
+    <a href="{if count($data)!=$conf['searchlist']}javascript:void(0);{else}{php HYBBS_URL('search',$pageid+1);}?key={$search_key}{/if}" class="hy-btn hy-btn-blu1 r {if count($data)!=$conf['searchlist']}disabled{/if}">{$_LANG['下一页']}</a>
+    <div style="clear: both;"></div>
+  </div>
+
+  <!--{hook t_m_search_index_8}-->
+</div>
+</section>
+{include b_menu}
+{include f}

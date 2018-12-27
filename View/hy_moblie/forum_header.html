@@ -1,0 +1,12 @@
+<!--{hook t_m_forum_header_0}-->
+<header class="hy-header hy-fix-t">
+<!--{hook t_m_forum_header_1}-->
+<a class="hy-header-nav hy-header-left icon icon-menu" onclick="$.hy.canvas_show('left')"></a>
+<!--{hook t_m_forum_header_2}-->
+<h1 class="hy-header-title">{$_LANG['板块']}</h1>
+<!--{hook t_m_forum_header_3}-->
+<a class="hy-header-nav hy-header-right icon icon-pencil2" href="{if IS_LOGIN}{php HYBBS_URL('post')}{else}{php HYBBS_URL('user','login')}{/if}" ajax="true" pos="right" ></a>
+<!--{hook t_m_forum_header_4}-->
+</header>
+<!--{hook t_m_forum_header_5}-->
+{include iframe_forum}

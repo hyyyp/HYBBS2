@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head lang="zh-cn">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="{$conf.description}">
+  <meta name="keywords" content="{$conf.keywords}">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>{$title}{$conf.title2}</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp"/>
+  <link rel="alternate icon" type="image/png" href="{#WWW}favicon.ico">
+  <link rel="apple-touch-icon-precomposed" href="{#WWW}favicon.ico">
+  <meta name="apple-mobile-web-app-title" content="HYUI"/>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  
+  
+    
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="format-detection" content="email=no">
+
+  <!--{hook t_m_h_0}-->
+  <script src="{#WWW}public/js/jquery.min.js"></script>
+
+  <link rel="stylesheet" href="{#WWW}hyui/ui.css?var={#HYBBS_V}"/>
+  <link rel="stylesheet" href="{#WWW}hyui/style.css?var={#HYBBS_V}"/>
+  <link rel="stylesheet" href="{#WWW}View/hy_moblie/app.css?var=2.4"/>
+  <!--{hook t_m_h_11}-->
+  <script>
+  var www = "{#WWW}{#RE}";
+  var WWW = "{#WWW}";
+  var exp = "{#EXP}";
+  var action_name = "{#ACTION_NAME}";
+  var method_name = "{#METHOD_NAME}";
+  {if IS_LOGIN}
+  window.hy_user = "{#NOW_USER}";
+  window.hy_avatar = "{$user.avatar.a}";
+  {else}
+  window.hy_user = '';
+  window.hy_avatar = '';
+  {/if}
+  <!--{hook t_m_h_1}-->
+  </script>
+  <!--{hook t_m_h_2}-->
+  <script src="{#WWW}hyui/hy.js?var={#HYBBS_V}"></script>
+  <script src="{#WWW}View/hy_moblie/app.js?var=2.4"></script>
+  
+  <script src="{#WWW}public/js/app.js?var={#HYBBS_V}"></script>
+  <link href="{#WWW}public/css/alert.css?var={#HYBBS_V}" rel="stylesheet">
+  <!--{hook t_m_h_3}-->
+  
+</head>
+<body hide_size="0">

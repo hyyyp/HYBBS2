@@ -1,0 +1,49 @@
+<!--{hook t_m_forum_index_1}-->
+<div class="hy-canvas-left" style="overflow: hidden;">
+	<div id="iframe-forum-box">
+    	<div id="iframe-forum-top">
+    	<!--{hook t_m_forum_index_2}-->
+			<a href="{#WWW}">
+				<img class="logo" src="{#WWW}View/hy_moblie/logo.png" >
+		    </a>
+			<div>
+				{if !IS_LOGIN}
+				<div class="hy-btn-group">
+					<a href="{php HYBBS_URL('user','login')}" ajax="true" pos="right" rgb="#f1f4f9" class="hy-btn hy-btn-sblue hy-btn-xs">{$_LANG['登录']}</a>
+					<a href="{php HYBBS_URL('user','add')}" ajax="true" pos="right" rgb="#f1f4f9" class="hy-btn hy-btn-xs">{$_LANG['注册']}</a>
+					<!--{hook t_m_forum_index_33}-->
+				</div>
+				{else}
+				<img src="{#WWW}{$user.avatar.b}" width="100" height="100" class="img-circle hy-btn-group">
+				<div class="info-list">
+				<!--{hook t_m_forum_index_5}-->
+					<span>{$_LANG['关注']} <i>{$user.follow}</i></span>
+					<span>{$_LANG['粉丝']} <i>{$user.fans}</i></span>
+					<span>{$_LANG['金币']} <i>{$user.gold}</i></span>
+					<!--{hook t_m_forum_index_6}-->
+				</div>
+				<div class="hy-btn-group" style="margin-top:10px">
+				<!--{hook t_m_forum_index_7}-->
+					<a href="{php HYBBS_URL('my',$user['user']);}"  class="hy-btn hy-btn-warning hy-btn-xs">{$_LANG['空间']}</a>
+					<a href="javascript:void(0);" class="hy-btn hy-btn-danger hy-btn-xs" onclick="tog_friend_box()">{$_LANG['好友']}</a>
+				<!--{hook t_m_forum_index_8}-->
+				</div>
+				{/if}
+			</div>
+		</div>
+		<div class="hy-list iframe_forum" style="overflow-y: auto;">
+			<div>
+		    {foreach $forum as $key => $v}
+		    <!--{hook t_m_forum_index_3}-->
+		    <a hide_menu="true" iframe="true" ajax="true" href="<?php HYBBS_URL('forum',$v['id']); ?>" {if isset($fid)}{if $fid==$v['id']}class="active"{/if}{/if}> 
+		        <img src="{#WWW}upload/forum{$key}.png" width="20" height="20" style="margin-right:10px" onerror="this.src='{#WWW}upload/de.png'">
+		        <span class="title">{$v.name}</span>
+		        <span class="icon icon-chevron-right"></span>
+		    </a>
+		    <!--{hook t_m_forum_index_4}-->
+		    {/foreach}
+		    </div>
+		</div>
+
+	</div>
+</div>

@@ -1,0 +1,82 @@
+{include h}
+{include user_header1}
+<section class="body" id="user_add_body">
+<div>
+    <form id="user-add-form" method="post" onsubmit="return user_add()">
+	   <div class="hy-box" style="margin-top:20px">
+			<!--{hook t_m_user_add_1}-->
+		    <div class="hy-input-box">
+		        <input type="text" name="user" placeholder="{$_LANG['请输入用户名']}">
+		    </div>
+		    <!--{hook t_m_user_add_2}-->
+		    <div class="hy-input-box">
+		        <input type="text" name="email" placeholder="{$_LANG['请输入安全邮箱']}">
+		    </div>
+		    <!--{hook t_m_user_add_3}-->
+		    <div class="hy-input-box">
+		        <input type="password" name="pass1" placeholder="{$_LANG['请输入密码']}">
+		    </div>
+		    <!--{hook t_m_user_add_4}-->
+		    <div class="hy-input-box">
+		        <input type="password" name="pass2" placeholder="{$_LANG['确认密码']}">
+		    </div>
+		    <!--{hook t_m_user_add_5}-->
+	    </div>
+
+    	<!--{hook t_m_user_add_55}-->
+    	<div style="padding:10px;    text-align: center;">
+    		<button type="submit" class="id-add hy-btn hy-btn-danger hy-btn-block" style="padding: 8px 0;">{$_LANG['注册']}</button>
+    		<a href="{php HYBBS_URL('user','login')}" ajax="true" pos="right" rgb="#f1f4f9" type="button" class="hy-btn hy-btn-link" style="color: #a2a2a2;">
+                        {$_LANG['已有账号']}
+            </a>
+            <div style="height:40px"></div>
+    	</div>
+    </form>
+</div>
+</section>
+
+<!--{hook t_m_user_add_js}-->
+<script>
+function user_add(){
+    var postdata = $('#user-add-form').serialize();
+
+    $(".id-add").attr('disabled','disabled').text('正在注册中...');
+    
+
+    <!--{hook t_user_add_js_1}-->
+    $.ajax({
+        url:"{php HYBBS_URL('user','add')}",
+        type:'post',
+        data:postdata,
+        dataType:'json',
+        success:function(e){
+            <!--{hook t_user_add_js_2}-->
+            $(".id-add").removeAttr('disabled').text('{$_LANG['注册']}');
+            if(e.error){
+                if(e.url !='')
+                    window.location.href=e.url;
+                else
+                    window.location.href="{#WWW}";
+            }else{
+                $.hy.warning( e.info);
+            }
+            <!--{hook t_user_add_js_3}-->
+        },error:function(e){
+            <!--{hook t_user_add_js_33}-->
+            $(".id-add").removeAttr('disabled').text('{$_LANG['注册']}');
+        }
+    });
+    <!--{hook t_user_add_js_4}-->
+ 
+    
+    return false;
+}
+</script>
+{if !IS_AJAX}
+<style type="text/css">
+    body{
+        background: rgb(241, 244, 249);
+    }
+</style>
+{/if}
+{include f}

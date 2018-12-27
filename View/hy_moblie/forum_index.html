@@ -1,0 +1,61 @@
+{include h}
+{include forum_header}
+<section class="body"  id="index_body" style="">
+
+	<!--{hook t_m_forum_index_1}-->
+	<?php 
+	$forum_group = M('Forum_group')->read_all_cache();
+	?>
+	<div class="wrap-box forum" style="margin-bottom:10px;overflow-x: hidden;">
+		<?php $has_none = true; ?>
+		<ul>
+			{foreach $forum as $key => $v}
+		        <?php $has = false; ?>
+		        {foreach $forum_group as $vv}
+		            
+		            {if $v['fgid'] == $vv['id']}
+		                <?php $has = true;break; ?>
+		            {/if}
+		            
+		        {/foreach}
+		        {if !$has}
+		        <?php $has_none = false; ?>
+				<li> 
+					<a iframe="true" ajax="true"  href="<?php HYBBS_URL('forum',$v['id']); ?>">
+		            	<i fid="{$v.id}"> 
+		            		<img src="{#WWW}upload/forum{$key}.png" onerror="this.src='{#WWW}upload/de.png'" align="left" alt="">
+			            </i> 
+			            <strong>{$v.name}</strong>
+			            
+		            </a>
+	            </li>
+	            {/if}
+		    {/foreach}
+        </ul>
+        {if !$has_none}<script type="text/javascript">$('#none-forum').show()</script>{/if}
+	</div>
+	<!--{hook t_m_forum_index_2}-->
+	{foreach $forum_group as $v}
+	<div id="" class="wrap-box forum" style="margin-bottom:10px">
+		<h3>{$v.name}</h3>
+		<ul>
+			{foreach $forum as $key => $vv}
+			{if $vv['fgid'] == $v['id']}
+			<li> 
+				<a iframe="true" ajax="true"  href="<?php HYBBS_URL('forum',$vv['id']); ?>">
+	            	<i> 
+	            		<img src="{#WWW}upload/forum{$key}.png" onerror="this.src='{#WWW}upload/de.png'" align="left" alt="">
+		            </i> 
+		            <strong>{$vv.name}</strong>
+		            
+	            </a>
+            </li>
+            {/if}
+            {/foreach}
+        </ul>
+	</div>
+	{/foreach}
+	<!--{hook t_m_forum_index_5}-->
+</section>
+{include b_menu}
+{include f}

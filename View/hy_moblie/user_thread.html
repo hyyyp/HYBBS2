@@ -1,0 +1,67 @@
+{include h}
+{include user_header}
+{include user_menu}
+{foreach $thread_data as $v}
+{include thread_list}
+{/foreach}
+<!--{hook t_m_user_thread_1}-->
+<div class="hy-box" style="padding:10px">
+<!--{hook t_m_user_thread_2}-->
+	{if $pageid!=1}
+	<span class="pg-item">
+
+        <a class="hy-btn hy-btn-danger" href="{php HYBBS_URL('my',$data['user'],['thread'=>$pageid-1]);}">{$_LANG['上一页']}</a>
+    </span>
+    {/if}
+    <!--{hook t_m_user_thread_3}-->
+    <?php $tmp = ($data['threads']%10) ?(intval($data['threads']/10)+1) : intval($data['threads']/10) ; ?>
+    {for $i=($pageid-3 < 1) ? 1 : $pageid -3; $i< (($pageid + 3 > $tmp) ? $tmp+1 : $pageid + 3) ; $i++}
+
+<!--{hook t_m_user_thread_4}-->
+    <span class="pg-item ">
+        <{if $pageid == $i}span{else}a{/if} class="hy-btn hy-btn-danger {if $pageid == $i}disabled{/if}" href="{php HYBBS_URL('my',$data['user'],['thread'=>$i]);}">
+            {$i}
+        </{if $pageid == $i}span{else}a{/if}>
+    </span>
+    {/for}
+    <!--{hook t_m_user_thread_5}-->
+    {if $pageid!=$page_count}
+    <span class="pg-item">
+        <a class="next hy-btn hy-btn-danger" href="{php HYBBS_URL('my',$data['user'],['thread'=>$pageid+1]);}">{$_LANG['下一页']}</a>
+    </span>
+    {/if}
+    <!--{hook t_m_user_thread_6}-->
+</div>
+
+<script type="text/javascript">
+	$(function(){
+		$(window).scroll(function(){
+			<!--{hook t_m_user_thread_7}-->
+			if(this.scrollY > 100  ){
+				$(".hy-header").css('background','#Fff');
+				$(".hy-header").addClass('header_shadow');
+				$(".hy-header-title,.hy-header .icon").css("cssText","color: #0d7dbb !important");
+				    
+
+			}else{
+				$(".hy-header").css('background','rgba(0, 0, 0, 0)');
+				$(".hy-header").removeClass('header_shadow');
+				$(".hy-header-title,.hy-header .icon").css("cssText","color: #fff");
+				    
+			}
+			<!--{hook t_m_user_thread_8}-->
+		});
+		<!--{hook t_m_user_thread_9}-->
+
+	})
+</script>
+<style type="text/css">
+	.hy-btn{
+		    padding: 4px 8px;
+		    font-size: 12px;
+	}
+	.thread{
+		padding-bottom: 10px
+	}
+</style>
+{include f}

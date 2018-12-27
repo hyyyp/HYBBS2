@@ -1,0 +1,27 @@
+<div class="hy-box hy-bo-b" >
+<!--{hook t_m_top_menu_1}-->
+    <div style="overflow: hidden;height: 50px;position: relative;">
+    <!--{hook t_m_top_menu_2}-->
+        <div class="hy-menu-nav">
+            <ul>
+            <!--{hook t_m_top_menu_3}-->
+                <li class="{if ACTION_NAME == 'Index' || ACTION_NAME == 'New' || ACTION_NAME == 'Btime' }a{/if}">
+                    <a href="{#WWW}">{$_LANG['论坛']}</a>
+                </li>
+                <!--{hook t_m_top_menu_4}-->
+                {foreach $forum as $v}
+                <!--{hook t_m_top_menu_5}-->
+                {if $v['fid'] == -1}
+                <li class="">
+                    <a href="{php HYBBS_URL('forum','',EXP.$v['id']);}">{$v.name}</a>
+                </li>
+                {/if}
+                <!--{hook t_m_top_menu_6}-->
+                {/foreach}
+                <!--{hook t_m_top_menu_7}-->
+            </ul>
+        </div>
+        <!--{hook t_m_top_menu_8}-->
+    </div>
+    <!--{hook t_m_top_menu_9}-->
+</div>

@@ -1,0 +1,322 @@
+{include h}
+<header class="hy-header hy-fix-t hy-bo-b" style="background:#FFF;">
+<a onclick="url_back()" class="hy-header-nav hy-header-left icon icon-chevron-small-left" style="color:#000"></a>
+<h1 class="hy-header-title">回复详情</h1>
+</header>
+<section class="body" id="thread-body">
+<div style="padding-bottom:5px">
+	<div class="hy-box postlist">
+		<table style="width: 100%;">
+			<tbody>
+				<tr>
+					<td class="user">
+						<a href="{php HYBBS_URL('my',$post_data['user']);}" ajax="true" pos="right" class="avatar">
+							<img src="{#WWW}{$post_data.avatar.c}">
+				        </a>
+					</td>
+					<td style="padding-top: 10px;">
+					    <div class="info">
+					    	<h4 class="cl">
+					        <a href="{php HYBBS_URL('my',$post_data['user']);}" ajax="true" pos="right" class="info-user">{$post_data.user}</a>
+							</h4>
+					    	<p class="time"> {php echo humandate($post_data['atime'])} 
+					    	{if IS_LOGIN }
+			                    {if $post_data['uid'] == NOW_UID || NOW_GID == C("ADMIN_GROUP")}
+			                        <!-- 帖子作者 或者 管理员 -->
+			                        <a class="" href="{php HYBBS_URL('post','edit',EXP.'id'.EXP.$post_data['pid']); }">{$_LANG['编辑']}</a>
+			                    {/if}
+			                    {if $post_data['uid'] == NOW_UID || NOW_GID == C("ADMIN_GROUP") || is_forumg($forum,NOW_UID,$post_data['fid'])}
+			                        <!-- 作者 与 管理员 判断 -->
+			                        <a href="javascript:void(0);" class="" onclick="del_thread({$post_data.pid},'post')" >{$_LANG['删除帖子']}</a>
+			                    {/if}
+			                    
+			                {/if}
+			                <a style="float:right;width:auto;height:auto;color: #929292;" href="javascript:void(0);" class=""  onclick="tp1('post1',{$post_data.pid},this)" ><em>{$post_data.goods}</em> <span style="margin-left: 4px;" class="icon-like"></span></a>
+			                </p> 
+
+					    </div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" class="content">
+		  				<div class="ce">
+		              		{$post_data.content}
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	{if $count}
+	<div class="hy-box postlist">
+		<i class="icon-bubble" style="position: absolute;margin-top: 12px;font-size: 17px;margin-left: 3px;color: #B6B6B6;"></i>
+		<span style="position: absolute;margin-top: 30px;font-size: 17px;margin-left: 0px;font-size: 12px;color: #B6B6B6;width: 23px;text-align: center;">{$count}</span>
+		<table style="width: 100%;">
+			<tbody id="post_post_tbody">
+				{foreach $post_post_data as $k => $v}
+				<tr>
+					<td style="width:30px"></td>
+					<td class="user">
+						<a href="{php HYBBS_URL('my',$v['user']);}" class="avatar">
+							<img src="{#WWW}{$v.avatar.c}">
+				        </a>
+					</td>
+					<td style="    padding-top: 10px;">
+					    <div class="info">
+					    	<h4 class="cl">
+					        <a href="{php HYBBS_URL('my',$v['user']);}" class="info-user">{$v.user}</a>
+							</h4>
+					    	<p class="time"> {php echo humandate($v['atime'])} 
+					    	{if IS_LOGIN }
+			                    {if $v['uid'] == NOW_UID || NOW_GID == C("ADMIN_GROUP")}
+			                        <!-- 帖子作者 或者 管理员 -->
+			                        <a class="" href="{php HYBBS_URL('post','edit',EXP.'id'.EXP.$v['id']); }">{$_LANG['编辑']}</a>
+			                    {/if}
+			                    {if $v['uid'] == NOW_UID || NOW_GID == C("ADMIN_GROUP") || is_forumg($forum,NOW_UID,$post_data['fid'])}
+			                        <!-- 作者 与 管理员 判断 -->
+			                        <a href="javascript:void(0);" class="" onclick="del_thread({$v.id},'post')" >{$_LANG['删除帖子']}</a>
+			                    {/if}
+			                    
+			                {/if}
+			                <a style="float:right;width:auto;height:auto;color: #929292;" href="javascript:void(0);" class=""  onclick="tp2('post3',{$v.id},this)" ><em>{$v.goods}</em> <span style="margin-left: 4px;" class="icon-like"></span></a>
+			                </p> 
+
+					    </div>
+					</td>
+				</tr>
+				<tr>
+					<td style="width:30px"></td>
+					<td colspan="2" class="content">
+		  				<div class="ce">
+		  					<a href="{php HYBBS_URL('thread','mob1',EXP.$v['id']);}" ajax="true" pos="right">
+		              		{$v.content}
+		              		</a>
+						</div>
+					</td>
+				</tr>
+				{/foreach}
+			</tbody>
+		</table>
+	</div>
+	{/if}
+	<div onclick="" class="hy-box hy-bo-t" style="padding:10px;">
+		<p onclick="load_post_post()" style="text-align: center;color: #787878;"><i class="icon-rotate-left "></i> <em class="loamore" style="font-size: 14px;">加载更多</em></p>
+	</div>
+</div>
+
+</section>
+<div class="post-box  hy-bo-t">
+	
+        {if IS_LOGIN}
+		<div class="hy-box" style="font-size: 16px;">
+			<div class="hy-input-box">
+			<label style="font-weight: bold;
+		    font-size: 1.4rem;">内容 <a href="javascript:void(0)" onclick="hide_post_box()">关闭评论</a></label>
+			</div>
+
+		    <div id="editor" class="hy-editor" contenteditable="true">
+		        <p>&nbsp;</p>
+		    </div>
+		    <div style="" id="upload">
+		        <label for="fileToUpload" class="hy-editor-btn" ><img src="{#WWW}Plugin/hy_moblie_editor/image.png"></label>
+		        <label class="hy-editor-btn" ><img style=" width: 28px;height: 28px;" class="hy-editor-emoji" src="{#WWW}Plugin/hy_moblie_editor/s.png" onclick="$('#emoji-box').toggleClass('emoji-box-show')"></label>
+		        <label class="hy-editor-btn" ><img style=" width: 28px;height: 28px;" class="hy-editor-emoji" src="{#WWW}Plugin/hy_moblie_editor/video.png" onclick="$('#video-box').toggleClass('emoji-box-show')"></label>
+		        <input type="file" name="fileToUpload" id="fileToUpload" onchange="fileSelected('upload','fileToUpload');" style="display: none;">
+		    </div>
+		    <p style="height:1px"></p>
+		</div>
+		<div id="video-box" class="hy-box" style="padding:10px;display:none">
+		    <h3>插入视频</h3>
+		    <div class="hy-input-box" style="margin-bottom:10px">
+		        <input type="text" id="video-input" placeholder="输入视频地址 (.mp4)">
+		    </div>
+		   
+		    <button type="button" class="hy-btn hy-btn-primary" onclick="insertvideo($('#video-input').val())">插入视频</button>
+		</div>
+		<div id="emoji-box" class="hy-box" style="padding:10px;display:none">
+
+		</div>
+		<link rel="stylesheet" type="text/css" href="{#WWW}Plugin/hy_moblie_editor/hy_moblie.css">
+		<script type="text/javascript" src="{#WWW}Plugin/hy_moblie_editor/hy_edit.js"></script>
+
+
+		{hook p_hy_moblie_editor_thread_index_1}
+
+		<div class="hy-box" style="padding:10px">
+			<button type="button" id="post1" class="hy-btn hy-btn-danger" >发 布</button>
+		</div>
+
+
+		<script type="text/javascript"> 
+		$(function () {
+		 
+		    $("#post1").click(function(){
+		        var _obj = $(this);
+		        _obj.attr('disabled','disabled');
+		        _obj.text("提交中...");
+		        
+		        var forum = $("#forum").val();
+		        $.ajax({
+		         url: '<?php HYBBS_URL('post','post_post','');?>',
+		         type:"POST",
+		         cache: false,
+		         data:{
+		             id:{$post_data.pid},
+		             content:$("#editor").html(),
+		             {hook p_hy_moblie_editor_thread_index_data}
+		         },
+		         dataType: 'json'
+		     }).then(function(e) {
+		         if(e.error){
+		            window.location.reload();
+		         }else{
+		            $.hy.warning( e.info);
+		         }
+		         _obj.removeAttr('disabled');
+		            _obj.text("发 布");
+		       }, function() {
+		         $.hy.warning( "请尝试重新提交");
+		         _obj.removeAttr('disabled');
+		            _obj.text("发 布");
+		       });
+		    })
+		});
+		</script>
+        {else}
+            <a class="hy-btn hy-btn-block" href="{#WWW}user{#EXP}login">{$_LANG['登陆后才可发表内容']}</a>
+        {/if}
+      
+</div>
+<style type="text/css">
+	.body{
+		    background: #EDF6F7;
+	}
+</style>
+
+<div class="hy-fix-b hy-bo-t" style="background: #f6f6f6;width:100%;padding:10px">
+	<button type="button" onclick="open_post_box(this)" class="hy-btn hy-btn-danger hy-btn-outlined" style="border-radius: 3px;
+    width: 100%;
+    border: 1px solid #E2E2E2 !important;
+    background: #FFF;
+    text-align: left;
+    color: #A9A9A9;"><i class="icon-pencil2"></i> 编写评论</button>
+</div>
+<script type="text/javascript">
+	window.post_{$post_data.pid} = {$pageid+1};
+	window.post_{$post_data.pid}_bool = false;
+	function load_post_post(){
+		if(window.post_{$post_data.pid}_bool == true)
+			return;
+		window.post_{$post_data.pid}_bool = true;
+		$('.icon-rotate-left').addClass('fa-spin1');
+		$('.loamore').text('正在加载中...');
+		$.ajax({
+			url:'{#WWW}thread/mob1/{$post_data.pid}/'+window.post_{$post_data.pid},
+			type:'get',
+			dataType:'html',
+			success:function(e){
+				$('.icon-rotate-left').removeClass('fa-spin1');
+				$('.loamore').text('加载更多');
+
+				window.post_{$post_data.pid}_bool = false;
+				var data = e.match(/<tbody id="post_post_tbody">([\s\S]+)<\/tbody>/);
+				console.log(data);
+				
+				$('#post_post_tbody').append(data[1]);
+
+				window.post_{$post_data.pid}++;
+			},
+			error:function(e){
+				$('.icon-rotate-left').removeClass('fa-spin1');
+				$('.loamore').text('加载更多');
+				window.post_{$post_data.pid}_bool = false;
+			}
+
+		})
+	}
+	
+</script>
+
+{if IS_LOGIN}
+            
+        
+
+<div class="post-box  hy-bo-t">
+	<div class="hy-box" style="font-size: 16px;">
+		<div class="hy-input-box">
+		<label style="font-weight: bold;
+	    font-size: 1.4rem;">内容 <a href="javascript:void(0)" onclick="hide_post_box()">关闭评论</a></label>
+		</div>
+
+	    <div id="editor" class="hy-editor mob1" contenteditable="true">
+	        <p>&nbsp;</p>
+	    </div>
+	    <div style="" id="upload">
+	        <label for="fileToUpload" class="hy-editor-btn" ><img src="{#WWW}Plugin/hy_moblie_editor/image.png"></label>
+	        <label class="hy-editor-btn" ><img style=" width: 28px;height: 28px;" class="hy-editor-emoji" src="{#WWW}Plugin/hy_moblie_editor/s.png" onclick="$('#emoji-box').toggleClass('emoji-box-show')"></label>
+	      
+	        <input type="file" name="fileToUpload" id="fileToUpload" onchange="fileSelected('upload','fileToUpload');" style="display: none;">
+	    </div>
+	    <p style="height:1px"></p>
+	</div>
+	<div id="video-box" class="hy-box" style="padding:10px;display:none">
+	    <h3>插入视频</h3>
+	    <div class="hy-input-box" style="margin-bottom:10px">
+	        <input type="text" id="video-input" placeholder="输入视频地址 (.mp4)">
+	    </div>
+	   
+	    <button type="button" class="hy-btn hy-btn-primary" onclick="insertvideo($('#video-input').val())">插入视频</button>
+	</div>
+	<div id="emoji-box" class="hy-box" style="padding:10px;display:none">
+
+	</div>
+	<link rel="stylesheet" type="text/css" href="{#WWW}Plugin/hy_moblie_editor/hy_moblie.css">
+	<script type="text/javascript" src="{#WWW}Plugin/hy_moblie_editor/hy_edit.js"></script>
+
+
+	{hook p_hy_moblie_editor_thread_index_1}
+
+	<div class="hy-box" style="padding:10px">
+		<button type="button"  class="hy-btn hy-btn-danger post2" >发 布</button>
+	</div>
+</div>
+
+<script type="text/javascript"> 
+$(function () {
+ 
+    $(".post2").click(function(){
+        var _obj = $(this);
+        _obj.attr('disabled','disabled');
+        _obj.text("提交中...");
+        
+   
+        $.ajax({
+         url: '<?php HYBBS_URL('post','post_post','');?>',
+         type:"POST",
+         cache: false,
+         data:{
+             id:{$post_data.pid},
+             content:$(".mob1").html(),
+             {hook p_hy_moblie_editor_thread_index_data}
+         },
+         dataType: 'json'
+     }).then(function(e) {
+         if(e.error){
+            window.location.reload();
+         }else{
+            $.hy.warning( e.info);
+         }
+         _obj.removeAttr('disabled');
+            _obj.text("发 布");
+       }, function() {
+         $.hy.warning( "请尝试重新提交");
+         _obj.removeAttr('disabled');
+            _obj.text("发 布");
+       });
+    })
+});
+</script>
+{else}
+    <a class="hy-btn hy-btn-block" href="{#WWW}user{#EXP}login">{$_LANG['登陆后才可发表内容']}</a>
+{/if}
+{include f}
