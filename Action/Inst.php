@@ -304,6 +304,7 @@ DROP TABLE IF EXISTS hy_vote_thread;
     `tid` int(10) UNSIGNED NOT NULL,
     `fid` int(10) UNSIGNED NOT NULL,
     `uid` int(10) UNSIGNED NOT NULL,
+    `rpid` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `isthread` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
     `content` longtext NOT NULL,
     `atime` int(10) UNSIGNED NOT NULL,
