@@ -1063,71 +1063,74 @@ return array(
         $this->display("view");
     }
     public function viewol(){
-            //下载
-            $down = X("post.down");
-            if(!empty($down)){
+        //下载
+        $down = X("post.down");
+        if(!empty($down)){
 
-                $name = $down;
-                if(X("post.gn") == 'update'){
+            $name = $down;
+            if(X("post.gn") == 'update'){
 
-                    $inc = get_view_inc($name);
+                $inc = get_view_inc($name);
 
-                    if(!deldir(VIEW_PATH . $down,false,true))
-                        $this->json(array('error'=>false,'data'=>"无法删除旧模板,请手动删除" . VIEW_PATH . $down ));
-                }
-
-                if(is_dir(VIEW_PATH . $down))
-                    $this->json(array('error'=>false,'data'=>'模板目录已有相同名称模板,如果你要重新下载,需要手动删除模板'));
-                $down_path = TMP_PATH . $down . '.zip';
-                if(is_file($down_path))
-                    unlink($down_path);
-                if(is_file($down_path))
-                    $this->json(array('error'=>false,'data'=>'下载模板,权限出现问题,无法删除旧压缩包,请检查目录权限'));
-                
-                $json = http_get_app(APP_WWW . 'json/get_down_path1',array('name'=>$name));
-
-                if(empty($json))
-                    $this->json(array('error'=>false,'data'=>'访问远程服务器失败.'));
-                $json = json_decode($json,true);
-                if(!$json['error'])
-                    $this->json(array('error'=>false,'data'=>$json['data']));
-                
-                $down = APP_WWW . 'app/' . $name . '/' .$json['data'];
-                //下载模板
-                http_down( $down_path, $down);
-                if(!is_file($down_path))
-                    $this->json(array('error'=>true,'data'=>'没有下载到模板压缩包'));
-                
-                //解压模板
-                $zip = L("Zip");
-                $zip->unzip($down_path, VIEW_PATH);
-
-                if(is_dir(VIEW_PATH . $name)){
-                    if(is_file(VIEW_PATH . $name . '/on'))
-                        unlink(VIEW_PATH . $name . '/on');
-
-                    
-                    $inc1 = get_view_inc($name);
-                    if(!empty($inc1) && !empty($inc)){
-
-                        foreach ($inc1 as $k => &$v) {
-                            if(isset($inc[$k])){
-                                if(!empty($inc[$k])){
-                                    $v = $inc[$k];
-                                }
-                            }
-                            
-                        }
-
-
-                    }
-                    put_tmp_file(VIEW_PATH . "{$name}/inc.php",json_encode($inc1));
-
-                    $this->json(array('error'=>true,'data'=>'下载完成'));
-                }
-                    
-                $this->json(array('error'=>true,'data'=>'模板解压失败'));
+                if(!deldir(VIEW_PATH . $down,false,true))
+                    $this->json(array('error'=>false,'data'=>"无法删除旧模板,请手动删除" . VIEW_PATH . $down ));
             }
+
+            if(is_dir(VIEW_PATH . $down))
+                $this->json(array('error'=>false,'data'=>'模板目录已有相同名称模板,如果你要重新下载,需要手动删除模板'));
+            $down_path = TMP_PATH . $down . '.zip';
+            if(is_file($down_path))
+                unlink($down_path);
+            if(is_file($down_path))
+                $this->json(array('error'=>false,'data'=>'下载模板,权限出现问题,无法删除旧压缩包,请检查目录权限'));
+            
+            $json = http_get_app(APP_WWW . 'json/get_down_path1',array('name'=>$name));
+
+            if(empty($json))
+                $this->json(array('error'=>false,'data'=>'访问远程服务器失败.'));
+            $json = json_decode($json,true);
+            if(!$json['error'])
+                $this->json(array('error'=>false,'data'=>$json['data']));
+            
+            $down = APP_WWW . 'app/' . $name . '/' .$json['data'];
+            //下载模板
+            http_down( $down_path, $down);
+            if(!is_file($down_path))
+                $this->json(array('error'=>true,'data'=>'没有下载到模板压缩包'));
+            
+            //解压模板
+            $zip = L("Zip");
+            $un_info = $zip->unzip($down_path, VIEW_PATH);
+            if($un_info !== true){
+                $this->json(array('error'=>false,'data'=>'模板解压失败，'.$un_info));
+            }
+
+            if(is_dir(VIEW_PATH . $name)){
+                if(is_file(VIEW_PATH . $name . '/on'))
+                    unlink(VIEW_PATH . $name . '/on');
+
+                
+                $inc1 = get_view_inc($name);
+                if(!empty($inc1) && !empty($inc)){
+
+                    foreach ($inc1 as $k => &$v) {
+                        if(isset($inc[$k])){
+                            if(!empty($inc[$k])){
+                                $v = $inc[$k];
+                            }
+                        }
+                        
+                    }
+
+
+                }
+                put_tmp_file(VIEW_PATH . "{$name}/inc.php",json_encode($inc1));
+
+                $this->json(array('error'=>true,'data'=>'下载完成'));
+            }
+                
+            $this->json(array('error'=>true,'data'=>'模板解压失败'));
+        }
 
         $dh = opendir(VIEW_PATH);
         $ml = array();
@@ -1422,7 +1425,11 @@ return array(
             if(!is_file($path))
                 $this->json(array('error'=>false,'data'=>'插件下载失败.'));
 
-            $zip->unzip($path,PLUGIN_PATH);
+            $un_info = $zip->unzip($path,PLUGIN_PATH);
+            if($un_info !== true){
+                $this->json(array('error'=>false,'data'=>'插件解压失败，'.$un_info));
+            }
+
             if(is_dir(PLUGIN_PATH . $name)){ //解压成功
                 if(is_file(PLUGIN_PATH . $name . '/on'))
                     unlink(PLUGIN_PATH . $name . '/on');
@@ -2072,7 +2079,10 @@ function plugin_uninstall(){
                     $this->json(array('error'=>false,'info'=>'解压失败，压缩包不存在！'));
                 $zip = L("Zip");
                 
-                @$zip->unzip(TMP_PATH . $data .'.zip', TMP_PATH);
+                $un_info = $zip->unzip(TMP_PATH . $data .'.zip', TMP_PATH);
+                if($un_info !== true){
+                    $this->json(array('error'=>false,'data'=>'升级包解压失败，，'.$un_info));
+                }
                 
                 if(!is_dir(TMP_PATH . $data))
                     $this->json(array('error'=>false,'info'=>'下载的压缩包是损坏的,请清理缓存重新升级!'));
