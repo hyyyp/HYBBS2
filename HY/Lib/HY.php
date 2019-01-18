@@ -74,8 +74,9 @@ class HY
             $vendor_bool = false;
             foreach (C('vendor') as $v) {
                 $vendor_path = ltrim($v,'\\/') . DIRECTORY_SEPARATOR . $filePath;
-                //echo PATH . $vendor_path."\r\n";
+                //echo PATH . $vendor_path." :\r\n<br>";
                 if(is_file(PATH . $vendor_path)){
+                    //echo PATH . $vendor_path." $\r\n<br>";
                     $filePath = $vendor_path;
                     $vendor_bool=true;
                     break;
@@ -88,6 +89,7 @@ class HY
                 
         }
         $filePath = PATH . $filePath;
+        //echo $filePath.' %<br>';
       	$info = explode('\\', $class);
         $agrs =count($info);
         if ($info[0] == 'Model') {
@@ -153,18 +155,22 @@ class HY
 
 
         if (DEBUG) {
-            if(IS_AJAX){
+            if(!isset($GLOBALS['HEADER_STATE'])) $GLOBALS['HEADER_STATE']=0;
+            if(!$GLOBALS['HEADER_STATE']){
+                $GLOBALS['HEADER_STATE']=1;
+                if(IS_AJAX){
 
-                header('HTTP/1.1 200 OK'); 
-                header('Content-Type:application/json; charset=utf-8');
-                die(json_encode(array('error'=>false,'info'=>$text,'data'=>$text)));
-            }
-            else{
-                header('HTTP/1.1 404 Not Found'); 
-                header('status: 404 Not Found');
-                $s = \HY\Lib\exception::to_html($e);
-                echo $s;
-                exit;
+                    header('HTTP/1.1 200 OK'); 
+                    header('Content-Type:application/json; charset=utf-8');
+                    die(json_encode(array('error'=>false,'info'=>$text,'data'=>$text)));
+                }
+                else{
+                    header('HTTP/1.1 404 Not Found'); 
+                    header('status: 404 Not Found');
+                    $s = \HY\Lib\exception::to_html($e);
+                    echo $s;
+                    exit;
+                }
             }
         } elseif($e->getCode()) {
             header('HTTP/1.1 404 Not Found'); 
