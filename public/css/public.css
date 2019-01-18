@@ -1,0 +1,64 @@
+/* 
+引用回复公用css
+ */
+.quote-box{
+    display: none;
+    width: 100%;
+    border: solid 1px #c9d8db;
+    background: #f9f9f9;
+    background: linear-gradient(white, #f1f1f1); 
+    padding: 10px;    
+    margin-bottom: 10px;
+}
+.quote-right{
+    float: right;
+}
+.quote-left{
+    float: left;
+}
+.quote-avatar{
+    border-radius: 50%;
+    width: 38px;
+    height: 38px
+}
+.quote-info{
+    float: left;
+    margin-left: 10px;
+    line-height: 1.5
+}
+.quote-user{
+    font-weight: 600;
+    color: #555;
+}
+.quote-time{
+    color: #8590a6;
+    padding-top: 0px;
+    font-size: 12px;
+}
+.quote-content{
+    margin-top: 0px
+}
+
+.quote-bx:before,.quote-bx:after {
+  content: " ";
+  display: table;
+}
+.quote-bx:after {
+  clear: both;
+}
+.quote-bx{
+  -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.quote-close {
+    float: right;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    /* text-shadow: 0 1px 0 #fff; */
+    filter: alpha(opacity=20);
+    opacity: .2;
+    cursor: pointer;
+}
