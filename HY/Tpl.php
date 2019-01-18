@@ -91,6 +91,8 @@ class Tpl{
             return  '<?php echo '.$flag.$name.';?>';
         }elseif($flag=="#"){
             return  '<?php echo '.$name.';?>';
+        }elseif($flag==':'){
+            return  '<?php echo '.$name.';?>';
         }elseif(strtolower($a2)=="if "){
             return  '<?php if ('.$aa2.'): ?>';
         }elseif(strtolower($tagStr)=="/if"){
