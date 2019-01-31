@@ -1,7 +1,6 @@
 <?php $eidt_inc = get_plugin_inc('UMeditor');?>
 
 {if $eidt_inc['thread'] == 1}
- 
 <style type="text/css">
 .select-forum{
   position: relative;
