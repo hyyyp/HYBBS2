@@ -583,6 +583,11 @@ class Admin extends HYBBS {
 
             }elseif($gn == 2){ //修改用户组
                 //{hook a_admin_usergroup_5}
+                $font_css = trim(X('post.font_css'));
+                $font_css1 ='';
+                foreach (explode("\n",$font_css) as $key => $v) {
+                    $font_css1.=trim($v)."\n";
+                }
                 S("Usergroup")->update([
                     'gid'=>intval(X("post.id")),
                     'name'=>X("post.name"),
@@ -590,6 +595,8 @@ class Admin extends HYBBS {
                     'credits_max'=>X('post.credits_max'),
                     'space_size'=>X("post.space_size"),
                     'chat_size'=>X("post.chat_size"),
+                    'font_color'=>X('post.font_color'),
+                    'font_css'=>trim($font_css1)
 
                 ],[
                     'gid'=>intval(X("post.iid"))
@@ -634,21 +641,60 @@ class Admin extends HYBBS {
         //{hook a_admin_thread_1}
         if(IS_POST){
             $gn = X("post.gn");
-            if($gn == 'del'){
-                $tid = X("post.id");
-                if(!empty($tid)){
-                    foreach ($tid as &$v) {
-                        $v=intval($v);
+            if($gn == 'del'){ //删除主题
+                $tid_list = X("post.id");
+                if(!empty($tid_list)){
+
+                    $File = M("File");
+                    $Fileinfo = S("Fileinfo");
+                    $Filegold = S('Filegold');
+                    $User = M('User');
+                    $Post = S('Post');
+                    $Vote_thread = S('Vote_thread');
+                    $Threadgold = S('Threadgold');
+                    $Post_post = S('Post_post');
+
+                    foreach ($tid_list as $tid) {
+                        
+                        
+                        //删除附件
+                        $FileinfoList = $Fileinfo->select('*',['tid'=>$tid]);
+                        if(empty($FileinfoList)) $FileinfoList=[];
+                        foreach($FileinfoList as $v){
+                            $Fileinfo->delete(['fileid'=>$v['fileid']]);
+                            $Filegold->delete(['fileid'=>$v['fileid']]);
+                            $FileData = $File->read($v['fileid'],['uid','md5name','filesize']);
+                            if(!empty($FileData)){
+                                //删除数据记录
+                                $File->delete(['id'=>$v['fileid']]);
+
+                                //更新用户上传字节
+                                $User->update([
+                                    'file_size[-]'=>$FileData['filesize']
+                                ],[
+                                    'uid'=>$FileData['uid']
+                                ]);
+
+                                //文件路劲
+                                $FilePath = INDEX_PATH . 'upload/userfile/' . $FileData['uid'] . '/' . $FileData['md5name'];
+                                if(is_file($FilePath)){
+                                    unlink($FilePath);
+                                }
+
+                            }
+                        }
+                        //删除主题数据
+                        $Thread->delete(['tid'=>$tid]);
+                        //删除评论数据
+                        $Post->delete(['tid'=>$tid]);
+
+
+                        $Vote_thread    ->delete(['tid'=>$tid]);
+                        $Threadgold     ->delete(['tid'=>$tid]);
+                        $Post_post      ->delete(['tid'=>$tid]);
+
                     }
-                    $Thread->delete(['OR'=>['tid'=>$tid]]);
                     
-                    S("Post")->delete(['OR'=>['tid'=>$tid]]);
-                    
-                    if(X("post.del_file"))
-                        S("Fileinfo")   ->delete(['OR'=>['tid'=>$tid]]);
-                    S("Vote_thread")    ->delete(['OR'=>['tid'=>$tid]]);
-                    S("Threadgold")     ->delete(['OR'=>['tid'=>$tid]]);
-                    S("Post_post")      ->delete(['OR'=>['tid'=>$tid]]);
                 }
             }
         }
