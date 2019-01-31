@@ -20,7 +20,7 @@ function X($name,$default = ''){
             return isset($_SERVER[$v])?$_SERVER[$v]:$default;
         }
     }
-    return '';
+    return $default;
 }
 //实例Model
 function S($name,$more=''){
@@ -36,11 +36,8 @@ function M($name,$more=''){
 
 //实例 Lib库
 function L($name){
-
-    //include MYLIB_PATH . $name . ".php";
     $class = "Lib\\{$name}";
     $obj = new $class;
-
     return $obj;
 }
 
