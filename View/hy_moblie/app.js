@@ -7,7 +7,7 @@ function open_thread(url){
 window.location.href = url;
 }
 function open_post_box(obj){
-	
+	$('#editor').focus();
 	//document.removeEventListener('touchmove', touchmove_handler, false);
 	$(".post-box").addClass("post-box-a");
 	$(obj).after('<div class="hy-back" onclick="hide_post_box(this)"></div>').addClass("hy-body-overflow");
