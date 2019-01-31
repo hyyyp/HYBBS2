@@ -76,7 +76,11 @@
 	<div class="hy-box postlist">
 	<!--{hook t_m_thread_index_13}-->
 	<table style="width: 100%;">
+		{php $DataModel = M('Data');$User = M('User');}
 		{foreach $PostList as $k => $v}
+		{if $v['rpid']}
+        	{php $quote_data = $DataModel->get_post_data($v['rpid'])}
+        {/if}
 		<!--{hook t_m_thread_index_14}-->
 		<tr>
 			<!--{hook t_m_thread_index_15}-->
@@ -95,14 +99,15 @@
 			    	<a class="ic" href="{php HYBBS_URL('thread','post',$v['pid']);}" ajax="true" pos="right">
 			        	
 			        	{if $v['posts']}
-			        	 {$v.posts} 条评论
+			        	 {$v.posts} 条点评
 			        	{else}
-			        	 评论
+			        	 点评
 			        	{/if}
 			        </a>
 
 
 			    	{if IS_LOGIN }
+			    		<a href="javascript:;" class="" data-pid="{$v.pid}" data-uid="{$v.uid}" data-avatar="{#WWW}{$v.avatar.b}" data-user="{$v.user}" data-time="{$v.atime_str}" onclick="jump_post(this)">回复帖子</a>
 	                    {if $v['uid'] == NOW_UID || NOW_GID == C("ADMIN_GROUP")}
 	                        <!-- 帖子作者 或者 管理员 -->
 	                        <a class="" href="{php HYBBS_URL('post','edit',['id'=>$v['pid']]); }">{$_LANG['编辑']}</a>
@@ -118,7 +123,26 @@
 			    </div>
   				<div class="ce">
   				<!--{hook t_m_post_content_top}-->
+              		{if $v['rpid']}
+	            	<div class="quote-bx quote-box" style="display: block;">
+					    
+					    <div class="quote-bx">
+					        <div class="quote-left">
+					            <img class="quote-avatar" src="{#WWW}public/images/user.gif">
+					        </div>
+					        <div class="quote-info">
+					            <p class="quote-user">{:$User->uid_to_user($quote_data['uid'])}</sppan>
+					            <p class="quote-time">{:humandate($quote_data['atime'])}</p>
+					        </div>
+					    </div>
+					    <div class="quote-content">
+					    	{$quote_data.content}
+					    </div>
+					</div>
+					{/if}
+  					<div id="pid-{$v.pid}">
               		{$v.content}
+              		</div>
               	<!--{hook t_m_post_content_bottom}-->
 				</div>
     
