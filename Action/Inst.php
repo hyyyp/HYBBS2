@@ -430,6 +430,8 @@ DROP TABLE IF EXISTS hy_vote_thread;
     `space_size` int(10) UNSIGNED DEFAULT '4294967295',
     `chat_size` int(10) UNSIGNED NOT NULL DEFAULT '4294967295',
     `name` varchar(12) NOT NULL,
+    `font_color` varchar(30) NOT NULL DEFAULT '',
+    `font_css` longtext NOT NULL,
     `json` varchar(120) NOT NULL,
     PRIMARY KEY (`gid`) USING BTREE
     ) ENGINE={$table_type} DEFAULT CHARSET=utf8;
