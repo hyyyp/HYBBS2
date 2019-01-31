@@ -25,7 +25,7 @@ class HYBBS extends Action {
         //加载Conf.php配置
         $this->init_conf();
 
-        
+
         if(empty($this->conf['debug_page']))
             C("DEBUG_PAGE",false);
         else
