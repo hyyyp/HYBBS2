@@ -239,11 +239,16 @@
 						}
 
 					}
+					
 					</script>
 				</div>
 				{/if}
 	        </div>
+	        {php $DataModel = M('Data');$User = M('User');}
 	        {foreach $PostList as $k => $v}
+	        {if $v['rpid']}
+	        	{php $quote_data = $DataModel->get_post_data($v['rpid'])}
+	        {/if}
 	        <div class="item" id="post-{$v.pid}">
 				<a href="{php HYBBS_URL('my',$v['user']);}" class="avatar" target="_blank">
 	            	<img class="circle js-unveil js-info" uid="{$v.uid}" pos="right" src="{#WWW}{$v.avatar.b}">
@@ -258,9 +263,28 @@
 							发表于 {$v.atime_str}
 						</span>
 	            	</p>
-		            <div class="text typo editor-style" id="pid-{$v.pid}">
+		            <div class="text typo editor-style">
 		            <!--{hook t_post_content_top}-->
+		            	{if $v['rpid']}
+		            	<div class="quote-bx quote-box" style="display: block;">
+						    
+						    <div class="quote-bx">
+						        <div class="quote-left">
+						            <img class="quote-avatar" src="{#WWW}public/images/user.gif">
+						        </div>
+						        <div class="quote-info">
+						            <p class="quote-user">{:$User->uid_to_user($quote_data['uid'])}</sppan>
+						            <p class="quote-time">{:humandate($quote_data['atime'])}</p>
+						        </div>
+						    </div>
+						    <div class="quote-content">
+						    	{$quote_data.content}
+						    </div>
+						</div>
+						{/if}
+		            	<div id="pid-{$v.pid}">
 						{$v.content}
+						</div>
 		            <!--{hook t_post_content_bottom}-->
 		            </div>
 		            <div class="p-foot">
@@ -271,8 +295,8 @@
 							<i class="iconfont icon-thumbsdown1"></i> <span>{$v.nos}</span>
 						</button>
 
-						<button id="post--start-{$v.pid}" class="btn btn-link" onclick="show_post_post_box(this)">
-                        	<i class="iconfont icon-marks"></i> {if $v['posts']}{$v.posts} 条评论{else}回复帖子{/if}
+						<button class="btn btn-link" data-pid="{$v.pid}" data-uid="{$v.uid}" data-avatar="{#WWW}{$v.avatar.b}" data-user="{$v.user}" data-time="{$v.atime_str}" onclick="jump_post(this)">
+                        	<i class="iconfont icon-marks"></i> 回复帖子
                         </button>
 
 						<button style="float: right;line-height: 2.3;{if $v['posts']}color: #ef6464;{/if}"  id="post--start-{$v.pid}" class="btn btn-link" data-str0="默认排序" data-str1="{$_LANG['最新回复']}" data-sort="0" data-posts="{$v.posts}" data-state="hide" data-pid="{$v.pid}" onclick="show_post_post_box(this)">
