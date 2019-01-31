@@ -246,3 +246,69 @@ $(window).scroll(function(){
 		$('.scroll-to-top').removeClass('active')
 	 }
 });
+
+function loading(text){
+text = text||'提交中';
+    var inputOptions = new Promise(function(resolve) {
+      setTimeout(function() {
+        
+      }, 2000);
+    });
+
+    swal({
+      title: text,
+      input: 'radio',
+      allowOutsideClick: false,
+      inputOptions: inputOptions,
+      inputValidator: function(result) {
+        return new Promise(function(resolve, reject) {
+          if (result) {
+            resolve();
+          } else {
+            reject('You need to select something!');
+          }
+        });
+      }
+    }).then(function(result) {
+      if (result) {
+        swal({
+          type: 'success',
+          html: 'You selected: ' + result
+        });
+      }
+    })
+}
+
+// function wait(){
+//     var inputOptions = new Promise(function(resolve) {
+//       setTimeout(function() {
+        
+//       }, 2000);
+//     });
+
+//     swal({
+//       title: '查找中',
+//       input: 'radio',
+//       allowOutsideClick: false,
+//       inputOptions: inputOptions,
+//       inputValidator: function(result) {
+//         return new Promise(function(resolve, reject) {
+//           if (result) {
+//             resolve();
+//           } else {
+//             reject('You need to select something!');
+//           }
+//         });
+//       }
+//     }).then(function(result) {
+//       if (result) {
+//         swal({
+//           type: 'success',
+//           html: 'You selected: ' + result
+//         });
+//       }
+//     })
+// }
+function wait_close(){
+	swal.close();
+}
