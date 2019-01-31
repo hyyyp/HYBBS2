@@ -4,5 +4,5 @@ return array(
     'user' => 'admin',
     'icon' => '',
     'mess' => '手机移动设备编辑器',
-    'version' => '2.1',
+    'version' => '2.2',
 );
