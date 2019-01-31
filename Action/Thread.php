@@ -128,9 +128,11 @@ class Thread extends HYBBS {
                         $v['atime_str']=humandate($v['atime']);
                         $v['key'] = (($pageid-1)*10) + (++$i);
                         $v['avatar']=$this->avatar($v['user']);
-                        //$v['group_name'] = $User->get_gid($v['uid']);
+                        $this->CacheObj->set('post_data_'.$v['pid'],$v);
                         if($v['isthread']==1)
                             unset($PostList[$key]);
+
+                        
                     }
                 }else{
                     $PostList = array();
@@ -149,15 +151,10 @@ class Thread extends HYBBS {
                 $PostList = array();
 
             //获取文章内容
-            $PostData = $this->CacheObj->get('post_data_'.$tid);
-            if(empty($PostData) || DEBUG){
-                //{hook a_thread_empty_cache_3}
-                $PostData = $Post->find("*",['pid'=>$thread_data['pid']]);
-                if(empty($PostData))
-                    return $this->message("文章内容没有找到");
-                $this->CacheObj->set('post_data_'.$tid,$PostData);
-                //{hook a_thread_empty_cache_4}
-            }
+            $PostData = M('Data')->get_post_data($thread_data['pid']);
+            if(empty($PostData))
+                return $this->message("文章内容没有找到");
+                
 
             //{hook a_thread_empty_6}
 
@@ -329,20 +326,20 @@ class Thread extends HYBBS {
         $Thread = M("Thread");
 
         //取出该主题ID的数据
-        $t_data = $Thread->read($tid);
-        if(empty($t_data))
+        $thread_data = $Thread->read($tid);
+        if(empty($thread_data))
             return $this->json(array('error'=>false,'info'=>'该文章无数据'));
 
         //版主
-        $arr = explode(",",$this->_forum[$t_data['fid']]['forumg']);
+        $arr = explode(",",$this->_forum[$thread_data['fid']]['forumg']);
 
         //{hook a_thread_del_4}
         //用户组不是 管理员 &&  用户不是文章作者 && 不是版主
         if(
             (NOW_GID != C("ADMIN_GROUP")) &&
-            (NOW_UID != $t_data['uid']) &&
+            (NOW_UID != $thread_data['uid']) &&
             
-            !is_forumg($this->_forum,NOW_UID,$t_data['fid'])
+            !is_forumg($this->_forum,NOW_UID,$thread_data['fid'])
         )
             return $this->json(array('error'=>false,'info'=>'你没有权限操作这个主题'));
         //{hook a_thread_del_55}
@@ -352,39 +349,97 @@ class Thread extends HYBBS {
         S("Mess")->delete(array('tid'=>$tid));
 
         //删除主题下所有评论
-        //if($t_data['posts']){ //存在评论
-            $Post = M('Post');
-            //删除当前主题的所有评论
-            $Post->del_thread_all_post($tid);
+        //if($thread_data['posts']){ //存在评论
+        $Post = M('Post');
+        //删除当前主题的所有评论
+        $Post->del_thread_all_post($tid);
 
         //}
         //帖子作者-1
-        M("User")->update_int($t_data['uid'],'threads','-');
+        $User = M('User');
+        $User->update_int($thread_data['uid'],'threads','-');
+
+
+        //删除附件
+        $File = M("File");
+        $Fileinfo = S("Fileinfo");
+        $Filegold = S('Filegold');
+
+        $FileinfoList = $Fileinfo->select('*',['tid'=>$tid]);
+        if(empty($FileinfoList)) $FileinfoList=[];
+
+        foreach($FileinfoList as $v){
+            //删除附件信息
+            $Fileinfo->delete(['fileid'=>$v['fileid']]);
+            //删除附件购买记录
+            $Filegold->delete(['fileid'=>$v['fileid']]);
+            $FileData = $File->read($v['fileid'],['uid','md5name','filesize']);
+            if(!empty($FileData)){
+                //删除数据记录
+                $File->delete(['id'=>$v['fileid']]);
+
+                //更新用户上传字节
+                $User->update([
+                    'file_size[-]'=>$FileData['filesize']
+                ],[
+                    'uid'=>$FileData['uid']
+                ]);
+
+                //文件路劲
+                $FilePath = INDEX_PATH . 'upload/userfile/' . $FileData['uid'] . '/' . $FileData['md5name'];
+                if(is_file($FilePath)){
+                    unlink($FilePath);
+                }
+
+            }
+        }
+
+
+        S('Vote_thread')    ->delete(['tid'=>$tid]);
+        S('Threadgold')     ->delete(['tid'=>$tid]);
+        S('Post_post')      ->delete(['tid'=>$tid]);
+
+
+
+
+
         //更新缓存
-        $this->_forum[$t_data['fid']]['posts']--;
+        $this->_forum[$thread_data['fid']]['posts']--;
         $this->CacheObj->forum = $this->_forum;
         $this->_count['thread']--;
         $this->CacheObj->bbs_count = $this->_count;
 
+        //删除缓存
         $this->CacheObj->rm('thread_data_'.$tid);
+        $this->CacheObj->rm('post_data_'.$thread_data['pid']);
 
-        if($t_data['posts'] != 0){
-            $count = intval(($t_data['posts'] /  $this->conf['postlist']) + 1)+1;
+        //删除评论列表缓存
+        if($thread_data['posts'] != 0){
+            $count = intval(($thread_data['posts'] /  $this->conf['postlist']) + 1)+1;
             for ($i=0; $i < $count; $i++) {
                 $this->CacheObj->rm("post_list_{$tid}_desc_{$i}");
                 $this->CacheObj->rm("post_list_{$tid}__{$i}");
             }
+            //删除帖子独立缓存
+            $pid_list = $Post->select('pid',['tid'=>$tid]);
+            if(empty($pid_list)) $pid_list = [];
+            foreach ($$pid_list as $key => $v) {
+                $this->CacheObj->rm('post_data_'.$v);
+            }
         }
         
-        if($t_data['top']==1) //如果是板块置顶帖子，清理该板块置顶帖子缓存
-            $this->CacheObj->rm("forum_top_id_".$t_data['fid']);
-        elseif($t_data['top']==2)
+        //置顶缓存
+        if($thread_data['top']==1) //如果是板块置顶帖子，清理该板块置顶帖子缓存
+            $this->CacheObj->rm("forum_top_id_".$thread_data['fid']);
+        elseif($thread_data['top']==2)
             $this->CacheObj->rm("top_data_2");
 
-        if(NOW_UID != $t_data['uid']){
+
+        //删除主题 消息通知
+        if(NOW_UID != $thread_data['uid']){
             M("Chat")->sys_send(
-                $t_data['uid'],
-                '你的帖子 ['.$t_data['title'].'] 被 '.NOW_USER.' 删除'
+                $thread_data['uid'],
+                '你的帖子 ['.$thread_data['title'].'] 被 '.NOW_USER.' 删除'
             );
         }
 
@@ -438,7 +493,7 @@ class Thread extends HYBBS {
         }
         $this->CacheObj->rm("top_data_2");
         $this->CacheObj->rm('thread_data_'.$tid);
-        $this->CacheObj->rm('post_data_'.$tid);
+        $this->CacheObj->rm('post_data_'.$data['pid']);
         
         //{hook a_thread_top_5}
         return $this->json(array('error'=>true,'info'=>'置顶成功'));
