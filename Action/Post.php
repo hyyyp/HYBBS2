@@ -86,13 +86,23 @@ class Post extends HYBBS {
 		$this->content = mb_substr(trim(strip_tags($content)), 0,$this->conf['summary_size']);
 
 		//{hook a_post_post_6}
+		
+		//回复评论 非点评评论
+		$rpid = intval(X('post.pid',0));
 
 		//写入评论数据
 		$Post = S("Post");
+
+		//评论不存在 或 评论是主题内容 无法引用回复
+		if(!$Post->has(['pid'=>$rpid]) || $thread_data['pid'] == $rpid)
+			$rpid = 0;
+
+
 		$Post->insert(array(
 			'tid'	=> $tid,
 			'fid'	=> $thread_data['fid'],
 			'uid'	=> NOW_UID,
+			'rpid'	=> $rpid,
 			'content' => trim($content),
 			'atime'	  => NOW_TIME,
 			'etime'	  => NOW_TIME
@@ -714,6 +724,7 @@ class Post extends HYBBS {
 				$tgold = intval(X("post.tgold"));
             	$thide = intval(X("post.thide"));
             	$UsergroupLib = L("Usergroup");
+            	$User = M('User');
             	if(!$UsergroupLib->read(NOW_GID,'thide',$this->_usergroup)){
 	            	$thide = 0;
 	            }
@@ -755,7 +766,7 @@ class Post extends HYBBS {
 					'tid'=>$post_data['tid']
 				]);
 				$this->CacheObj->rm('thread_data_'.$post_data['tid']);
-            	$this->CacheObj->rm('post_data_'.$post_data['tid']);
+            	$this->CacheObj->rm('post_data_'.$post_data['pid']);
 				//{hook a_post_edit_38}
 
 				//判断是否有上传附件权限
@@ -768,7 +779,9 @@ class Post extends HYBBS {
 		            $filemess 	= X("post.filemess");
 		            $filehide 	= X("post.filehide");
 		            
-
+		            $File = M("File");
+		            $Fileinfo = S("Fileinfo");
+		            $Filegold = S('Filegold');
 		            if(!empty($fileid)){
 		            	//{hook a_post_edit_40}
 
@@ -780,37 +793,130 @@ class Post extends HYBBS {
 		            	if(count($fileid_arr)){
 		            		//{hook a_post_edit_41}
 
-		            		$File = M("File");
-		            		$Fileinfo = S("Fileinfo");
-		            		$Fileinfo->delete(['tid'=>$post_data['tid']]);
-		            		$i = 0;
+		            		$FileinfoList = $Fileinfo->select('*',['tid'=>$post_data['tid']]);
+		            		if(empty($FileinfoList)) $FileinfoList=[];
+		            		
+		            		$tmp_arr=[];
+		            		foreach($FileinfoList as $key => $v){
+		            			$tmp_arr[$v['fileid']]=[
+		            				'tid'	=>	$v['tid'],
+		            				'uid'	=>	$v['uid'],
+		            				'gold'	=>	$v['gold'],
+		            				'hide'	=>	$v['hide'],
+		            				'downs'	=>	$v['downs'],
+		            				'mess'	=>	$v['mess'],
+		            				//是否被删除
+		            				'is_del'	=> true
+		            			];
+		            		}
 
-		            		foreach ($fileid_arr as $key => $v) {
-		            			//{hook a_post_edit_42}
-		            			if(empty($v))
-		            			{
+
+		            		
+	            			foreach ($fileid_arr as $key => $fileid_v) {
+		            			$fileid_v=intval($fileid_v);
+		            			if(empty($fileid_v)) continue;
+		            			//判断文件是否属于文章作者
+		            			if($File->is_comp($fileid_v,$post_data['uid'])){
+		            				$tmp_arr[$fileid_v]=[
+		            					'tid'	=>	$post_data['tid'],
+		            					'uid'	=>	$post_data['uid'],
+		            					'gold'	=>	isset($filegold_arr[$key]) ? intval($filegold_arr[$key]) : 0,
+		            					'hide'	=>	isset($filehide_arr[$key]) ? intval($filehide_arr[$key]) : 0,
+		            					'downs'	=>	isset($tmp_arr[$fileid_v]) ? $tmp_arr[$fileid_v]['downs'] : 0,
+		            					'mess'	=>	isset($filemess_arr[$key]) ? $filemess_arr[$key] : '',
+		            					//是否被删除
+		            					'is_del'	=>	false
+		            				];
 		            				
-		            				continue;
-		            			}
-		            			$i++;
-		            			if($File->is_comp(intval($v),$post_data['uid'])){
-		            				$Fileinfo->insert(array(
-		            					'fileid'	=>	intval($v),
-		            					'tid'		=>	$post_data['tid'],
-		            					'uid'		=>	$post_data['uid'],
-		            					'gold'		=>	isset($filegold_arr[$key]) ? intval($filegold_arr[$key]) : 0,
-		            					'hide'		=>	isset($filehide_arr[$key]) ? intval($filehide_arr[$key]) : 0,
-		            					'mess'		=>	isset($filemess_arr[$key]) ? $filemess_arr[$key] : '',
-		            					
-		            				));
 		            			}
 
 		            		}
+		            		$i = 0;
+		            		
+		            		foreach($tmp_arr as $key => $v){
+		            			if($v['is_del']){//删除附件
+		            				$Fileinfo->delete(['fileid'=>$key]);
+		            				$Filegold->delete(['fileid'=>$key]);
+		            				$FileData = $File->read($key,['uid','md5name','filesize']);
+		            				if(!empty($FileData)){
+		            					//删除数据记录
+		            					$File->delete(['id'=>$key]);
+
+		            					//更新用户上传字节
+		            					$User->update([
+		            						'file_size[-]'=>$FileData['filesize']
+		            					],[
+		            						'uid'=>$FileData['uid']
+		            					]);
+
+		            					//文件路劲
+		            					$FilePath = INDEX_PATH . 'upload/userfile/' . $FileData['uid'] . '/' . $FileData['md5name'];
+		            					if(is_file($FilePath)){
+		            						unlink($FilePath);
+		            					}
+
+		            				}
+		            			}else{
+		            				$i++;
+		            				if($Fileinfo->has(['fileid'=>$key])){ //存在旧附件
+		            					$Fileinfo->update([
+		            						'tid'		=>	$v['tid'],
+		            						'gold'		=>	$v['gold'],
+		            						'hide'		=>	$v['hide'],
+		            						'downs'		=>	$v['downs'],
+		            						'mess'		=>	$v['mess']
+		            					],[
+		            						'fileid'	=>	$key
+		            					]);
+		            				}else{
+		            					$Fileinfo->insert([
+		            						'fileid'	=>	$key,
+		            						'tid'		=>	$v['tid'],
+		            						'uid'		=>	$v['uid'],
+		            						'gold'		=>	$v['gold'],
+		            						'hide'		=>	$v['hide'],
+		            						'downs'		=>	$v['downs'],
+		            						'mess'		=>	$v['mess']
+		            					]);
+		            				}
+		            			}
+		            		}
+		            		
+
+
+		            		
 		            		//{hook a_post_edit_43}
 		            		$Thread->update(['files'=>$i],['tid'=>$post_data['tid']]); //更新主题附件数量
 		            	}
 		            }else{ //清空附件
-	            		S("Fileinfo")->delete(['tid'=>$post_data['tid']]);
+		            	$FileinfoList = $Fileinfo->select('*',['tid'=>$post_data['tid']]);
+		            	if(empty($FileinfoList)) $FileinfoList=[];
+
+		            	foreach($FileinfoList as $v){
+		            		$Fileinfo->delete(['fileid'=>$v['fileid']]);
+		            		$Filegold->delete(['fileid'=>$v['fileid']]);
+            				$FileData = $File->read($v['fileid'],['uid','md5name','filesize']);
+            				if(!empty($FileData)){
+            					//删除数据记录
+            					$File->delete(['id'=>$v['fileid']]);
+
+            					//更新用户上传字节
+            					$User->update([
+            						'file_size[-]'=>$FileData['filesize']
+            					],[
+            						'uid'=>$FileData['uid']
+            					]);
+
+            					//文件路劲
+            					$FilePath = INDEX_PATH . 'upload/userfile/' . $FileData['uid'] . '/' . $FileData['md5name'];
+            					if(is_file($FilePath)){
+            						unlink($FilePath);
+            					}
+
+            				}
+		            	}
+
+	            		
 	            		$Thread->update(['files'=>0],['tid'=>$post_data['tid']]); //更新主题附件数量
 
 	            	}
@@ -826,6 +932,7 @@ class Post extends HYBBS {
 		            $this->CacheObj->rm("post_list_{$post_data['tid']}_DESC_{$i}");
 		            $this->CacheObj->rm("post_list_{$post_data['tid']}_ASC_{$i}");
 		        }
+		        $this->CacheObj->rm('post_data_'.$post_data['pid']);
 			}
 			//{hook a_post_edit_4}
 			//修改评论内容
@@ -982,18 +1089,18 @@ class Post extends HYBBS {
         $Post = M("Post");
 
 		//获取 评论数据
-        $p_data = $Post->read($pid);
+        $post_data = $Post->read($pid);
         if(empty($p_data))
             return $this->json(array('error'=>false,'info'=>'不存在此评论'));
         //{hook a_post_del_3}
 		//获取 评论的板块ID
-		$fid = $p_data['fid'];
+		$fid = $post_data['fid'];
 
 		//{hook a_post_del_4}
         //用户组不是 管理员 &&  用户不是文章作者
         if(
 			(NOW_GID != C("ADMIN_GROUP")) &&
-			(NOW_UID != $p_data['uid']) &&
+			(NOW_UID != $post_data['uid']) &&
 			//array_search(NOW_UID,$arr) === false
 			!is_forumg($this->_forum,NOW_UID,$fid)
 		)
@@ -1003,9 +1110,9 @@ class Post extends HYBBS {
         $Post->del($pid);
         //主题评论数-1
 		$Thread = M('Thread');
-		$Thread->update_int($p_data['tid'],'posts','-');
+		$Thread->update_int($post_data['tid'],'posts','-');
 		//帖子作者-1
-		M("User")->update_int($p_data['uid'],'posts','-');
+		M("User")->update_int($post_data['uid'],'posts','-');
 		//更新缓存
 		$this->_forum[$fid]['posts']--;
 		$this->CacheObj->forum = $this->_forum;
@@ -1014,15 +1121,16 @@ class Post extends HYBBS {
 
 		
         M("Chat")->sys_send(
-            $p_data['uid'],
-            '你的评论被删除 所在主题<a href="'.HYBBS_URLA('thread',$p_data['tid']).'" target="_blank">['.M('Thread')->get_title($p_data['tid']).']</a> 操作者:'.NOW_USER
+            $post_data['uid'],
+            '你的评论被删除 所在主题<a href="'.HYBBS_URLA('thread',$post_data['tid']).'" target="_blank">['.M('Thread')->get_title($post_data['tid']).']</a> 操作者:'.NOW_USER
         );
-        $tid = $p_data['tid'];
+        $tid = $post_data['tid'];
         $count = intval(($Thread->get_row($tid,'posts') /  $this->conf['postlist']) + 1)+1;
         for ($i=0; $i < $count; $i++) {
             $this->CacheObj->rm("post_list_{$tid}_DESC_{$i}");
             $this->CacheObj->rm("post_list_{$tid}_ASC_{$i}");
         }
+        $this->CacheObj->rm("post_data_".$post_data['pid']);
 
 		//{hook a_post_del_5}
         return $this->json(array('error'=>true,'info'=>'删除成功'));
