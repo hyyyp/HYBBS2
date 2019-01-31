@@ -1406,3 +1406,13 @@ margin: 14px auto 0 auto;
 line-height: 18px;
 width: 252px;
 }
+.quote-avatar {
+    width: 33px;
+    height: 33px;
+}
+.quote-user{
+    font-size: 12px
+}
+.quote-time{
+    font-size: 12px 
+}
