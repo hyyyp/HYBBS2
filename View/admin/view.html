@@ -324,7 +324,12 @@
                             <div class="owl-carousel no-controls owl-theme owl-loaded">
                                 <div class="owl-stage-outer owl-height" style="padding-left: 0px; padding-right: 0px;height: 200px;overflow: hidden; ">
                                
-                                <span style="background:url('{#WWW}View/{$v}/back.png');display: inline-block;width: 100%;height: 100%;background-position: center 0;background-repeat: no-repeat;background-size: cover;-webkit-background-size: cover;-o-background-size: cover;background-color: #404040;">
+                                <span style="background:url('{#WWW}View/{$v}/back.png');display: inline-block;width: 100%;height: 100%;background-position: center 0;background-repeat: no-repeat;background-size: cover;-webkit-background-size: cover;-o-background-size: cover;background-color: #404040;position: relative;">
+                                    {if is_file(VIEW_PATH . $v . '/conf.html')}
+                                    <a class="label label-warning" style="position: absolute;right: 10px;bottom: 10px;padding: 7px 10px;font-size: 14px;" href="{php HYBBS_URL('admin','view',['op'=>$v])}">
+                                        <i class="fa fa-cog"></i> 配置
+                                    </a>
+                                    {/if}
                                     
                                 </span>
                                     <!-- <img src="{#WWW}View/{$v}/back.png"> -->
@@ -333,13 +338,13 @@
                         </div>
                         <div class="panel-footer bg-white">
                             
-                            <div class="h3 text-success">
+                            <div class="h3 text-success" style="min-height: 52px;max-height: 52px;overflow: hidden;">
                                 {$qj[$key]['name']} - {$v} 
                             </div>
                             <span class=" block" style="color: purple;font-size:14px">
                                 作者:{$qj[$key]['user']} <span style="color: darkcyan;">版本:{$qj[$key]['version']}</span>
                             </span>
-                            <span class=" block" style="margin-top:5px">
+                            <span class=" block" style="margin-top:5px;min-height: 44px;max-height: 44px;overflow: hidden;">
                                 {$qj[$key]['mess']}
                             </span>
                             {if $qj[$key]['code']}
@@ -355,30 +360,29 @@
                             {/if}
                             <hr>
                             <div class="clearfix">
-                                <div class="btn-group marginTB-xs">
-                                    <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
-                                        将模板应用为 <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu" role="menu">
-                                        <li><a href="{php HYBBS_URL('admin','view',['edit'=>$v,'type'=>'pc'])}">电脑端模板</a></li>
-                                        <li class="divider"></li>
-                                        <li><a href="{php HYBBS_URL('admin','view',['edit'=>$v,'type'=>'wap'])}">移动端模板</a></li>
-                                        
-                                    </ul>
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                            应用为 <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li><a href="{php HYBBS_URL('admin','view',['edit'=>$v,'type'=>'pc'])}">电脑端模板</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="{php HYBBS_URL('admin','view',['edit'=>$v,'type'=>'wap'])}">移动端模板</a></li>
+                                            
+                                        </ul>
+                                    </div>
+                                    {if $conf['theme'] == $v}
+                                    <a class="btn btn-danger disabled" disabled>
+                                        <i class="fa fa-tv fa-lg"></i> 已用于电脑端
+                                    </a>
+                                    {/if}
+                                    {if $conf['wapview'] == $v}
+                                    <a class="btn btn-danger disabled" disabled>
+                                        <i class="fa fa-mobile  fa-lg"></i> 已用于移动端
+                                    </a>
+                                    {/if}
                                 </div>
-                                {if $conf['theme'] == $v}
-                                <a class="btn btn-danger disabled" disabled>
-                                    <i class="fa fa-tv fa-lg"></i> 已启用为电脑端
-                                </a>
-                                {/if}
-                                {if $conf['wapview'] == $v}
-                                <a class="btn btn-danger disabled" disabled>
-                                    <i class="fa fa-mobile  fa-lg"></i> 已启用为移动端
-                                </a>
-                                {/if}
-
-
-                                {if is_file(VIEW_PATH . $v . '/conf.html')}<a class="btn btn-warning" href="{php HYBBS_URL('admin','view',['op'=>$v])}">配置</a>{/if}
                           
                             </div>
                         </div>
