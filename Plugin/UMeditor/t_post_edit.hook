@@ -1,7 +1,9 @@
 <?php $eidt_inc = get_plugin_inc('UMeditor');?>
 {if $data['isthread']}
+{hook p_simditor_post_eidt_2}
 <?php $fid = $thread_data['fid']; ?>
 <style type="text/css">
+{hook p_simditor_post_eidt_3}
 .select-forum{
   position: relative;
     width: 150px;
@@ -203,10 +205,11 @@ $(function(){
     <input type="text" id="title" class="hy-text " value="{$thread_data.title}" placeholder="请填写标题">
   </div>
 </div>
-
+{hook p_simditor_post_eidt_4}
 {/if}
+{hook p_simditor_post_eidt_5}
 <label>编辑内容 <span></span></label>
-
+{hook p_simditor_post_eidt_6}
 <script id="container" name="content" type="text/plain">{php echo ($data['content'])}</script>
 
 
@@ -218,7 +221,7 @@ $(function(){
     <span class="grey">|</span>
      <label for="thread-gold"> 付费：</label> <input type="text" id="tgold" style="width:60px" value="{$thread_data['gold']}">
 </div>
-
+{hook p_simditor_post_eidt_7}
 <div class="uploadifybox" >
 <label for="file" style="display:block">上传附件</label>
 <div id="file_upload"></div>
@@ -258,6 +261,7 @@ $(function(){
     </table>
 </form>
 </div>
+{hook p_simditor_post_eidt_8}
 <script type="text/javascript">
         <?php $timestamp = time();?>
         $(function() {
@@ -303,6 +307,7 @@ $(function(){
 {/if}
 {hook p_simditor_post_eidt_1}
 <button type="button" class="btn btn-primary" id="post1"><i class="am-icon-check"></i> 提交编辑</button>
+{hook p_simditor_post_eidt_9}
 <link href="{#WWW}Plugin/UMeditor/uploadify.css" type="text/css" rel="stylesheet">
 <script type="text/javascript" src="{#WWW}Plugin/UMeditor/jquery.Huploadify.js"></script>
 <style>
@@ -380,6 +385,7 @@ var edit_bool = function(){};
         $(".filehide").each(function(e){
             filehide+=($(this).is(':checked')?'1':0)+'||';
         });
+        {hook p_simditor_post_eidt_10}
         {/if}
 
         $.ajax({
@@ -398,6 +404,7 @@ var edit_bool = function(){};
 
              thide:($("#thread-hide").is(':checked')?1:0),
              tgold:$("#tgold").val(),
+             {hook p_simditor_post_eidt_11}
         {/if}
              content:ue.getContent(),
              {hook p_simditor_post_eidt_data}
@@ -408,22 +415,25 @@ var edit_bool = function(){};
             _obj.removeAttr('disabled');
             _obj.text("提交编辑");
         }
-
+        {hook p_simditor_post_eidt_12}
 
          swal(e.error?"修改成功":"修改失败", e.info, e.error?"success": "error");
-
+         {hook p_simditor_post_eidt_13}
          if(e.error){
-          
+            {hook p_simditor_post_eidt_14}
              setTimeout(function(){
                  window.location.href="{php HYBBS_URL('thread',$data['tid']);}";
              },1000);
+             {hook p_simditor_post_eidt_15}
          }
 
 
        }, function() {
+        {hook p_simditor_post_eidt_16}
         _obj.removeAttr('disabled');
             _obj.text("提交编辑");
          swal("失败", "请尝试重新提交", "error");
+         {hook p_simditor_post_eidt_17}
        });
     })
 })
