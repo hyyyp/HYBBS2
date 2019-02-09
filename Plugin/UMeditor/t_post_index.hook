@@ -2,6 +2,7 @@
 
 {if $eidt_inc['thread'] == 1}
 <style type="text/css">
+{hook p_simditor_post_index_2}
 .select-forum{
   position: relative;
     width: 150px;
@@ -116,7 +117,7 @@ function select_forum($v,$forum){
 <div style="position: relative;display: table;border-collapse: separate;width: 100%;">
   <div style="display: table-cell;width: 150px;">
   <label>文章分类 <span></span></label>
-  
+  {hook p_simditor_post_index_3}
   <div class="select-forum">
   <button onclick="open_select_forum()" id="forum" type="text" class="select-forum-input hy-text" style="width:150px;margin-bottom:10px;text-align: left;cursor:pointer">选择分类</button>
   <div class="select-forum-ul">
@@ -203,7 +204,7 @@ $(function(){
     <input type="text" id="title" class="hy-text " placeholder="请填写标题">
   </div>
 </div>
-
+{hook p_simditor_post_index_4}
 <label>文章内容 <span></span></label>
 <!-- 加载编辑器的容器 -->
 <script id="container" name="content" type="text/plain"></script>
@@ -212,8 +213,9 @@ $(function(){
     <input type="checkbox" id="thread-hide"> <label for="thread-hide"> 需要回复可见</label>
     <span class="grey">|</span>
      <label for="thread-gold"> 付费：</label> <input type="text" id="tgold" style="width:60px">
+      {hook p_simditor_post_index_5}
 </div>
-
+{hook p_simditor_post_index_6}
 <div class="uploadifybox" >
 <label for="file" style="display:block">上传附件</label>
 <div id="file_upload"></div>
@@ -233,6 +235,7 @@ $(function(){
     </table>
 </form>
 </div>
+{hook p_simditor_post_index_7}
 <script type="text/javascript">
     
         $(function() {
@@ -378,14 +381,18 @@ $(function(){
             window.location.href="{php HYBBS_URL('thread','','',EXP)}"+e.id + "{#EXT}";
              
          }else{
+            {hook p_simditor_post_index_8}
             _obj.removeAttr('disabled');
             _obj.text("发 表");
             swal(e.error?"发表成功":"发表失败", e.info, e.error?"success": "error");
+            {hook p_simditor_post_index_9}
          }
        }, function() {
+        {hook p_simditor_post_index_10}
           _obj.removeAttr('disabled');
           _obj.text("发 表");
          swal("失败", "请尝试重新提交", "error");
+         {hook p_simditor_post_index_11}
        });
     })
 })
