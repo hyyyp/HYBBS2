@@ -32,9 +32,9 @@ class HYBBS extends Action {
             C("DEBUG_PAGE",true);
 
         if(!C('TMP_PATH_KEY'))
-            C('TMP_PATH_KEY') = C('1234567890');
+            C('TMP_PATH_KEY',C('MD5_KEY'));
         if(!C('TMP_PATH_PREFIX'))
-            C('TMP_PATH_PREFIX') = C('1234567890');
+            C('TMP_PATH_PREFIX',C('MD5_KEY'));
         
   
         //跳转安装
