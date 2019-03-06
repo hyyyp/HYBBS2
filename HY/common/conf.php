@@ -18,6 +18,9 @@ return array(
 	'lang_switch_on'	=>	false,
 	'lang_var'			=>	'lang',
 
+	'TMP_PATH_KEY'		=>	'',
+	'TMP_PATH_PREFIX'	=>	'',
+
 
 	//缓存类
 	

@@ -497,7 +497,9 @@ if($gn == 3){
             'http://127.0.0.1',
             'sql_typee',
             '1234567890',
-            'SQL_STORAGE_ENGINE_VALUE'
+            'SQL_STORAGE_ENGINE_VALUE',
+            'TMP_PATH_KEY_VALUE',
+            'TMP_PATH_PREFIX_VALUE',
           ),
           array(
             X("post.name"),
@@ -508,7 +510,10 @@ if($gn == 3){
             trim(X("post.www"),'/'),
             X("post.sqltype"),
             $str,
-            $table_type
+            $table_type,
+            rand_str(16),
+            rand_str(8),
+
 
           ),$content
         );

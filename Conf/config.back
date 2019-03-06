@@ -58,6 +58,9 @@ return array(
     'ADMIN_GROUP' =>1,
     'lang_switch_on'=>true,
 
+    'TMP_PATH_KEY'      =>  'TMP_PATH_KEY_VALUE',
+    'TMP_PATH_PREFIX'   =>  'TMP_PATH_PREFIX_VALUE',
+
 
 
 
