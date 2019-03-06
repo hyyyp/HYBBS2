@@ -1,0 +1,3 @@
+<?php
+//000000000060a:17:{s:3:"pid";s:3:"204";s:3:"tid";s:2:"93";s:3:"fid";s:1:"3";s:3:"uid";s:1:"4";s:4:"rpid";s:3:"203";s:8:"isthread";s:1:"0";s:7:"content";s:18:"<p>qweweqw1111</p>";s:5:"atime";s:10:"1548136313";s:5:"etime";s:10:"1548853776";s:5:"goods";s:1:"0";s:3:"nos";s:1:"0";s:5:"posts";s:1:"0";s:9:"client_ip";s:1:"0";s:4:"user";s:6:"admin1";s:9:"atime_str";s:10:"1个月前";s:3:"key";i:8;s:6:"avatar";a:3:{s:1:"a";s:22:"public/images/user.gif";s:1:"b";s:22:"public/images/user.gif";s:1:"c";s:22:"public/images/user.gif";}}
+?>

@@ -52,7 +52,7 @@ class File extends Cache {
     private function filename($name) {
         $name	=	md5(C('DATA_CACHE_KEY').$name.C('TMP_PATH_KEY'));
         
-        $filename	=	$this->options['prefix'].C('TMP_PATH_PREFIX').$name.'.php';
+        $filename	=	$this->options['prefix'].C('TMP_PATH_PREFIX').$name.'.cache';
         
         return $this->options['temp'].$filename;
     }
