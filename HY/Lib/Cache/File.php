@@ -72,7 +72,8 @@ class File extends Cache {
         }
         $content    =   file_get_contents($filename);
         if( false !== $content) {
-            $expire  =  (int)substr($content,8, 12);
+            $expire  =  (int)substr($content,0, 12);
+            
             if($expire != 0 && time() > filemtime($filename) + $expire) {
                 //缓存过期删除缓存文件
                 if(is_file($filename));
@@ -80,13 +81,15 @@ class File extends Cache {
                 return false;
             }
             
-            $content   =  substr($content,20, -3);
+            $content   =  substr($content,12);
+            
             
             if(C('DATA_CACHE_COMPRESS') && function_exists('gzuncompress')) {
                 //启用数据压缩
                 $content   =   gzuncompress($content);
             }
             $content    =   unserialize($content);
+            
             return $content;
         }
         else {
@@ -116,7 +119,7 @@ class File extends Cache {
         
         $check  =  '';
         
-        $data    = "<?php\n//".sprintf('%012d',$expire).$check.$data."\n?>";
+        $data    = sprintf('%012d',$expire).$check.$data;
         $result  =   file_put_contents($filename,$data);
         if($result) {
             clearstatcache();
