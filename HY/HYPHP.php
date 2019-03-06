@@ -15,7 +15,7 @@
 //----------------------------------
 
 //框架版本
-define('HYPHP_VERSION','2.5');
+define('HYPHP_VERSION','2.6');
 
 //开始记录运行时间，运行内存
 $GLOBALS['START_TIME'] = microtime(TRUE);
