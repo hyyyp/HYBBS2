@@ -137,7 +137,8 @@ function jump_post(obj){
 
     $('.rep-user').text(user);
     $('.rep-time').text(time);
-    $('.rep-avatar').text(avatar);
+    $('.rep-avatar').attr('src',avatar);
+    
     $('.rep-content').html(content.html());
 
     $('.rep-box').show();
