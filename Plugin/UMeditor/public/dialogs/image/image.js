@@ -200,7 +200,7 @@
                 input = input[0];
 
             $(me.dialog).delegate( ".edui-image-file", "change", function ( e ) {
-				if (window.applicationCache) {//判断HTML5
+				if (typeof(Worker) !== "undefined") {//判断HTML5
 					var fileList = document.getElementById('um_up').files;
 					$.each(fileList, function (i, f) {
 								
