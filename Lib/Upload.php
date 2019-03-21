@@ -304,6 +304,11 @@ class Upload {
         if(isset($finfo)){
             finfo_close($finfo);
         }
+        if(!empty($info)){
+            if(count($info) == 1 && isset($info[0])){
+                $info[$info[0]['key']] = $info[0];
+            }
+        }
         return empty($info) ? false : $info;
     }
 
