@@ -30,7 +30,9 @@ class Usergroup extends Model {
         $usergroup = array();
         //{hook m_usergroup_format_3}
         foreach ($tmp as $k => $v) {
+            $v['font_css']=str_replace("\n", '', $v['font_css']);
             $usergroup[intval($v['gid'])] = $v;
+
         }
     }
     //检测升级
