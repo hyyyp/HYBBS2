@@ -4,7 +4,7 @@ use HY\Action;
 !defined('HY_PATH') && exit('HY_PATH not defined.');
 class Search extends HYBBS {
     public function __construct() {
-		parent::__construct();
+        parent::__construct();
         //{hook a_search_init}
         $this->view = IS_MOBILE ? $this->conf['wap_search'] : $this->conf['pc_search'];
         //{hook a_search_init_1}
@@ -22,16 +22,11 @@ class Search extends HYBBS {
         $key = htmlspecialchars($key);
         $this->v("key",$key);
         $this->v("search_key",$key);
-
         
-
-
         //{hook a_search_index_1}
         $this->v('title',$key.' 搜索');
-
         //分页ID
         $pageid=intval(X('get.pageid')) or $pageid=1;
-
         $user_list =array();
         $forum_list = array();
         if($pageid == 1){
@@ -42,16 +37,12 @@ class Search extends HYBBS {
                     $v['avatar'] = $this->avatar($v['user']);
                 }
             }
-
             $forum_list = (array)S('Forum')->select(array('name','id'),array('name[~]'=>$key,'LIMIT'=>10));
-
         }
         $this->v('user_list',$user_list);
         $this->v('forum_list',$forum_list);
-
         $type = intval(X('get.type'));
         $this->v("type",$type);
-
         if(mb_strlen($key) < $this->conf['search_key_size']){
             $this->v("pageid",$pageid);
             $this->v("page_count",0);
@@ -78,6 +69,7 @@ class Search extends HYBBS {
                     'thread.hide',
                     'thread.gold',
                     'post.content',
+                    'thread.posts',
                     'thread.goods',
                     'thread.nos',
                     'thread.views',
@@ -97,7 +89,6 @@ class Search extends HYBBS {
                     "LIMIT" => array(($pageid-1) * $this->conf['searchlist'], $this->conf['searchlist'])
                 )
             );
-
             $page_count = $Thread->count(
                 array(
                     "[>]post" => array( "pid" => "pid"), //thread.pid == post.pid
@@ -128,20 +119,13 @@ class Search extends HYBBS {
             $this->v('message','没有搜索到相关内容');
             $data=array();
         }
-
-
-
-
-
         //$Thread->format($data);
         //{hook a_search_index_3}
         $t=$key;
-
         $tmp_avatar = 'public/images/user.gif';
         foreach ($data as $i => &$v) {
             $v['title'] = preg_replace("/({$key})/is",'<font color="red">$1</font>',$v['title']);
             $tmp = strip_tags($v['content']);
-
             if((empty($tmp) || stripos($tmp, $key) === false) && stripos($v['title'], $key) === false){
                 unset($data[$i]);
                 continue;
@@ -154,8 +138,6 @@ class Search extends HYBBS {
             
             if(empty($tmp))
                 $tmp = '...';
-
-
             if(mb_strlen($tmp) > 120){
                 $length = mb_strpos($tmp,$key);
                 $v['content'] = mb_substr($tmp, $length, 120) . '...';
@@ -168,7 +150,6 @@ class Search extends HYBBS {
             
             
         }
-
         //{hook a_search_index_v}
         $this->v("pageid",$pageid);
         $this->v("page_count",$page_count);
