@@ -28,16 +28,17 @@ class Admin extends HYBBS {
             $this->login();
             exit();
         }
-        /*$url1 = X("server.HTTP_REFERER");
-        $reg = '/\/\/([^\/]+)/i';  
-        preg_match($reg, $url1,$res1);
-        preg_match($reg, WWW,$res2);
-
+        if(IS_POST){ //过滤CSRF POST提交
+            $url1 = X("server.HTTP_REFERER");
+            $reg = '/\/\/([^\/]+)/i';  
+            preg_match($reg, $url1,$res1);
+            preg_match($reg, WWW,$res2);
+            if(!isset($res1[1]) || !isset($res2[1]))
+                return $this->out();
+            if($res1[1] != $res2[1])
+                return $this->out();
+        }
         
-        if(!isset($res1[1]) || !isset($res2[1]))
-            return $this->out();
-        if($res1[1] != $res2[1])
-            return $this->out();*/
         
 
         $this->menu_action = array(
@@ -132,21 +133,11 @@ class Admin extends HYBBS {
 
     }
     public function forum_group(){
-
         $Forum = S("Forum");
         $Forum_group = S("Forum_group");
-        if(IS_GET){
-            $id = X("get.del");
-            //if($Forum->has(array('fgid'=>$id)))
-                //return $this->mess("无法删除该分组. 因为该分组下 还有板块分类. 你需要将他们移动到其他分组.");
-            if(!empty($id)){
-                $Forum_group->delete(array('id'=>$id));
-                header('Location: '.HYBBS_URLA('admin','forum_group'));
-            }
-        }
         if(IS_POST){
             $gn = X('post.gn');
-            if($gn == 'add'){
+            if($gn == 'add'){ //添加大分组
                 $fg_name = X("post.fg_name");
                 if(empty($fg_name))
                     return $this->mess("名称无法设置为空.");
@@ -155,7 +146,7 @@ class Admin extends HYBBS {
                 header('Location: '.HYBBS_URLA('admin','forum_group'));
                 exit;
             }
-            else if($gn == 'edit'){
+            else if($gn == 'edit'){ //编辑大分组
                 $fgid = X("post.fgid");
 
                 $edit_id = X("post.edit_id");
@@ -166,25 +157,24 @@ class Admin extends HYBBS {
                 }
                 header('Location: '.HYBBS_URLA('admin','forum_group'));
                 exit;
-            }else if($gn == 'move'){
+            }else if($gn == 'move'){ //移动分类到其他大分组
                 $fid = X("post.fid");
                 $move_fg = X("post.move_fg");
                 $Forum->update(array('fgid'=>$move_fg),array('id'=>$fid));
                 $this->CacheObj->forum = NULL;
                 header('Location: '.HYBBS_URLA('admin','forum_group'));
                 exit;
+            }else if($gn == 'del'){ //删除大分组
+                $id = X("post.id");
+                $Forum_group->delete(['id'=>$id]);
+                return $this->json(['error'=>true,'info'=>'删除成功']);
             }
             return $this->mess("缺少参数.");
             
         }
 
-        
-        
         $data = $Forum_group->select('*');
         $forum_data = $Forum->select('*');
-
-
-
 
         $this->v("data",$data);
         $this->v("forum_data",$forum_data);
@@ -192,10 +182,9 @@ class Admin extends HYBBS {
     }
     public function forum(){
         //{hook a_admin_forum_1}
-
+        $Forum = M("Forum");
         if(IS_POST){
-
-            $gn         = (X("post.gn"));
+            $gn         = X("post.gn");
             $id         = intval(X("post.id"));
             $name       = X("post.name");
             $name2      = X("post.name2");
@@ -203,18 +192,12 @@ class Admin extends HYBBS {
             $background = X("post.background");
             $html       = X("post.html");
             $fid        = intval(X("post.fid"));
-
             //{hook a_admin_forum_2}
-
-
             if(empty($gn))
                 return $this->mess("参数不完整");
-
-            $Forum = M("Forum");
             //删除缓存
             $this->CacheObj->rm('forum');
-            if($gn == '1') //添加分类
-            {
+            if($gn == 'add'){ //添加分类
                 if($Forum->has(array('id'=>$id)))
                     return $this->mess("该分类ID已存在");
                 $Forum->insert(array(
@@ -228,7 +211,7 @@ class Admin extends HYBBS {
                     )
                 );
                 return $this->mess("添加成功");
-            }elseif($gn == '2'){ //修改分类
+            }elseif($gn == 'edit'){ //修改分类
                 $iid = intval(X("post.iid")); //修改的分类ID
                 if($iid < 0 )
                     return $this->mess("参数不完整 Error = 22!");
@@ -264,13 +247,13 @@ class Admin extends HYBBS {
                 ),array('id'=>$iid));
 
                 return $this->mess("修改成功");
-            }elseif($gn == '3'){ //删除分类
+            }elseif($gn == 'del'){ //删除分类
                 
                 S("Thread")->delete(array('fid'=>$id));
                 S("Post")->delete(array('fid'=>$id));
                 $Forum->delete(array('id'=>$id));
                 
-                return $this->json(array('error'=>true,"info"=>'good'));
+                return $this->json(array('error'=>true,"info"=>'删除成功'));
             }else if($gn == 'move'){ //合并板块
                 $move_f1 = intval(X("post.move_f1"));
                 $move_f2 = intval(X("post.move_f2"));
@@ -293,7 +276,6 @@ class Admin extends HYBBS {
             return $this->mess("参数不完整 Error = 2");
         }else{
             //{hook a_admin_forum_3}
-            $Forum = S("Forum");
             $pageid=intval(X('get.pageid')) or $pageid=1;
 
             $data1 = $Forum->select("*");
@@ -321,8 +303,8 @@ class Admin extends HYBBS {
         $User = M('User');
         //{hook a_admin_user_1}
         if(IS_POST){
-            $gn = intval(X("post.gn"));
-            if($gn=='2'){ //添加用户
+            $gn = X("post.gn");
+            if($gn=='add'){ //添加用户
 
                 $user = X("post.user");
                 $pass = X("post.pass");
@@ -339,7 +321,7 @@ class Admin extends HYBBS {
                 //{hook a_admin_user_3}
                 return $this->mess("添加账号成功");
 
-            }elseif($gn=='3'){ //修改用户
+            }elseif($gn=='edit'){ //修改用户
                 $uid = intval(X("post.id"));
                 $user = X("post.user");
                 $pass = X("post.pass");
@@ -376,7 +358,7 @@ class Admin extends HYBBS {
                 //{hook a_admin_user_5}
                 return $this->mess("修改成功");
 
-            }elseif($gn == '4'){ //删除用户
+            }elseif($gn == 'del'){ //删除用户
                 //{hook a_admin_user_6}
                 $uid = intval(X("post.id"));
                 $User->delete(['uid'=>$uid]);
@@ -555,8 +537,8 @@ class Admin extends HYBBS {
             //删除缓存
             $this->CacheObj->rm('usergroup');
             //{hook a_admin_usergroup_3}
-            $gn = intval(X("post.gn"));
-            if($gn == 1){ //添加用户组
+            $gn = X("post.gn");
+            if($gn == 'add'){ //添加用户组
                 //{hook a_admin_usergroup_4}
                 S("Usergroup")->insert(array(
                     'gid'=>intval(X("post.id")),
@@ -581,7 +563,7 @@ class Admin extends HYBBS {
                 ));
                 return $this->mess("添加成功");
 
-            }elseif($gn == 2){ //修改用户组
+            }elseif($gn == 'edit'){ //修改用户组
                 //{hook a_admin_usergroup_5}
                 $font_css = trim(X('post.font_css'));
                 $font_css1 ='';
@@ -602,7 +584,7 @@ class Admin extends HYBBS {
                     'gid'=>intval(X("post.iid"))
                 ]);
                 return $this->mess("修改成功");
-            }elseif($gn == 3){ //编辑权限
+            }elseif($gn == 'edit_permission'){ //编辑权限
                 //{hook a_admin_usergroup_6}
                 $gid = intval(X("post.id"));
                 $type = X("post.type");
@@ -625,7 +607,7 @@ class Admin extends HYBBS {
                 return $this->json(array('error'=>true,'info'=>'修改成功'));
 
                 //print_r($data);
-            }elseif($gn == 4){ //删除用户组
+            }elseif($gn == 'del'){ //删除用户组
                 $gid = intval(X("post.id"));
                 $Usergroup = S("Usergroup");
                 $Usergroup->delete(['gid'=>$gid]);
@@ -655,8 +637,6 @@ class Admin extends HYBBS {
                     $Post_post = S('Post_post');
 
                     foreach ($tid_list as $tid) {
-                        
-                        
                         //删除附件
                         $FileinfoList = $Fileinfo->select('*',['tid'=>$tid]);
                         if(empty($FileinfoList)) $FileinfoList=[];
@@ -782,7 +762,6 @@ class Admin extends HYBBS {
         $Post = S('Post');
         if(IS_POST){
             $gn = X("post.gn");
-
             if($gn == 'del'){
                 $pid = X("post.id");
                 if(!empty($pid)){
@@ -983,69 +962,34 @@ class Admin extends HYBBS {
     }
     public function view(){
 
-        if(IS_POST && IS_AJAX){
-            $name = X("post.name");
-            $name2= X("post.name2");
-            $user = X("post.user");
-            $mess = X("post.mess");
-            $code = X("post.code");
-            if(empty($name) || empty($name2) || empty($mess))
-                return $this->json(array('error'=>false,'info'=>'参数不完整'));
+        if(IS_POST){ //生成模板目录
+            $gn = X('post.gn');
+            if($gn == 'create_view'){
+                $name = X("post.name");
+                $name2= X("post.name2");
+                $user = X("post.user");
+                $mess = X("post.mess");
+                $code = X("post.code");
+                if(empty($name) || empty($name2) || empty($mess))
+                    return $this->json(array('error'=>false,'info'=>'参数不完整'));
 
-            if(is_dir(VIEW_PATH . $name2))
-                return $this->json(array('error'=>false,'info'=>"英文名已经存在\r\n如果你想覆盖,请手动到目录中删除".$name2));
-            mkdir(VIEW_PATH . $name2);
-            file_put_contents(VIEW_PATH . $name2 . '/conf.php',"<?php
-return array(
-    'name' => '{$name}',
-    'user' => '{$user}',
-    'mess' => '{$mess}',
-    'code' => '{$code}',
-    'version' => '1.0',
-);");
+                if(is_dir(VIEW_PATH . $name2))
+                    return $this->json(array('error'=>false,'info'=>"英文名已经存在\r\n如果你想覆盖,请手动到目录中删除".$name2));
+                mkdir(VIEW_PATH . $name2);
+                file_put_contents(VIEW_PATH . $name2 . '/conf.php',"<?php
+    return array(
+        'name' => '{$name}',
+        'user' => '{$user}',
+        'mess' => '{$mess}',
+        'code' => '{$code}',
+        'version' => '1.0',
+    );");
 
 
-            return $this->json(array('error'=>true,'info'=>'建立成功'));
-        }
-
-        $edit = X("get.edit");
-        //{hook a_admin_view_1}
-        if(!empty($edit)){ //修改模板 更改模板 更换模板
-            $conf = $this->conf;
-            //if(is_file(CONF_PATH . 'conf.php'))
-                //$conf = file(CONF_PATH . 'conf.php');
-            //$arr = json_decode($conf[1],true);
-            
-
-            if(!is_dir(VIEW_PATH . $edit))
-                return $this->mess("修改失败,{$edit} :模板不存在");
-
-            
-            $type = X("get.type");
-            file_put_contents(VIEW_PATH . $edit . '/on','');
-            if($type =='pc'){
-                
-                $conf['theme']=$edit;
-            }else{
-
-                $conf['wapview']        = 
-                $conf['wapuserview']    =
-                $conf['wapuserview2']   =
-                $conf['wapmessview']    = $edit;
-                
-            }
-
-            $conf['title2'] = str_replace(" - Powered by HYBBS",'',$conf['title2']);
-            file_put_contents(CONF_PATH . 'conf.php' , "<?php die(); ?>\r\n".json_encode($conf));
-            del_cache_file($this->conf);
-            header('Location: '. HYBBS_URLA('admin','view'));
-            exit;
-        }
-        $op = X("get.op");
-        if(!empty($op)){
-
-            if(IS_POST){
+                return $this->json(array('error'=>true,'info'=>'建立成功'));
+            }else if($gn == 'op'){//提交模板配置
                 $json = array();
+                $op = X("get.op");
                 if(is_file(VIEW_PATH . "/{$op}/inc.php")){
                     $file = file(VIEW_PATH . "/{$op}/inc.php");
                     $json = isset($file[1]) ? json_decode($file[1],true) : array();
@@ -1056,15 +1000,42 @@ return array(
                     $json[$k] = $v;
                 }
                 put_tmp_file(VIEW_PATH . "/{$op}/inc.php",json_encode($json));
+            }else if($gn == 'apply'){
+                //{hook a_admin_view_1}
+                $theme = X('post.theme');
+                $conf = $this->conf;
+                if(!is_dir(VIEW_PATH . $theme))
+                    $this->json(array('error'=>false,'info'=>"修改失败,{$theme} :模板不存在"));
+                    
+                $type = X("post.type");
+                file_put_contents(VIEW_PATH . $theme . '/on','');
+                if($type =='pc'){
+                    
+                    $conf['theme']=$theme;
+                }else{
+
+                    $conf['wapview']        = 
+                    $conf['wapuserview']    =
+                    $conf['wapuserview2']   =
+                    $conf['wapmessview']    = $theme;
+                    
+                }
+
+                $conf['title2'] = str_replace(" - Powered by HYBBS",'',$conf['title2']);
+                file_put_contents(CONF_PATH . 'conf.php' , "<?php die(); ?>\r\n".json_encode($conf));
+                del_cache_file($this->conf);
+                $this->json(array('error'=>true,'info'=>"应用成果"));
             }
-
-
-            //echo VIEW_PATH . $op . '/conf.html';
             
-            
+        }
+
+        //显示模板配置
+        $op = X("get.op");
+        if(!empty($op)){
             $this->display("view_op");
             return;
         }
+        
         //{hook a_admin_view_2}
         $ml = array();
         $dh = opendir(VIEW_PATH);
@@ -1110,72 +1081,76 @@ return array(
     }
     public function viewol(){
         //下载
-        $down = X("post.down");
-        if(!empty($down)){
+        if(IS_POST){
+            $down = X("post.down");
+            $gn = X('post.gn');
+            if(!empty($down)){
 
-            $name = $down;
-            if(X("post.gn") == 'update'){
+                $name = $down;
+                if($gn == 'update'){
 
-                $inc = get_view_inc($name);
+                    $inc = get_view_inc($name);
 
-                if(!deldir(VIEW_PATH . $down,false,true))
-                    $this->json(array('error'=>false,'data'=>"无法删除旧模板,请手动删除" . VIEW_PATH . $down ));
-            }
-
-            if(is_dir(VIEW_PATH . $down))
-                $this->json(array('error'=>false,'data'=>'模板目录已有相同名称模板,如果你要重新下载,需要手动删除模板'));
-            $down_path = TMP_PATH . $down . '.zip';
-            if(is_file($down_path))
-                unlink($down_path);
-            if(is_file($down_path))
-                $this->json(array('error'=>false,'data'=>'下载模板,权限出现问题,无法删除旧压缩包,请检查目录权限'));
-            
-            $json = http_get_app(APP_WWW . 'json/get_down_path1',array('name'=>$name));
-
-            if(empty($json))
-                $this->json(array('error'=>false,'data'=>'访问远程服务器失败.'));
-            $json = json_decode($json,true);
-            if(!$json['error'])
-                $this->json(array('error'=>false,'data'=>$json['data']));
-            
-            $down = APP_WWW . 'app/' . $name . '/' .$json['data'];
-            //下载模板
-            http_down( $down_path, $down);
-            if(!is_file($down_path))
-                $this->json(array('error'=>true,'data'=>'没有下载到模板压缩包'));
-            
-            //解压模板
-            $zip = L("Zip");
-            $un_info = $zip->unzip($down_path, VIEW_PATH);
-            if($un_info !== true){
-                $this->json(array('error'=>false,'data'=>'模板解压失败，'.$un_info));
-            }
-
-            if(is_dir(VIEW_PATH . $name)){
-                if(is_file(VIEW_PATH . $name . '/on'))
-                    unlink(VIEW_PATH . $name . '/on');
-
-                
-                $inc1 = get_view_inc($name);
-                if(!empty($inc1) && !empty($inc)){
-
-                    foreach ($inc1 as $k => &$v) {
-                        if(isset($inc[$k])){
-                            if(!empty($inc[$k])){
-                                $v = $inc[$k];
-                            }
-                        }
-                        
-                    }
-
-
+                    if(!deldir(VIEW_PATH . $down,false,true))
+                        $this->json(array('error'=>false,'data'=>"无法删除旧模板,请手动删除" . VIEW_PATH . $down ));
                 }
-                put_tmp_file(VIEW_PATH . "{$name}/inc.php",json_encode($inc1));
 
-                $this->json(array('error'=>true,'data'=>'下载完成'));
-            }
+                if(is_dir(VIEW_PATH . $down))
+                    $this->json(array('error'=>false,'data'=>'模板目录已有相同名称模板,如果你要重新下载,需要手动删除模板'));
+                $down_path = TMP_PATH . $down . '.zip';
+                if(is_file($down_path))
+                    unlink($down_path);
+                if(is_file($down_path))
+                    $this->json(array('error'=>false,'data'=>'下载模板,权限出现问题,无法删除旧压缩包,请检查目录权限'));
                 
-            $this->json(array('error'=>true,'data'=>'模板解压失败'));
+                $json = http_get_app(APP_WWW . 'json/get_down_path1',array('name'=>$name));
+
+                if(empty($json))
+                    $this->json(array('error'=>false,'data'=>'访问远程服务器失败.'));
+                $json = json_decode($json,true);
+                if(!$json['error'])
+                    $this->json(array('error'=>false,'data'=>$json['data']));
+                
+                $down = APP_WWW . 'app/' . $name . '/' .$json['data'];
+                //下载模板
+                http_down( $down_path, $down);
+                if(!is_file($down_path))
+                    $this->json(array('error'=>true,'data'=>'没有下载到模板压缩包'));
+                
+                //解压模板
+                $zip = L("Zip");
+                $un_info = $zip->unzip($down_path, VIEW_PATH);
+                if($un_info !== true){
+                    $this->json(array('error'=>false,'data'=>'模板解压失败，'.$un_info));
+                }
+
+
+                if(is_dir(VIEW_PATH . $name)){
+                    if(is_file(VIEW_PATH . $name . '/on'))
+                        unlink(VIEW_PATH . $name . '/on');
+
+                    
+                    $inc1 = get_view_inc($name);
+                    if(!empty($inc1) && !empty($inc)){
+
+                        foreach ($inc1 as $k => &$v) {
+                            if(isset($inc[$k])){
+                                if(!empty($inc[$k])){
+                                    $v = $inc[$k];
+                                }
+                            }
+                            
+                        }
+
+
+                    }
+                    put_tmp_file(VIEW_PATH . "{$name}/inc.php",json_encode($inc1));
+
+                    $this->json(array('error'=>true,'data'=>'下载完成'));
+                }
+                    
+                $this->json(array('error'=>true,'data'=>'模板解压失败'));
+            }
         }
 
         $dh = opendir(VIEW_PATH);
@@ -1395,7 +1370,7 @@ return array(
 
             file_put_contents(CONF_PATH . 'conf.php' , "<?php die(); ?>\r\n".json_encode($this->conf));
             $this->json(array('error'=>true,'info'=>'修改配置成功'));
-        }
+        }//END IF
         //{hook a_admin_op_v}
 
         $this->conf['title2'] = str_replace(" - Powered by HYBBS",'',$this->conf['title2']);
@@ -1408,7 +1383,6 @@ return array(
 
         if(IS_POST){ // 下载压缩包
             $name = X("post.name");
-
             $gn = X("post.gn");
 
             if($gn == 'get_down'){
@@ -1426,9 +1400,6 @@ return array(
 
             //}
             //$this->json(array('error'=>false,'data'=>''));
-
-
-
 
             $on = false; //是否已经开始
             $install = false; //是否已经安装
@@ -1530,47 +1501,51 @@ return array(
         $this->display('codeol');
 
     }
+    //上传、更新插件压缩包
     public function update_code(){
-        $upload = new \Lib\Upload();// 实例化上传类
-        $upload->maxSize   =  0;// 设置附件上传大小 
+        if(IS_POST){
+            $upload = new \Lib\Upload();// 实例化上传类
+            $upload->maxSize   =  0;// 设置附件上传大小 
 
-        $upload->exts      =    array('zip');// 设置图片上传类型
-        $upload->rootPath  =    TMP_PATH; // 设置图片上传根目录
-        $upload->autoSub    =   false;
-        $info   =   $upload->upload();
-        if($info){
-            $file_path = TMP_PATH . $info['photo']['savename'];
-            $zip = L("Zip");
-            $zip->unzip($file_path, PLUGIN_PATH);
-            $this->json(array('error'=>true));
+            $upload->exts      =    array('zip');// 设置图片上传类型
+            $upload->rootPath  =    TMP_PATH; // 设置图片上传根目录
+            $upload->autoSub    =   false;
+            $info   =   $upload->upload();
+            if($info){
+                $file_path = TMP_PATH . $info['photo']['savename'];
+                $zip = L("Zip");
+                $zip->unzip($file_path, PLUGIN_PATH);
+                $this->json(array('error'=>true));
+            }
         }
         $this->json(array('error'=>true,'data'=>$upload->getError()));
         
     }
-    //上传模板
+    //上传、更新模板压缩包
     public function update_view(){
-        $upload = new \Lib\Upload();// 实例化上传类
-        $upload->maxSize   =  0;// 设置附件上传大小 
+        if(IS_POST){
+            $upload = new \Lib\Upload();// 实例化上传类
+            $upload->maxSize   =  0;// 设置附件上传大小 
 
-        $upload->exts      =    array('zip');// 设置图片上传类型
-        $upload->rootPath  =    TMP_PATH; // 设置图片上传根目录
-        $upload->autoSub    =   false;
-        $info   =   $upload->upload();
-        if($info){
-            $file_path = TMP_PATH . $info['photo']['savename'];
-            $zip = L("Zip");
-            $zip->unzip($file_path, VIEW_PATH);
-            $this->json(array('error'=>true));
-        }
-        $this->json(array('error'=>true,'data'=>$upload->getError()));
-        
+            $upload->exts      =    array('zip');// 设置图片上传类型
+            $upload->rootPath  =    TMP_PATH; // 设置图片上传根目录
+            $upload->autoSub    =   false;
+            $info   =   $upload->upload();
+            if($info){
+                $file_path = TMP_PATH . $info['photo']['savename'];
+                $zip = L("Zip");
+                $zip->unzip($file_path, VIEW_PATH);
+                $this->json(array('error'=>true));
+            }
+            $this->json(array('error'=>true,'data'=>$upload->getError()));
+        }            
     }
     public function code(){
 
-        if(IS_POST && (!IS_AJAX || X("post.gn") == 'op')){ //修改插件配置
+        if(IS_POST){
             $name = X("post.name");
             $gn = X("post.gn");
-            if($gn == 'op'){
+            if($gn == 'op'){//修改插件配置
                 if(!is_file(PLUGIN_PATH . "/{$name}/inc.php"))
                     return $this->mess("这个插件没有配置功能");
 
@@ -1583,7 +1558,7 @@ return array(
 
                 put_tmp_file(PLUGIN_PATH . "/{$name}/inc.php",json_encode($json));
                 $this->json(array('error'=>true));
-            }elseif($gn == 'install'){ //安装插件
+            }elseif($gn == 'install'){ //安装插件 执行安装函数
                 $path = PLUGIN_PATH . "/{$name}/function.php";
                 if(!is_file($path))
                     return $this->mess('这个插件 没有安装功能');
@@ -1605,7 +1580,7 @@ return array(
 
 
  
-            }elseif($gn == 'uninstall'){ //卸载插件
+            }elseif($gn == 'uninstall'){ //卸载插件 执行卸载函数
                 $path = PLUGIN_PATH . "/{$name}/function.php";
                 if(!is_file($path))
                     return $this->mess('这个插件 没有安装功能');
@@ -1626,20 +1601,18 @@ return array(
                     else
                         return $this->mess('卸载失败.无具体原因');
                 }
-            }elseif($gn == 'del'){ //删除插件
+            }elseif($gn == 'del'){ //删除插件 删除插件目录
                 deldir(PLUGIN_PATH . "{$name}",false,true);
                 del_cache_file($this->conf);
                 return $this->mess('删除成功');
-            }elseif($gn == 'add'){ //添加插件
-                $name = X("post.name"); //插件名
-                $name2= X("post.name2"); //插件英文名
-                $user = X("post.user"); //作者
-                $icon = X("post.icon"); //fa图标
-
-                $mess = X("post.mess"); //插件描述
-
-                $inc = X("post.inc"); //是否开启配置功能
-                $fun = X("post.fun"); //是否支持函数
+            }elseif($gn == 'add'){ //添加插件 建立插件目录
+                $name   = X("post.name"); //插件名
+                $name2  = X("post.name2"); //插件英文名
+                $user   = X("post.user"); //作者
+                $icon   = X("post.icon"); //fa图标
+                $mess   = X("post.mess"); //插件描述
+                $inc    = X("post.inc"); //是否开启配置功能
+                $fun    = X("post.fun"); //是否支持函数
 
                 if(is_dir(PLUGIN_PATH . $name2))
                     return $this->mess("已存在相同英文名的插件");
@@ -1668,35 +1641,36 @@ function plugin_uninstall(){
                 }
 
                 return $this->mess("插件建立成功,请打开" . PLUGIN_PATH . $name2 . '进行开发吧');
-            }
-            if(IS_AJAX)
-                $this->json(array('error'=>false));
-            return $this->mess("未知参数1");
-
-
-        }
-
-        if(IS_AJAX){
-            $update = X("post.update");
-            $state = X("post.state");
-            $name = X("get.name");
-            $gn = X("get.gn");
-
-            if(!empty($update)){ //插件开关
+            }elseif($gn == 'apply_code'){
+                $name = X("post.name");
+                $state = X("post.state");
 
                 if($state == 'on'){
-                    if(is_file(PLUGIN_PATH . $update . '/on'))
-                        unlink(PLUGIN_PATH . $update . '/on');
+                    if(is_file(PLUGIN_PATH . $name . '/on'))
+                        unlink(PLUGIN_PATH . $name . '/on');
                 }
                 else{
-                    file_put_contents(PLUGIN_PATH . $update . '/on','');
+                    file_put_contents(PLUGIN_PATH . $name . '/on','');
                 }
 
 
                 del_cache_file($this->conf);
                 
                 $this->json(array('error'=>true,'info'=>'修改成功'));
-            }elseif(!empty($name)){ //加载插件配置
+            }
+            if(IS_AJAX)
+                $this->json(array('error'=>false,'info'=>'缺少参数，提交无效'));
+            return $this->mess("未知参数1");
+
+
+        }
+
+        if(IS_AJAX){
+            
+            $name = X("get.name");
+            $gn = X("get.gn");
+
+            if(!empty($name)){ //加载插件配置
                 if($gn == 'op'){ // 显示插件配置模板
                     $conf = PLUGIN_PATH . "/{$name}/conf.html";
                     if(!is_file($conf))
@@ -1782,6 +1756,7 @@ function plugin_uninstall(){
             
         }
     }
+    //插件优先级
     public function code_op(){
         if(IS_POST){
             $hook = X("post.hook");
@@ -1797,8 +1772,6 @@ function plugin_uninstall(){
 
             $json[$hook] = $value;
             
-
-
             put_tmp_file(PLUGIN_PATH . "{$code}/p.php",json_encode($json));
             $this->json(array('error'=>true));
         }
@@ -1887,7 +1860,7 @@ function plugin_uninstall(){
 
             }
         }
-        if(IS_AJAX){
+        if(IS_AJAX){ //显示版主编辑模板
             $id = X("get.id");
             $gn = X("get.gn");
 
@@ -1927,39 +1900,8 @@ function plugin_uninstall(){
                 $v['user'][]=$User->uid_to_user(intval($vv));
 
             }
-            //$v['user'] = $user;
             unset($tmp);
         }
-        /*$Usergroup = M("Usergroup");
-        foreach ($data as &$v) {
-            $arr = json_decode($v['json'],true);
-            $v['jsonarr'] = array(
-                "vforum"=>array(),
-                'vthread'=>array(),
-                'thread'=>array(),
-                'post'=>array(),
-                'downfile'=>array(),
-            );
-
-            if(is_array($arr)){
-                foreach ($arr as $key=>$value) {
-                    $v['jsonarr']["$key"]=array();
-                    //分割 json
-                    $tmp = explode(",",$arr["$key"]);
-                    if(!count($tmp))
-                        continue;
-
-                    foreach ($tmp as $vv) {
-                        $v['jsonarr']["$key"][]=$Usergroup->id_to_name(intval($vv));
-                    }
-                    unset($tmp);
-                }
-            }
-
-            //$v['user'] = $user;
-
-
-        }*/
 
         $this->v("data",$data);
         $this->display('forumg');
@@ -2024,20 +1966,6 @@ function plugin_uninstall(){
 
         $Forum = S("Forum");
         $data = $Forum->select("*");
-
-        /*$User = M("User");
-        foreach ($data as &$v) {
-            $tmp = explode(",",$v['forumg']);
-            if(!count($tmp))
-                continue;
-            $v['user'] = array();
-            foreach ($tmp as $vv) {
-                $v['user'][]=$User->uid_to_user(intval($vv));
-
-            }
-            unset($tmp);
-        }*/
-        //var_dump($data);
         $Usergroup = M("Usergroup");
         foreach ($data as &$v) {
             $arr = json_decode($v['json'],true);
@@ -2069,29 +1997,28 @@ function plugin_uninstall(){
     }
     //分类图标上传
     public function forumupload(){
-        $upload = new \Lib\Upload();// 实例化上传类
-        $upload->maxSize   =     3145728 ;// 设置附件上传大小  3M
-        $upload->exts      =     explode(",",$this->conf['uploadimageext']);// 设置图片上传类型
-        $upload->rootPath  =     INDEX_PATH. "upload/"; // 设置图片上传根目录
-
-        $upload->replace    =   true;
-        $upload->autoSub    =   false;
-        $upload->saveName   =   'forum'.X("post.forum"); //保存文件名
-        $upload->saveExt    =   'png';
-        if(!is_dir(INDEX_PATH. "upload"))
-            mkdir(INDEX_PATH. "upload");
-
-        $info   =   $upload->upload();
-        if(!$info) {
-            return $this->mess("上传失败 Error : " . $upload->getError());
+        if(IS_POST){
+            $upload = new \Lib\Upload();// 实例化上传类
+            $upload->maxSize   =     3145728 ;// 设置附件上传大小  3M
+            $upload->exts      =     explode(",",$this->conf['uploadimageext']);// 设置图片上传类型
+            $upload->rootPath  =     INDEX_PATH. "upload/"; // 设置图片上传根目录
+            $upload->replace    =   true;
+            $upload->autoSub    =   false;
+            $upload->saveName   =   'forum'.X("post.forum"); //保存文件名
+            $upload->saveExt    =   'png';
+            if(!is_dir(INDEX_PATH. "upload"))
+                mkdir(INDEX_PATH. "upload");
+            $info   =   $upload->upload();
+            if(!$info) {
+                return $this->mess("上传失败 Error : " . $upload->getError());
+            }
+            else{
+                header('Location: '. HYBBS_URLA('admin','forum'));
+                exit;
+            }
         }
-        else{
-            header('Location: '. HYBBS_URLA('admin','forum'));
-            exit;
-        }
-
-
     }
+    //获取更新
     public function hybbsupdate2(){
         $data = file_get_contents(C("PLUGIN_DOWN").'ajax/update2');
         $info = file_get_contents(C("PLUGIN_DOWN").'ajax/update_info');
@@ -2169,13 +2096,17 @@ function plugin_uninstall(){
         $json = file_get_contents(APP_WWW . 'json/get_ip');
         die($json);
     }
+    //模板高级配置提交
     public function ajax_edit_view(){
-        $name = X('post.name');
-        $v = X('post.value');
-        $this->conf[$name] = $v;
-        file_put_contents(CONF_PATH . 'conf.php' , "<?php die(); ?>\r\n".json_encode($this->conf));
-        $this->json(array('error'=>true,'info'=>'修改配置成功'));
+        if(IS_POST){
+            $name = X('post.name');
+            $v = X('post.value');
+            $this->conf[$name] = $v;
+            file_put_contents(CONF_PATH . 'conf.php' , "<?php die(); ?>\r\n".json_encode($this->conf));
+            $this->json(array('error'=>true,'info'=>'修改配置成功'));
+        }
     }
+    //日志页面
     public function log(){
         $Log = S('Log');
 
@@ -2241,58 +2172,60 @@ function plugin_uninstall(){
     public function log_php(){
         $this->display("log_php");
     }
-    //更改用户 允许登陆 金牙状态
+    //更改用户 允许登陆 
     public function ajax_user_switch(){
-        $type = X('post.type');
-        $uid = X('post.uid');
+        if(IS_POST){
+            $type = X('post.type');
+            $uid = X('post.uid');
 
-        $User = M('User');
+            $User = M('User');
 
-        if($type == 'login'){
-            $state = $User->get_row($uid,'ban_login') == 0 ? 1 : 0; //交换状态
-            
-            $User->update(['ban_login'=>$state],['uid'=>$uid]);
-            $this->json(['error'=>true,'info'=>'success','state'=>$state]);
-        }elseif($type == 'post'){
-            $state = $User->get_row($uid,'ban_post') == 0 ? 1 : 0;
-            $User->update(['ban_post'=>$state],['uid'=>$uid]);
-            $this->json(['error'=>true,'info'=>'success','state'=>$state]);
+            if($type == 'login'){
+                $state = $User->get_row($uid,'ban_login') == 0 ? 1 : 0; //交换状态
+                
+                $User->update(['ban_login'=>$state],['uid'=>$uid]);
+                $this->json(['error'=>true,'info'=>'success','state'=>$state]);
+            }elseif($type == 'post'){
+                $state = $User->get_row($uid,'ban_post') == 0 ? 1 : 0;
+                $User->update(['ban_post'=>$state],['uid'=>$uid]);
+                $this->json(['error'=>true,'info'=>'success','state'=>$state]);
+            }
         }
         $this->json(['error'=>false,'info'=>'参数丢失']);
-
-
     }
     public function ajax_clean_user(){
-        $type = X('post.type');
-        $uid = X('post.uid');
-        $User = M('User');
+        if(IS_POST){
+            $type = X('post.type');
+            $uid = X('post.uid');
+            $User = M('User');
 
-        if($type == 'del_thread'){
-            $Thread = S('Thread');
-            $tid = $Thread->select('tid',['uid'=>$uid]);
-            S('Post')->delete(['tid'=>$tid]);
-            $Thread->delete(['uid'=>$uid]);
-            $User->update(['threads'=>0,'posts'=>0],['uid'=>$uid]);
-            $this->json(['error'=>true,'info'=>'删除文章成功']);
-        }elseif($type == 'del_post'){
-            S('Post')->delete(['AND'=>['uid'=>$uid,'isthread'=>0]]);
-            $User->update(['posts'=>0],['uid'=>$uid]);
-            $this->json(['error'=>true,'info'=>'删除评论成功']);
-        }elseif($type == 'del_post'){
-            S('Post_post')->delete(['uid'=>$uid]);
-            $this->json(['error'=>true,'info'=>'删除子评论成功']);
-        }elseif($type == 'del_file') {
-            S('File')->delete(['uid'=>$uid]);
-            S('Fileinfo')->delete(['uid'=>$uid]);
-            deldir(INDEX_PATH. "upload/userfile/" . $uid,false,true);
-            $this->json(['error'=>true,'info'=>'删除文件成功']);
-        }elseif($type == 'del_follow'){
-            S('Friend')->delete(['uid1'=>$uid]);
-            $this->json(['error'=>true,'info'=>'清空关注列表成功']);
-        }elseif($type == 'del_chat'){
-            //$Chat->delete(['uid1'=>$uid]);
-            //$Chat_count->delete(array('uid'=>$v));
-            $this->json(['error'=>true,'info'=>'该功能被停用 无法清理聊天记录!']);
+            if($type == 'del_thread'){
+                $Thread = S('Thread');
+                $tid = $Thread->select('tid',['uid'=>$uid]);
+                S('Post')->delete(['tid'=>$tid]);
+                $Thread->delete(['uid'=>$uid]);
+                $User->update(['threads'=>0,'posts'=>0],['uid'=>$uid]);
+                $this->json(['error'=>true,'info'=>'删除文章成功']);
+            }elseif($type == 'del_post'){
+                S('Post')->delete(['AND'=>['uid'=>$uid,'isthread'=>0]]);
+                $User->update(['posts'=>0],['uid'=>$uid]);
+                $this->json(['error'=>true,'info'=>'删除评论成功']);
+            }elseif($type == 'del_post'){
+                S('Post_post')->delete(['uid'=>$uid]);
+                $this->json(['error'=>true,'info'=>'删除子评论成功']);
+            }elseif($type == 'del_file') {
+                S('File')->delete(['uid'=>$uid]);
+                S('Fileinfo')->delete(['uid'=>$uid]);
+                deldir(INDEX_PATH. "upload/userfile/" . $uid,false,true);
+                $this->json(['error'=>true,'info'=>'删除文件成功']);
+            }elseif($type == 'del_follow'){
+                S('Friend')->delete(['uid1'=>$uid]);
+                $this->json(['error'=>true,'info'=>'清空关注列表成功']);
+            }elseif($type == 'del_chat'){
+                //$Chat->delete(['uid1'=>$uid]);
+                //$Chat_count->delete(array('uid'=>$v));
+                $this->json(['error'=>true,'info'=>'该功能被停用 无法清理聊天记录!']);
+            }
         }
         $this->json(['error'=>false,'info'=>'参数丢失!']);
     }
