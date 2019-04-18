@@ -55,6 +55,8 @@ class My extends HYBBS {
         //{hook a_my_empty_3}
         $this->menu_action[$method] = 'active';
         $this->v('menu_action',$this->menu_action);
+        $this->v('method',$method);
+        $this->v('username',$username);
 
         if($method == 'index'){ //用户首页
             //{hook a_my_empty_4}
@@ -77,7 +79,7 @@ class My extends HYBBS {
             $this->v("post_data",$post_data);
 
             $data = $User->read($uid);
-            $data['avatar'] = $this->avatar($data['user']);
+            $data['avatar'] = $this->avatar($uid);
             $data['friend_state'] = false;
             if(IS_LOGIN){
                 if(NOW_UID != $uid){
@@ -94,7 +96,7 @@ class My extends HYBBS {
         }elseif($method == 'thread'){ //用户主题
             //{hook a_my_empty_6}
             $data = $User->read($uid);
-            $data['avatar'] = $this->avatar($data['user']);
+            $data['avatar'] = $this->avatar($uid);
 
             $Thread = M("Thread");
             $pageid=intval(isset($_GET['HY_URL'][3]) ? $_GET['HY_URL'][3] : 1) or $pageid=1;
@@ -122,13 +124,17 @@ class My extends HYBBS {
         }elseif($method == 'post'){ //用户帖子
             //{hook a_my_empty_9}
             $data = $User->read($uid);
-            $data['avatar'] = $this->avatar($data['user']);
+            $data['avatar'] = $this->avatar($uid);
 
             $Post = S("Post");
 
             $pageid=intval(isset($_GET['HY_URL'][3]) ? $_GET['HY_URL'][3] : 1) or $pageid=1;
             $post_data = $Post->select('*',[
-                'uid'=>$uid,
+                
+                'AND'=>[
+                    'uid'=>$uid,
+                    'isthread'=>0
+                ],
                 'LIMIT' =>[($pageid-1) * 10, 10],
                 'ORDER' => ['pid'=>'DESC']
             ]);
@@ -165,7 +171,7 @@ class My extends HYBBS {
             if(NOW_UID != $uid)
                 return $this->message("没有权限访问他人配置页");
             $data = $User->read($uid);
-            $data['avatar'] = $this->avatar($data['user']);
+            $data['avatar'] = $this->avatar($uid);
 
             //{hook a_my_empty_133}
             $this->v('data',$data);
@@ -179,25 +185,25 @@ class My extends HYBBS {
             if(NOW_UID != $uid)
                 return $this->message("你不能查看他人文件!");
             $data = $User->read($uid);
-            $data['avatar'] = $this->avatar($data['user']);
+            $data['avatar'] = $this->avatar($uid);
 
             $File=S("File");
-            $Filedata = $File->select(array('filename','md5name','filesize','atime'),array('uid'=>$uid));
+            $Filedata = $File->select('*',['uid'=>$uid,'ORDER'=>['id'=>'DESC']]);
 
-            $filearr = array();
-            if(is_dir(INDEX_PATH. "upload/userfile/".$uid."/")){
-                if($dh = opendir(INDEX_PATH. "upload/userfile/".$uid."/")) {
-                    while (($file = readdir($dh)) !== false){
+            // $filearr = array();
+            // if(is_dir(INDEX_PATH. "upload/userfile/".$uid."/")){
+            //     if($dh = opendir(INDEX_PATH. "upload/userfile/".$uid."/")) {
+            //         while (($file = readdir($dh)) !== false){
                         
-                        if($file!="." && $file!=".."){
-                            $filearr[]=$file;
+            //             if($file!="." && $file!=".."){
+            //                 $filearr[]=$file;
                             
-                        }
-                    }
-                }
-            }
+            //             }
+            //         }
+            //     }
+            // }
             //{hook a_my_empty_17}
-            $this->v("filearr",$filearr);
+            //$this->v("filearr",$filearr);
             $this->v("Filelist",$Filedata);
             $this->v('data',$data);
             $this->v("title","我的文件");
@@ -211,7 +217,7 @@ class My extends HYBBS {
             $pageid=intval(isset($_GET['HY_URL'][3]) ? $_GET['HY_URL'][3] : 1) or $pageid=1;
 
             $data = $User->read($uid);
-            $data['avatar'] = $this->avatar($data['user']);
+            $data['avatar'] = $this->avatar($uid);
             $this->v('data',$data);
             $this->v("title","流水记录");
 

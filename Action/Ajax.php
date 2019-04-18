@@ -25,12 +25,12 @@ class Ajax extends HYBBS {
         //{hook a_ajax_userjson_3}
     	$ud = $User->read($uid);
     	$data['user']      = $ud['user'];
-    	$data['avatar']    = $this->avatar($ud['user']);
+    	$data['avatar']    = $this->avatar($ud['uid']);
     	$data['atime_str'] = humandate($ud['atime']);
     	$data['threads']   = $ud['threads'];
     	$data['posts']     = $ud['posts'];
     	$data['gid']       = $ud['gid'];
-    	$data['groupname'] = $this->_usergroup[$ud['gid']]['name'];
+    	$data['groupname'] = '<font color="'.$this->_usergroup[$ud['gid']]['font_color'].'" style="'.$this->_usergroup[$ud['gid']]['font_css'].'" >'.$this->_usergroup[$ud['gid']]['name'].'</font>';
     	$data['gold']      = $ud['gold'];
         $data['ps']        = $ud['ps'];
     	$data['href']      = HYBBS_URLA('my',$data['user']);
@@ -51,12 +51,12 @@ class Ajax extends HYBBS {
         //{hook a_ajax_userjson_v}
     	return $this->json($data);
     }
-    //传user账户名 返回头像JSON
+    //传用户UID 返回头像JSON
     public function useravatar(){
-        $user = X("get.user");
+        $uid = X("get.uid");
         //{hook a_ajax_useravatar_v}
         //print_r($this->avatar($user));return;
-        return $this->json($this->avatar($user));
+        return $this->json($this->avatar($uid));
     }
 
     //下载附件

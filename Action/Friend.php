@@ -140,7 +140,7 @@ class Friend extends HYBBS {
                 $v['uid'] = $v['uid2'];
                 $v['user'] = $user_tmp[$v['uid2']];
                 $v['ps'] = $User->get_row($v['uid'],'ps');
-                $v['avatar'] = $this->avatar($v['user']);
+                $v['avatar'] = $this->avatar($v['uid']);
                 $v['ol']=$Online->has(['AND'=>['uid'=>$v['uid'],'atime[>]'=>NOW_TIME-BBSCONF('out_s')]]);
                 unset($v['uid2']);
                 unset($v['uid1']);
@@ -268,7 +268,7 @@ class Friend extends HYBBS {
                 return $this->json(array('error'=>false,'info'=>'没有这个用户!'));
             //{hook a_friend_user_info_4}
             $user = $User->uid_to_user($uid);
-            $avatar = $this->avatar($user);
+            $avatar = $this->avatar($uid);
             //{hook a_friend_user_info_5}
             return $this->json(array('error'=>true,'info'=>array('user'=>$user,'avatar'=>$avatar)));;
         }

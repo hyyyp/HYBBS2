@@ -499,7 +499,7 @@ class Post extends HYBBS {
 			$Post->update(['posts[+]'=>1],['pid'=>$pid]);
 			M('User')->update(['post_ps[+]'=>1],['uid'=>NOW_UID]);
 			$data = [
-				'avatar'=>$this->avatar(NOW_USER),
+				'avatar'=>$this->avatar(NOW_UID),
 				'user'=>NOW_USER,
 				'uid'=>NOW_UID,
 				'content'=>$content
@@ -1090,7 +1090,7 @@ class Post extends HYBBS {
 
 		//获取 评论数据
         $post_data = $Post->read($pid);
-        if(empty($p_data))
+        if(empty($post_data))
             return $this->json(array('error'=>false,'info'=>'不存在此评论'));
         //{hook a_post_del_3}
 		//获取 评论的板块ID

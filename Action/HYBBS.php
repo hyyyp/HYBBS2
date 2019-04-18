@@ -120,7 +120,7 @@ class HYBBS extends Action {
 
                         $this->_group = $user_data['gid'];
                         $user = $user_data;
-                        $user['avatar'] = $this->avatar($user['user']);
+                        $user['avatar'] = $this->avatar($user['uid']);
                         $user['mess'] = M("Chat_count")->get_c($user['uid']);
                         $this->_user = $user;
 
@@ -165,7 +165,6 @@ class HYBBS extends Action {
             $UsergroupObj->format($usergroup);
             $this->CacheObj->usergroup = $usergroup;
         }
-        
         $this->_usergroup = $usergroup;
         //{hook a_hybbs_init_group_v}
         $this->v("usergroup",$this->_usergroup);
@@ -373,10 +372,11 @@ class HYBBS extends Action {
         $this->display('message');
     }
     //获取用户头像
-    protected function avatar($user){
+    //传入UID
+    protected function avatar($uid){
         //{hook a_hybbs_avatar}
-        $path = INDEX_PATH . 'upload/avatar/' . md5($user);
-        $path1 = 'upload/avatar/' . md5($user);
+        $path = INDEX_PATH . 'upload/avatar/' . md5($uid);
+        $path1 = 'upload/avatar/' . md5($uid);
         if(!is_file($path.'-a.jpg'))
             return array(
                 'a'=>'public/images/user.gif',
