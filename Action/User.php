@@ -365,7 +365,7 @@ class User extends HYBBS {
         $upload->saveExt    =   "jpg";
         $upload->replace    =   true;
         $upload->autoSub    =   false;
-        $upload->saveName   =   md5(NOW_USER);
+        $upload->saveName   =   md5(NOW_UID);
         if(!is_dir(INDEX_PATH. "upload"))
 			mkdir(INDEX_PATH. "upload");
         if(!is_dir($upload->rootPath))
