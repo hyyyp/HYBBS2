@@ -77,6 +77,7 @@
 	<!--{hook t_m_thread_index_13}-->
 	<table style="width: 100%;">
 		{php $DataModel = M('Data');$User = M('User');}
+		{php $floor=1;}
 		{foreach $PostList as $k => $v}
 		{if $v['rpid']}
         	{php $quote_data = $DataModel->get_post_data($v['rpid'])}
@@ -95,7 +96,7 @@
 			    	<h4 class="cl">
 			        <a href="{php HYBBS_URL('my',$v['user']);}" class="info-user">{$v.user}</a>
 					</h4>
-			    	<p class="time"><em># {$k+1}{$_LANG['楼']}</em> {php echo humandate($v['atime'])} 
+			    	<p class="time"><em># {$floor++ + (($pageid-1) * $conf['postlist'])}{$_LANG['楼']}</em> {php echo humandate($v['atime'])} 
 			    	<a class="ic" href="{php HYBBS_URL('thread','post',$v['pid']);}" ajax="true" pos="right">
 			        	
 			        	{if $v['posts']}
