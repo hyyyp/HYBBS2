@@ -171,7 +171,7 @@ class Thread extends Model {
                     
                 }
                 $v['buser'] = $user_tmp[$v['buid']];
-                $v['buser_avatar'] =$User->avatar($v['buser']);
+                $v['buser_avatar'] =$User->avatar($v['buid']);
             }
             //{hook m_thread_format_5}
             //UID获取用户名
@@ -179,7 +179,7 @@ class Thread extends Model {
             //摘要去掉标签
             $v['summary'] = strip_tags($v['summary']);
             //$v['atime'] = humandate($v['atime']);
-            $v['avatar']=$User->avatar($v['user']);
+            $v['avatar']=$User->avatar($v['uid']);
             if(!empty($v['img'])){
                 $v['image']=explode(",", $v['img']);
                 $v['image_count']=count($v['image'])-1;
