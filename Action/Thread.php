@@ -34,7 +34,7 @@ class Thread extends HYBBS {
                     return $this->message("不存在该主题");
                 //获取文章作者用户名以及头像
                 $thread_data['user']=$User->uid_to_user($thread_data['uid']);
-                $thread_data['avatar']=$this->avatar($thread_data['user']);
+                $thread_data['avatar']=$this->avatar($thread_data['uid']);
                 $this->CacheObj->set('thread_data_'.$tid,$thread_data);
                 //{hook a_thread_empty_cache_2}
             }
@@ -127,7 +127,7 @@ class Thread extends HYBBS {
                     foreach ($PostList as $key => &$v) {
                         $v['atime_str']=humandate($v['atime']);
                         $v['key'] = (($pageid-1)*10) + (++$i);
-                        $v['avatar']=$this->avatar($v['user']);
+                        $v['avatar']=$this->avatar($v['uid']);
                         $this->CacheObj->set('post_data_'.$v['pid'],$v);
                         if($v['isthread']==1)
                             unset($PostList[$key]);
@@ -240,7 +240,7 @@ class Thread extends HYBBS {
             $data = $Post_post->get_list($pid,$pageid,BBSCONF('post_post_show_size'),$ORDER);
             $User->auto_add_user($data);
             foreach ($data as $k => &$v) {
-                $v['avatar']=$this->avatar($v['user']);
+                $v['avatar']=$this->avatar($v['uid']);
                 $v['atime_str'] = humandate($v['atime']);
             }
 
@@ -267,7 +267,7 @@ class Thread extends HYBBS {
             return $this->message('不存在该评论');
         $User = M('User');
         $post_data['user'] = $User->uid_to_user($post_data['uid']);
-        $post_data['avatar'] = $this->avatar($post_data['user']);
+        $post_data['avatar'] = $this->avatar($post_data['uid']);
 
         
         $this->v('pageid',$pageid);
@@ -281,7 +281,7 @@ class Thread extends HYBBS {
 
         $User->auto_add_user($post_post_data);
         foreach ($post_post_data as &$v) {
-            $v['avatar']=$this->avatar($v['user']);
+            $v['avatar']=$this->avatar($v['uid']);
             $v['atime_str'] = humandate($v['atime']);
         }
 
@@ -295,7 +295,7 @@ class Thread extends HYBBS {
                 return $this->message("不存在该主题");
             //获取文章作者用户名以及头像
             $thread_data['user']=$User->uid_to_user($thread_data['uid']);
-            $thread_data['avatar']=$this->avatar($thread_data['user']);
+            $thread_data['avatar']=$this->avatar($thread_data['uid']);
             $this->CacheObj->set('thread_data_'.$tid,$thread_data);
             //{hook a_thread_empty_cache_2}
         }
