@@ -288,7 +288,7 @@
                     var name = _this.data('name');
                     var state= _this.data('state');
 
-                    $.post(window.location.href,{update:name,state:state},function(e){
+                    $.post(window.location.href,{gn:'apply_code',name:name,state:state},function(e){
                         if(e.error){
                             if(state=='on'){
                                 

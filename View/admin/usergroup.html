@@ -15,20 +15,39 @@
             </div>
             
             <script>
-            (function(){
-
-            });
+          
             function del_group(id,obj){
-                if(!confirm("确定删除? 删除不能恢复的哦")){
-                    return;
-                }
-                $.post('{php HYBBS_URL('admin','usergroup')}',{id:id,gn:4},function(e){
-                    
-                    if(e.error){
-                        $(obj).parent().parent().remove();
-                    }
+                swal({
+                    title: "确认删除？",
+                    text: '切勿随意删除用户组，删除前先确认是否有用户正在使用该用户组。删除后无法恢复用户组！',
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "删除",
+                    cancelButtonText:'取消',
 
-                },'json');
+                }).then(
+                    function(){
+                        $(obj).attr("disabled", true);
+
+                        $.post('{php HYBBS_URL('admin','usergroup')}',{id:id,gn:'del'},function(e) {
+                            $(obj).removeAttr("disabled");
+                            if (e.error) {
+                                swal(e.info,'页面自动刷新中...','success');
+                                setTimeout(function(){
+                                    location.reload();    
+                                },500);
+                                
+                            }
+
+                        }, 'json');
+                    },
+                    function(e){
+                        console.log(e);
+                    }
+                );
+
+               
 
             }
             function edit_forum(obj){
@@ -92,7 +111,7 @@
                         url:'{php HYBBS_URL('admin','usergroup')}',
                         type:'post',
                         data:{
-                            gn:3,
+                            gn:'edit_permission',
                             id:gid,
                             type:type,
                             b:_this.prop('checked') ? 0:1
@@ -362,7 +381,7 @@
                     <h4 class="modal-title">添加分类</h4>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="gn" value="1">
+                    <input type="hidden" name="gn" value="add">
                     <div class="form-group">
                         <label for="">用户组 ID</label>
                         <input type="text" name="id" class="form-control" value="<?php $i=-1; foreach ($usergroup as $v) {
@@ -428,10 +447,10 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title">修改分类</h4>
+                    <h4 class="modal-title">修改用户组</h4>
                 </div>
                 <div class="modal-body">
-                   <input type="hidden" name="gn" value="2">
+                   <input type="hidden" name="gn" value="edit">
                     <input type="hidden" name="iid" id="edit-iid">
 
                     <div class="form-group">

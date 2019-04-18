@@ -51,7 +51,7 @@
                                         <td>{$v.name}</td>
                                         <td>
                                             <a onclick="edit_fg({$v['id']},'{$v.name}')" class="btn btn-success btn-xs">编辑</a>
-                                            <a onclick="del_fg({$v['id']})" class="btn btn-danger btn-xs">删除分组</a>
+                                            <a onclick="del_fg({$v['id']},this)" class="btn btn-danger btn-xs">删除分组</a>
                                         </td>
                                     </tr>
                                     {/foreach}
@@ -150,7 +150,7 @@
     </div>
 
 <script type="text/javascript">
-    function del_fg(id){
+    function del_fg(id,obj){
         swal({
             title: "删除分组?",
             text: '删除分组. 不会影响分类的使用',
@@ -161,7 +161,14 @@
              cancelButtonText:'取消'
         }).then(
             function(){
-                window.location.href="{php HYBBS_URL('admin','forum_group','',EXP.'del'.EXP)}" + id;
+                // window.location.href="{php HYBBS_URL('admin','forum_group','',EXP.'del'.EXP)}" + id;
+                $.post('{php HYBBS_URL('admin','forum_group')}',{gn:'del',id:id},function(e){
+                    swal(e.info);
+                    if(e.error){
+                        $(obj).parents('tr').remove();
+                    }
+
+                })
             },
             function(){
                 

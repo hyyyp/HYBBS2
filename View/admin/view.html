@@ -58,7 +58,7 @@
                 <div class="col-lg-12">
                     <div class="alert alert-success alert-custom alert-dismissible" role="alert" style="margin-top: 10px;margin-bottom: 0;">
                        
-                        <i class="fa fa-check-circle m-right-xs"></i><strong>高级设置说明!</strong> 这里展现了各个部位所使用的模板. 切换后立即生效
+                        <i class="fa fa-check-circle m-right-xs"></i><strong>高级设置说明!</strong> 这里展现了各个部位所使用的模板. 切换后立即生（非专业人员 请勿乱改！）
                     </div>
                 </div>
 
@@ -251,6 +251,7 @@
 
 
             <form method="post" id="form">
+            <input type="hidden" name="gn" value="create_view">
             <div class="modal fade in" id="normalModal1" aria-hidden="false">
 			  	<div class="modal-dialog">
 			    	<div class="modal-content">
@@ -366,9 +367,9 @@
                                             应用为 <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu" role="menu">
-                                            <li><a href="{php HYBBS_URL('admin','view',['edit'=>$v,'type'=>'pc'])}">电脑端模板</a></li>
+                                            <li><a onclick="apply_theme('{$v}','pc')" href="javascript:;"><i class="fa fa-tv"></i> 电脑端模板</a></li>
                                             <li class="divider"></li>
-                                            <li><a href="{php HYBBS_URL('admin','view',['edit'=>$v,'type'=>'wap'])}">移动端模板</a></li>
+                                            <li><a onclick="apply_theme('{$v}','wap')" href="javascript:;"><i class="fa fa-mobile"></i> 移动端模板</a></li>
                                             
                                         </ul>
                                     </div>
@@ -418,6 +419,14 @@
 
 </style>
 <script type="text/javascript">
+    function apply_theme(theme,type){
+        $.post('{php HYBBS_URL('admin','view')}',{gn:'apply',theme:theme,type:type},function(e){
+            if(e.error)
+                window.location.reload();
+            else
+                swal(e.info);
+        },'json');
+    }
     function add_lib(){
         if($("#text").val()=='')
             return;

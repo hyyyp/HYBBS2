@@ -35,7 +35,7 @@
                     <h4 class="modal-title">添加分类</h4>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="gn" value="1">
+                    <input type="hidden" name="gn" value="add">
                     <div class="form-group">
                         <label for="">分类ID</label>
                         <input type="text" name="id" class="form-control" AUTOCOMPLETE="off" value="<?php $i=-1; foreach ($forum as $v) {
@@ -96,7 +96,7 @@
                     <h4 class="modal-title">修改分类</h4>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="gn" value="2">
+                    <input type="hidden" name="gn" value="edit">
                     <input type="hidden" id="iid" name="iid" value="">
                     <div class="form-group">
                         <label for="">分类ID (不建议更改)</label>
@@ -262,9 +262,11 @@
 
                         }).then(
                             function(){
-                                $.post("{php HYBBS_URL('admin','forum')}",{gn:3,id:id},function(e){
-                                    if(e.error)
+                                $.post("{php HYBBS_URL('admin','forum')}",{gn:'del',id:id},function(e){
+                                    if(e.error){
+                                        swal(e.info);
                                         window.location.reload();
+                                    }
                                 },'json');
                             },
                             function(){
