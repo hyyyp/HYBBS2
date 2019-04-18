@@ -444,3 +444,19 @@ function HYBBS_URL($action, $method = '', $age = [], $ext = '') {
 function HYBBS_URLA($action, $method = '', $age = [], $ext = '') {
 	return WWW . (C('REWRITE') ? '' : '?') . URL($action, $method, $age, $ext);
 }
+
+function get_avatar($uid){
+	$path = INDEX_PATH . 'upload/avatar/' . md5($uid);
+    $path1 = 'upload/avatar/' . md5($uid);
+    if(!is_file($path.'-a.jpg'))
+        return array(
+            'a'=>'public/images/user.gif',
+            'b'=>'public/images/user.gif',
+            'c'=>'public/images/user.gif',
+        );
+    return array(
+        "a"=>$path1."-a.jpg",
+        "b"=>$path1."-b.jpg",
+        "c"=>$path1."-c.jpg"
+    );
+}
