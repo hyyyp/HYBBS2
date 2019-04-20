@@ -255,7 +255,11 @@ function cache($name,$value='',$options=null){
         return $cache->set($name, $value, $expire);
     }
 }
-
+/**
+ * 根据PHP各种类型变量生成唯一标识号
+ * @param mixed $mix 变量
+ * @return string
+ */
 function to_guid_string($mix) {
     if (is_object($mix)) {
         return spl_object_hash($mix);
