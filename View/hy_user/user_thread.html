@@ -20,40 +20,40 @@
     	</div>
     	<div class="postlist-meta">
     		<div class="postlist-meta-time">
-    			<i class="fa fa-clock-o"></i>&nbsp;{php echo humandate($v['atime'])}
+    			<i class="icon icon-time"></i>&nbsp;{php echo humandate($v['atime'])}
     		</div>
 
     		<div class="postlist-meta-category">
-    			<i class="fa fa-folder-open"></i>&nbsp;<a href="{php HYBBS_URL('forum',$v['fid']);}" rel="category tag"><?php echo $forum[$v['fid']]['name']; ?></a>
+    			<i class="icon icon-forum"></i>&nbsp;<a href="{php HYBBS_URL('forum',$v['fid']);}" rel="category tag"><?php echo $forum[$v['fid']]['name']; ?></a>
     		</div>
 
             {if !empty($v['img'])}
             <div class="postlist-meta-category">
-                <i class="fa fa-image"></i>&nbsp;<a href="#" rel="category tag">{$_LANG['图片数量']}: {php echo count(explode(',',$v['img']))}</a>
+                <i class="icon icon-image"></i>&nbsp;<a href="#" rel="category tag">{$_LANG['图片数量']}: {php echo count(explode(',',$v['img']))}</a>
             </div>
             {/if}
 
             {if $v['files']}
             <div class="postlist-meta-category">
-                <i class="fa fa-file"></i>&nbsp;<a href="#" rel="category tag">{$_LANG['附件数量']}: {$v.files}</a>
+                <i class="icon icon-file"></i>&nbsp;<a href="#" rel="category tag">{$_LANG['附件数量']}: {$v.files}</a>
             </div>
             {/if}
             {if $v['posts']}
             <div class="postlist-meta-category">
-                <i class="fa fa-send"></i>&nbsp;<a href="#" rel="category tag">{$_LANG['评论数量']}: {$v.posts}</a>
+                <i class="icon icon-comments"></i>&nbsp;<a href="#" rel="category tag">{$_LANG['评论数量']}: {$v.posts}</a>
             </div>
             {/if}
 
            
 
     		<div class="postlist-meta-like like-btn" style="float:right;">
-    			<i class="fa fa-thumbs-o-down"></i>&nbsp;<span>{$v.nos}</span>&nbsp;
+    			<i class="icon icon-thumbs-o-down"></i>&nbsp;<span>{$v.nos}</span>&nbsp;
     		</div>
     		<div class="postlist-meta-collect collect-btn collect-no" style="float:right;">
-    			<i class="fa fa-thumbs-o-up"></i>&nbsp;<span>{$v.goods}</span>&nbsp;
+    			<i class="icon icon-thumbs-o-up"></i>&nbsp;<span>{$v.goods}</span>&nbsp;
     		</div>
             <div class="postlist-meta-collect collect-btn collect-no" style="float:right;">
-                <i class="fa fa-fire"></i>&nbsp;<span>{$v.views}</span>&nbsp;
+                <i class="icon icon-views"></i>&nbsp;<span>{$v.views}</span>&nbsp;
             </div>
     	</div>
     	</article>

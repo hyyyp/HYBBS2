@@ -1,13 +1,6 @@
 {include h}
 <div class="dashboard-header">
-	<h2>{$_LANG['所有文件']} <span class="label label-default">{$_LANG['曾上传过的所有文件']}</span></h2>
-    <ul class="filelist">
-    {foreach $filearr as $v}
-    <?php $tmp = substr(strrchr($v, '.'), 1) ;?>
-
-        <li><a href="{#WWW}upload/userfile/{#NOW_UID}/{$v}" target="_blank"><i class="fa fa-{if $tmp=='jpeg' || $tmp=='jpg' || $tmp=='bmp' || $tmp=='png' || $tmp=='gif'}image{elseif $tmp =='zip' || $tmp =='rar' || $tmp =='7z'}file-zip-o{else}file-o{/if}"></i>{$v}</a></li>
-    {/foreach}
-    </ul>
+	
     <style type="text/css">
     .filelist{
         width: 100%;
@@ -30,12 +23,21 @@
     </style>
     <div style="clear:both"></div>
 </div>
+<?php 
+$file_type = S('file_type')->select('*');
+$tmp=[];
+foreach($file_type as $v){
+    $tmp[$v['id']]=$v;
+}
+$file_type=$tmp;
+?>
 <div class="dashboard-wrapper select-message">
     <h2>{$_LANG['附件列表']} <span class="label label-default">{$_LANG['曾上传在文章的附件']}</span></h2>
     <table width="100%" border="0" cellspacing="0" class="table table-bordered orders-table">
         <thead>
             <tr>
                 <th scope="col" style="width:20%;">{$_LANG['附件名']}</th>
+                <th scope="col">文件类型</th>
                 <th scope="col">{$_LANG['文件大小']}(M)</th>
                 <th scope="col">{$_LANG['上传时间']}</th>
                 
@@ -45,6 +47,7 @@
             {foreach $Filelist as $v}
             <tr>
               <td>{$v.filename}</td>
+              <td>{$file_type[$v['file_type']]['name']}</td>
               <td>{php echo round($v['filesize']/1024/1024,3)}</td>
               <td>{php echo humandate($v['atime'])}</td>
             </tr>

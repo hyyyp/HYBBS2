@@ -8,7 +8,7 @@
 <div class="dashboard-wrapper select-profile">
 	<div id="profile">
 		<ul class="user-msg">
-			<li class="tip">{$data.user} {$_LANG['来']} HYBBS {$_LANG['已经']}<?php echo diffBetweenTwoDays($data['atime'],NOW_TIME); ?>{$_LANG['天了']}</li>
+			<li class="tip">{$data.user} 来社区已经<?php echo diffBetweenTwoDays($data['atime'],NOW_TIME); ?>{$_LANG['天了']}</li>
 		</ul>
 		<!--{hook t_user_op_11}-->
 		<table id="author-profile">
@@ -25,9 +25,19 @@
 
 		<tr>
 			<td class="title">
-				{$_LANG['个人说明']}:
+				注册邮箱:
+			</td>
+			<td>
+				{$data.email}
+			</td>
+		</tr>
+
+		<tr>
+			<td class="title">
+				个人签名:
 			</td>
     		<td>
+    			{$data.ps}
     		</td>
 		</tr>
 		</tbody>
@@ -72,10 +82,8 @@
 			<div class="form-group">
 				<label for="display_name" class="col-sm-3 control-label">{$_LANG['选择头像文件']}</label>
 				<div class="col-sm-9">
-
 					<input class="" type="file" name="photo" />
-
-
+					<span>上传成功后，浏览器显示新头像会有延迟！</span>
 				</div>
 			</div>
             <div class="form-group">

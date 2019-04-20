@@ -8,7 +8,7 @@
   
 <div class="dashboard-header">
 	<p class="sub-title">
-		{$_LANG['用户中心']} - HYBBS
+		{$_LANG['用户中心']}
 	</p>
 	
 </div>
@@ -18,46 +18,46 @@
 			<!--{hook t_user_index_1}-->
 			<li class="post">
 			<div class="visual">
-				<i class="fa fa-tasks"></i>
+				<i class="icon icon-tasks"></i>
 			</div>
 			<div class="number">
 				{$data.threads}<span>{$_LANG['文章作品']}</span>
 			</div>
 			<div class="more">
-				<a href="{php HYBBS_URL('my',$data['user'],'thread');}">{$_LANG['查看更多']}<i class="fa fa-arrow-circle-right"></i></a>
+				<a href="{php HYBBS_URL('my',$data['user'],'thread');}">{$_LANG['查看更多']}<i class="icon icon-arrow-circle-right"></i></a>
 			</div>
 			</li>
 			<li class="photo">
 			<div class="visual">
-				<i class="fa fa-heart"></i>
+				<i class="icon icon-heart"></i>
 			</div>
 			<div class="number">
 				0<span>{$_LANG['我的收藏']}</span>
 			</div>
 			<div class="more">
-				<a href="{php HYBBS_URL('my',$data['user'],'thread');}">{$_LANG['查看更多']}<i class="fa fa-arrow-circle-right"></i></a>
+				<a href="{php HYBBS_URL('my',$data['user'],'thread');}">{$_LANG['查看更多']}<i class="icon icon-arrow-circle-right"></i></a>
 			</div>
 			</li>
 			<li class="credit">
 			<div class="visual">
-				<i class="fa fa-money"></i>
+				<i class="icon icon-gold"></i>
 			</div>
 			<div class="number">
-				{$data.gold}<span>{$_LANG['我的金钱']}</span>
+				{$data.gold}<span>我的金币</span>
 			</div>
 			<div class="more">
-				<a href="{php HYBBS_URL('my',$data['user'],'thread');}">{$_LANG['查看更多']}<i class="fa fa-arrow-circle-right"></i></a>
+				<a href="{php HYBBS_URL('my',$data['user'],'thread');}">{$_LANG['查看更多']}<i class="icon icon-arrow-circle-right"></i></a>
 			</div>
 			</li>
 			<li class="comments">
 			<div class="visual">
-				<i class="fa fa-comments"></i>
+				<i class="icon icon-comments"></i>
 			</div>
 			<div class="number">
 				{$data.posts}<span>{$_LANG['评论留言']}</span>
 			</div>
 			<div class="more">
-				<a href="{php HYBBS_URL('my',$data['user'],'post');}">{$_LANG['查看更多']}<i class="fa fa-arrow-circle-right"></i></a>
+				<a href="{php HYBBS_URL('my',$data['user'],'post');}">{$_LANG['查看更多']}<i class="icon icon-arrow-circle-right"></i></a>
 			</div>
 			</li>
 			<!--{hook t_user_index_2}-->
@@ -101,20 +101,20 @@
 			<li><a href="javascript:void(0);" onclick="friend({$data.uid},this)" style="color:#c12397"><i class="fa fa-{if $data['friend_state']}star{else}star-o{/if}"></i><span id="star">{if $data['friend_state']}{$_LANG['取消关注']}{else}{$_LANG['关注']}{/if}</span></a></li>
 			{/if}
 			{if NOW_GID == C("ADMIN_GROUP")}
-			<li><a href="{php HYBBS_URL('admin');}"><i class="fa fa-tachometer"></i>{$_LANG['管理后台']}</a></li>
+			<li><a href="{php HYBBS_URL('admin');}"><i class="icon icon-admin"></i>{$_LANG['管理后台']}</a></li>
 			{/if}
 			{/if}
-			<li><a href="{#WWW}"><i class="fa fa-home"></i>{$_LANG['网站首页']}</a></li>
+			<li><a href="{#WWW}"><i class="icon icon-home"></i>{$_LANG['网站首页']}</a></li>
 
 			<li>
 			<a href="{php HYBBS_URL('post');}">
-			<i class="fa fa-pencil-square-o"></i>{$_LANG['发布文章']}</a></li>
+			<i class="icon icon-post"></i>{$_LANG['发布文章']}</a></li>
 
 			{if NOW_UID == $data['uid']}
-			<li><a href="{php HYBBS_URL('my',$data['user'],'file');}"><i class="fa fa-file-o"></i>{$_LANG['我的文件']}</a></li>
-			<li><a href="{php HYBBS_URL('my',$data['user'],'op');}"><i class="fa fa-cog"></i>{$_LANG['修改资料']}</a></li>
+			<li><a href="{php HYBBS_URL('my',$data['user'],'file');}"><i class="icon icon-file"></i>{$_LANG['我的文件']}</a></li>
+			<li><a href="{php HYBBS_URL('my',$data['user'],'op');}"><i class="icon icon-user-info"></i>{$_LANG['修改资料']}</a></li>
 			
-			<li><a href="{php HYBBS_URL('user','out');}"><i class="fa fa-power-off"></i>{$_LANG['注销登录']}</a></li>
+			<li><a href="{php HYBBS_URL('user','out');}"><i class="icon icon-out"></i>{$_LANG['注销登录']}</a></li>
 			{/if}
 			<!--{hook t_user_index_6}-->
 		</ul>
