@@ -1,20 +1,21 @@
 <?php
 namespace HY\Lib;
 class Line{
-	public static function run(){
-		$url='';
+    public static function run(){
+        $url='';
         if(isset($_GET['s'])){
             $url = ltrim($_GET['s'], C("url_explode"));
         }
         else{
             $_GET['s'] = $_SERVER["QUERY_STRING"];
             if(empty($_GET['s'])){
-                if(!isset($_SERVER["REQUEST_URI"]))
-                    $_SERVER['REQUEST_URI']='';
-                $_GET['s'] = $_SERVER['REQUEST_URI'];
+                // if(!isset($_SERVER["REQUEST_URI"]))
+                //     $_SERVER['REQUEST_URI']='';
+                // $_GET['s'] = $_SERVER['REQUEST_URI'];
             }
             $url = ltrim($_GET['s'], C("url_explode"));
         }
+        
         
         self::auto_get();
         
@@ -26,7 +27,7 @@ class Line{
         $_GET['HY_URL']=array('Index','Index');
 
         if (empty($url)) {
-        	//命令行运行
+            //命令行运行
             if(isset($GLOBALS['argv'])){
                 if(isset($GLOBALS['argv'][1]) && isset($GLOBALS['argv'][2]))
                     $class = '\\Action\\'.ucfirst($GLOBALS['argv'][1]);
@@ -83,7 +84,7 @@ class Line{
         define('ACTION_NAME', $_Action);
         define('METHOD_NAME', $_Fun);
 
-
+       
         
         if (!file_exists(ACTION_PATH . "{$Action}.php")) {
             if (!file_exists(ACTION_PATH . 'No.php')) {
@@ -112,7 +113,7 @@ class Line{
             $method->invoke($module);
         }
 
-	}
+    }
     //自动转化get参数
     //http://127.0.0.1:86/?s=thread-11-2.html?order=desc&a=1
     public static function auto_get(){
