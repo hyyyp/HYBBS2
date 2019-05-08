@@ -86,7 +86,7 @@ class Friend extends HYBBS {
             //{hook a_friend_send_chat_6}
             M("Chat")->send($uid,NOW_UID,$content);
             M("User")->update_int(NOW_UID,'chat_size','+',strlen($content));
-            $this->json(['error'=>true,'info'=>'!']);
+            $this->json(['error'=>true,'info'=>'发送成功！']);
         }
         //{hook a_friend_send_chat_7}
     }
@@ -102,7 +102,7 @@ class Friend extends HYBBS {
             //获取我关注的
             $list = $Friend->select('*',['uid1'=>NOW_UID]);
             //获取我的粉丝
-            $list1 = $Friend->select("*",['AND'=>['uid2'=>NOW_UID,'state'=>1]]);
+            $list1 = $Friend->select("*",['AND'=>['uid2'=>NOW_UID,'state'=>[1,2]]]);
 
             //{hook a_friend_friend_list_4}
             foreach ($list as $k=> &$v) {
@@ -161,6 +161,7 @@ class Friend extends HYBBS {
             //{hook a_friend_get_old_chat_3}
             $uid1 = intval(X("post.uid"));
             $uid2 = NOW_UID;
+            $start_limit=X('post.start_limit',0);
             $Chat = S("Chat");
             $Friend = M("Friend");
             //{hook a_friend_get_old_chat_4}
@@ -174,6 +175,7 @@ class Friend extends HYBBS {
             //{hook a_friend_get_old_chat_5}
             $data = [];
             if($size == 10){
+                //echo $start_limit;
                 //{hook a_friend_get_old_chat_6}
                 $data = $Chat->select('*',
                      array(
@@ -187,7 +189,7 @@ class Friend extends HYBBS {
                                 "uid2" => $uid1
                             )
                         ),
-                        'LIMIT' => $size,
+                        'LIMIT' => [$start_limit,$size],
                         'ORDER' => ['id'=>'DESC']
                     )
                 );
@@ -209,11 +211,9 @@ class Friend extends HYBBS {
             }
             //{hook a_friend_get_old_chat_10}
 
-            //扣除未读消息
-            if(!$history)
-                $Friend->update_int($uid2,$uid1,'-',$size);
-            
+            //扣除未读消息       
             if(!$history){
+                $Friend->update_int($uid2,$uid1,'-',$size);
                 $Chat_count = M("Chat_count");
                 $Chat_count->update_int(NOW_UID,'-',$size1);
             }
