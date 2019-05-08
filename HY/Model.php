@@ -163,7 +163,7 @@ class Model {
         static $CacheObj = false;
         if(!$CacheObj){
             $CacheObj = cache(array());
-            echo '缓存第一次<br>';
+            //echo '缓存第一次<br>';
         }
         $this->CacheObj = $CacheObj;
         $this->cache_mode = true;
