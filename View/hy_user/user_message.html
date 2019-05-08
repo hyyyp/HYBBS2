@@ -1,0 +1,325 @@
+{include h}
+<div class="dashboard-header">
+    <style type="text/css">
+    .filelist{
+        width: 100%;
+        margin-top: 30px
+    }
+    .filelist li{
+    float: left;
+        float: left;
+    width: 100px;
+    height: 150px;
+        text-align: center;
+        margin-right: 10px
+    }
+    .filelist li i{
+        font-size: 74px;
+    }
+    .filelist li i{
+        margin-bottom: 5px;
+    }
+    .dashboard-body{
+        padding: 0;
+        position: absolute;
+        left: 240px;
+        top: 46px;
+        right: 0;
+        bottom: 0;
+    }
+    .dashboard-wrapper{
+        height: 100%;
+    }
+    </style>
+    <div style="clear:both"></div>
+</div>
+<div class="dashboard-wrapper" style="margin: 0;">
+    
+    <!-- <h2>我的消息 <span style="font-size: 14px;color: #afafaf;font-weight: 400;">1</span></h2> -->
+    <div class="friend-list-box">
+        <div class="friend-list-body">
+            <ul>
+                
+                {foreach $friend_list as $v}
+              
+                <li>
+                    <a href="{php HYBBS_URL('my',$data['user'],['message'=>X('get.message'),'uid'=>$v['uid2']]);}" class="clearfix">
+                        <img src="{#WWW}{$v.avatar.c}" class="img-circle" alt="user avatar">
+                        <div class="chat-detail m-left-sm">
+                            <div class="chat-name">
+                                <div class="chat-status">
+                                    <span class="friend-{if $v['ol']}zx{else}lx{/if}"></span>
+                                </div>
+                                {$v.user}
+                            </div>
+                            <div class="chat-message">{$v.ps}</div>
+                        </div>
+                        
+                        <div class="chat-alert">
+                            <span id="friend-span-0" class="badge badge-purple bounceIn animation-delay2 friend-hide">{$v.c}</span>
+                        </div>
+                        
+                       
+                    </a>
+                </li>
+                {/foreach}
+                
+            
+            </ul>
+        </div>
+        <div class="chat-container" >
+            <div class="chat-container-header">
+                <div class="chat-head">
+                    <a style="flex: 1;    align-items: center;display: flex;justify-content: left;" href="">
+                        <img src="{$chat_user_data.avatar.c}" style="width: 30px;height: 30px;border-radius: 61px;">
+                    </a>
+                    <h1 style="flex: 1;align-items: center;display: flex;justify-content: center;font-weight: 400;font-size: 18px">{$chat_user_data.user}</h1>
+                    <a href="javascript:;" onclick="alert('这个不是实时聊天，仅用于私信！','warning')" style="flex:1;align-items: center;display: flex;justify-content: flex-end;">
+                        <i class="icon icon-question-mark" style="font-size: 18px"></i>
+                    </a>
+                </div>
+                <div class="chat-body">
+                    <div class="chat-list">
+                        <ul id="chat-list-ul">
+                            <li style="display: flex;justify-content: center;">
+                                <a href="javascript:;" onclick="read_old_chat(true,this)">获取更早的记录</a>
+                            </li>
+                            <!-- <li>
+                                <div class="chat-box">
+                                    <img class="chat-avatar" src="http://192.168.1.184:88/View/hy_friend/bell.png">
+                                    <div class="chat-text">
+                                        <div class="chat-content">asdsadasdadsa萨达萨达所 阿萨德撒的是</div>
+                                        <div class="chat-time">2个月前</div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="chat-right-box">
+                                <div class="chat-box">
+                                    <img class="chat-avatar" src="http://192.168.1.184:88/View/hy_friend/bell.png">
+                                    <div class="chat-text">
+                                        <div class="chat-content">asdsadasdadsa萨达萨达所 阿萨德撒的是</div>
+                                        <div class="chat-time">2个月前</div>
+                                    </div>
+                                </div>
+                            </li> -->
+                        </ul>
+                    </div>
+                </div>
+                
+            </div>
+            <div style="display: ;height: 120px;    border-top: solid 1px #f7f7f9;">
+                <div style="padding:10px 10px 0 10px">
+                    <div id="send-text" style="outline: 0;height: 59px;overflow-y: auto;font-size: 14px;color: #ddd /*border: solid 1px #DDD;*/" contenteditable="true">
+                        <p>输入内容</p>
+                    </div>
+                </div>
+                <div style="padding:10px">
+                    <button class="send-button" id="send" type="button" onclick="send_chat(this)">发送 (Enter)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function add0(m){return m<10?'0'+m:m }
+    function format_time(time){
+    //time是整数，否则要parseInt转换
+        var time = new Date(time);
+        var y = time.getFullYear();
+        var m = time.getMonth()+1;
+        var d = time.getDate();
+        var h = time.getHours();
+        var mm = time.getMinutes();
+        var s = time.getSeconds();
+        return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
+    }
+    //去掉左边的空白  
+    function trimLeft(s){  
+        if(s == null) {  
+            return "";  
+        }  
+        var whitespace = new String(" \t\n\r");  
+        var str = new String(s);  
+        if (whitespace.indexOf(str.charAt(0)) != -1) {  
+            var j=0, i = str.length;  
+            while (j < i && whitespace.indexOf(str.charAt(j)) != -1){  
+                j++;  
+            }  
+            str = str.substring(j, i);  
+        }  
+        return str;  
+    }  
+    //去掉右边的空白 
+    function trimRight(s){  
+        if(s == null) return "";  
+        var whitespace = new String(" \t\n\r");  
+        var str = new String(s);  
+        if (whitespace.indexOf(str.charAt(str.length-1)) != -1){  
+            var i = str.length - 1;  
+            while (i >= 0 && whitespace.indexOf(str.charAt(i)) != -1){  
+               i--;  
+            }  
+            str = str.substring(0, i+1);  
+        }  
+        return str;  
+    }
+    function trim(s){  
+        return trimRight(trimLeft(s));  
+    } 
+
+    $(function(){
+        
+
+        
+
+        $('#send-text').click(function(){
+            var _this = $(this);
+            var now_content = trim(_this.html());
+            console.log(now_content);
+            if(now_content == '<p>输入内容</p>'){
+                _this.css({color:'#000'}).html('<p><br></p>');
+            }
+        });
+        $('#send-text').blur(function(){
+            var _this = $(this);
+            var now_content = trim(_this.html());
+            console.log(now_content);
+            if(now_content == '<p><br></p>'){
+                _this.css({color:'#ddd'}).html('<p>输入内容</p>');
+            }
+        });
+
+
+    });
+
+    {if !empty($chat_user_data)}
+    var chat_user_data={
+        uid:{$chat_user_data.uid},
+        user:'{$chat_user_data.user}',
+        avatar:{
+            a:'{$chat_user_data['avatar']['a']}',
+            b:'{$chat_user_data['avatar']['b']}',
+            c:'{$chat_user_data['avatar']['c']}',
+        }
+    };
+
+    function add_chat_box(id,pos,avatar,content,time,prepend){ //chat-right-box
+        if(prepend===true){
+            $('#chat-list-ul').prepend('<li class="'+(pos == 'left' ? '' :'chat-right-box')+'">'+
+                '<div class="chat-box">'+
+                    '<img class="chat-avatar" src="'+avatar+'">'+
+                    '<div class="chat-text">'+
+                        '<div class="chat-content">#'+id+' - -'+content+'</div>'+
+                        '<div class="chat-time">'+(format_time(time*1000))+'</div>'+
+                    '</div>'+
+                '</div>'+
+            '</li>');
+        }else{
+            $('#chat-list-ul').append('<li class="'+(pos == 'left' ? '' :'chat-right-box')+'">'+
+                '<div class="chat-box">'+
+                    '<img class="chat-avatar" src="'+avatar+'">'+
+                    '<div class="chat-text">'+
+                        '<div class="chat-content">#'+id+' - -'+content+'</div>'+
+                        '<div class="chat-time">'+(format_time(time*1000))+'</div>'+
+                    '</div>'+
+                '</div>'+
+            '</li>');
+            $('.chat-body').scrollTop(9999);
+        }
+        
+        
+    }
+
+    var start_limit = 0;
+    function read_old_chat(prepend,obj){
+        $.ajax({
+            url:'{php HYBBS_URL('Friend','get_old_chat')}',
+            data:{
+                uid:chat_user_data.uid,
+                start_limit:start_limit
+            },
+            type:'post',
+            dataType:'json',
+            success:function(e){
+                start_limit+=e.length;
+                console.log(start_limit);
+
+                if(prepend === true){
+                    obj.onclick = null;
+                    obj.innerText='以上是历史记录';
+                    //console.log();
+                    for(o in e){
+                        //uid1 = 接收者
+                        //uid2 = 发送者
+                        //console.log(e[o]);
+                        if(e[o].uid1 == {$user.uid}){
+                            add_chat_box(e[o].id,'left',chat_user_data.avatar.c,e[o].content,e[o].atime,prepend);
+                        }
+                        else{
+                            add_chat_box(e[o].id,'right','{$user.avatar.c}',e[o].content,e[o].atime,prepend);
+                        }
+                        
+                    }
+                    if(e.length != 0){
+                        $('#chat-list-ul').prepend('<li style="display: flex;justify-content: center;">'+
+                            '<a href="javascript:;" onclick="read_old_chat(true,this)">获取更早的记录</a>'+
+                        '</li>');
+                    }else{
+                        obj.innerText='已经没有更多记录了！';
+                    }
+                }else{
+                    for(o in e.reverse()){
+                        //uid1 = 接收者
+                        //uid2 = 发送者
+                        //console.log(e[o]);
+                        if(e[o].uid1 == {$user.uid}){
+                            add_chat_box(e[o].id,'left',chat_user_data.avatar.c,e[o].content,e[o].atime,prepend);
+                        }
+                        else{
+                            add_chat_box(e[o].id,'right','{$user.avatar.c}',e[o].content,e[o].atime,prepend);
+                        }
+                        
+                    }
+                }
+                //add_lt()
+            }
+            ,error: function(){
+
+            }
+        });
+    }
+    read_old_chat();
+    function send_chat(obj){
+        var _this = $(obj);
+        var content = trim($('#send-text').html());
+        if(content == '<p>输入内容</p>')
+            content='';
+        if(content == '')
+            return swal('发送失败','内容不能为空!','error');
+        _this.attr('disabled','disabled').text('发送中...');
+        $.ajax({
+            url:'{php HYBBS_URL('Friend','send_chat')}',
+            data:{
+                uid:chat_user_data.uid,
+                content:content
+            },
+            type:'post',
+            dataType:'json',
+            success:function(e){
+                if(e.error){
+                    $('#send-text').css({color:'#ddd'}).html('<p>输入内容</p>');
+                    add_chat_box('test','right','{$user.avatar.c}',content,(new Date()).getTime() / 1000,false);
+                }else{
+                    swal('发送失败',e.info,'error');
+                }
+            }
+            ,error: function(){
+
+            },complete:function(){
+                _this.removeAttr('disabled').text('发送 (Enter)');
+            }
+        });
+    }
+    {/if}
+</script>
+{include f}
