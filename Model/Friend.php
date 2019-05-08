@@ -59,24 +59,25 @@ class Friend extends Model {
 					$this->set_state($uid2,$uid1,1);
 			}
 			//{hook m_friend_rm_friend_4}
-			$this->delete(['AND'=>['uid1'=>$uid1,'uid2'=>$uid2]]);
+			//$this->delete(['AND'=>['uid1'=>$uid1,'uid2'=>$uid2]]);
+			$this->set_state($uid1,$uid2,0);
 		}
 		//{hook m_friend_rm_friend_5}
 	}
 
 	public function update_int($uid1,$uid2,$type="+",$size=1){
 		//{hook m_friend_update_int_1}
-		if($this->has(array('AND'=>array('uid1'=>$uid1,'uid2'=>$uid2)))){
+		if($this->has(['AND'=>['uid1'=>$uid1,'uid2'=>$uid2]])){
 			//{hook m_friend_update_int_2}
 			if($type==="+")
-				$this->update(["c[{$type}]"=>$size,'atime'=>NOW_TIME],['AND'=>['uid1'=>$uid1,'uid2'=>$uid2]]);
+				$this->update(["c[{$type}]"=>$size,'update_time'=>NOW_TIME],['AND'=>['uid1'=>$uid1,'uid2'=>$uid2]]);
 			else
 				$this->update(["c[{$type}]"=>$size],['AND'=>['uid1'=>$uid1,'uid2'=>$uid2]]);
 			$this->get_c($uid1,$uid2);
 			 
 		}
 		//{hook m_friend_update_int_3}
-		$this->insert(['uid1'=>$uid1,'uid2'=>$uid2,'c'=>1,'atime'=>NOW_TIME,'state'=>0]);
+		$this->insert(['uid1'=>$uid1,'uid2'=>$uid2,'c'=>1,'atime'=>NOW_TIME,'update_time'=>NOW_TIME,'state'=>0]);
 		//{hook m_friend_update_int_4}
 		//陌生人=1
 	}
