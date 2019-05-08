@@ -52,6 +52,9 @@ class My extends HYBBS {
         if(!$uid)
             return $this->message("不存在该用户");
 
+        if(empty($method))
+            $method = 'index';
+
         //{hook a_my_empty_3}
         $this->menu_action[$method] = 'active';
         $this->v('menu_action',$this->menu_action);
@@ -236,10 +239,158 @@ class My extends HYBBS {
             $this->v("page_count",$page_count);
             $this->v('log_data',$log_data);
             $this->display('user_log');
+        }elseif($method == 'message'){
+            if(!IS_LOGIN)
+                return $this->message("未登录，无法查看该页面");
+            if(NOW_UID != $uid)
+                return $this->message("没有权限访问消息页面");
+
+            $data = $User->read($uid);
+            $data['avatar'] = $this->avatar($uid);
+            $this->v("title","我的消息");
+
+
+            $message = X('get.message');
+            $chat_uid = X('get.uid');
+            if(empty($message))  $message = 'index';
+            if(empty($chat_uid)) $chat_uid = 0;
+
+            $Friend = S('Friend');
+            $friend_data = $Friend->select('*',['OR'=>['uid1'=>NOW_UID,'uid2'=>NOW_UID],'ORDER'=>['update_time'=>'DESC']]);
+
+
+            $chat_user_data =[];
+            if($chat_uid == 0){
+                $chat_user_data=[
+                    'uid'=>0,
+                    'user'=>'系统',
+                    'avatar'=>[
+                        'a'=>'View/hy_friend/bell.png',
+                        'b'=>'View/hy_friend/bell.png',
+                        'c'=>'View/hy_friend/bell.png'
+                    ]
+                ];
+            }elseif($User->has(['uid'=>$chat_uid])){
+                $chat_user_data = $User->read($chat_uid);
+                $chat_user_data['avatar'] = $this->avatar($chat_uid);
+
+            }
+            $this->v('chat_user_data',$chat_user_data);
+            $friend_list=[];
+            if(!empty($friend_data)){
+
+                switch ($message) {
+                    case 'index':
+                        foreach ($friend_data as $v) {
+                            if($v['uid1']==NOW_UID)
+                                $friend_list[]=$v;
+                        }
+                        foreach ($friend_data as $v) {
+                            if($v['uid1'] != NOW_UID && $v['uid2'] == NOW_UID){
+                                $b=false;
+                                foreach ($friend_list as $vv) {
+                                    if($vv['uid1'] == $v['uid2'] && $vv['uid2'] == $v['uid1']){
+                                        $b=true;
+                                        break;
+                                    }
+                                }
+                                if(!$b){
+                                    $v['uid2'] = $v['uid1'];
+                                    $friend_list[]=$v;
+                                }
+
+                                $tmp = array();
+                                unset($vv);
+                                foreach ($friend_list as $vv) {
+                                    $tmp[] = $vv['update_time'];
+                                }
+                                array_multisort($tmp,SORT_DESC,$friend_list);
+                            }
+                        }
+                        break;
+                    case 'follow':
+                        // $friend_list = $Friend->select('*',['AND'=>['uid1'=>NOW_UID,'state'=>[1,2]],'ORDER'=>['atime'=>'DESC']]);
+
+                        foreach ($friend_data as $v) {
+                            if($v['uid1']==NOW_UID && ($v['state'] == 1 || $v['state'] == 2))
+                                $friend_list[]=$v;
+                        }
+                        break;
+                    case 'fans':
+                        // $friend_list = $Friend->select('*',['AND'=>['uid2'=>NOW_UID,'state'=>[1,2]],'ORDER'=>['update_time'=>'DESC']]);
+                        // foreach ($friend_list as $key => &$v) {
+                        //     $v['uid2'] = $v['uid1'];
+                        // }
+
+                        foreach ($friend_data as $v) {
+                            if($v['uid2']==NOW_UID && ($v['state'] == 1 || $v['state'] == 2)){
+                                $v['uid2']=$v['uid1'];
+                                $friend_list[]=$v;
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                $User->auto_add_user($friend_list,'user','uid2');
+            }
+
+            
+
+            
+
+            
+
+            $Online = S("Online");
+
+            $administrator = [
+                'uid2'=>0,
+                'user'=>'系统',
+                'ps'=>'系统消息',
+                'avatar'=>[
+                    'a'=>'View/hy_friend/bell.png',
+                    'b'=>'View/hy_friend/bell.png',
+                    'c'=>'View/hy_friend/bell.png',
+                ],
+                'ol'=>true,
+                'c'=>0
+            ];
+            foreach ($friend_list as $key => &$v) {
+                $v['ps'] = $User->get_row($v['uid2'],'ps');
+//                if($v['uid2']==0)$v['ps']='系统消息';
+                $v['avatar'] = $this->avatar($v['uid2']);
+                $v['ol']=$Online->has(['AND'=>['uid'=>$v['uid2'],'atime[>]'=>NOW_TIME-BBSCONF('out_s')]]);
+
+                if($v['uid2'] == 0){
+                    $administrator['c']=$v['c'];
+                    unset($friend_list[$key]);
+                }
+            }
+            if($message == 'index')
+                array_unshift($friend_list,$administrator);
+
+
+            $this->v('friend_list',$friend_list);
+            $this->v('data',$data);
+            $this->display('user_message');
         }
         //{hook a_my_empty_18}
 
-
+        
     }
     //{hook a_my_fun}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
