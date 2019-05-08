@@ -1,0 +1,116 @@
+{hook p_editor_thread_index_header}
+<?php $editor_inc = get_plugin_inc('hy_editor');?>
+{if $editor_inc['post'] == 1}
+<!-- HYBBS公用编辑器UI资源 -->
+<link href="{#WWW}public/css/editor.ui.css?ver=1.0" type="text/css" rel="stylesheet">
+
+<link rel="stylesheet" type="text/css" href="{#WWW}Plugin/hy_editor/icon/iconfont.css">
+<link rel="stylesheet" type="text/css" href="{#WWW}Plugin/hy_editor/editor.css">
+<script type="text/javascript" src="{#WWW}Plugin/hy_editor/editor.js"></script>
+<script type="text/javascript" src="{#WWW}Plugin/hy_editor/lib/uploadImage.js"></script>
+<script type="text/javascript" src="{#WWW}Plugin/hy_editor/lib/help.js"></script>
+
+
+<a name="post"></a>
+<div class="rep-bx rep-box">
+    <div class="rep-close rep-right" onclick="stop_post(this)">×</div>
+    <div class="rep-bx">
+        <div class="rep-left">
+            <img class="rep-avatar" src="{#WWW}public/images/user.gif">
+        </div>
+        <div class="rep-info">
+            <p class="rep-user">loading</sppan>
+            <p class="rep-time">loading</p>
+        </div>
+    </div>
+    <div class="rep-content"></div>
+</div>
+
+{hook p_editor_thread_index_content_header}
+<div class="hy-editor"></div>
+{hook p_editor_thread_index_content_footer}
+
+{hook p_editor_thread_index_postbtn_header}
+<button style="margin-top: 10px" type="button" class="editor-btn editor-btn-primary" id="post_post"><i class="am-icon-check"></i> 发 表</button>
+{hook p_editor_thread_index_postbtn_footer}
+
+
+<script type="text/javascript">
+    var editor = new HY_editor('.hy-editor',{
+        toolbar:'{$editor_inc.toolbar_post}',
+        upload_image_path:'{php HYBBS_URL('Post','upload')}',
+        toolbarFixed:true,
+
+        width:'{$editor_inc.width}',
+        height:'{$editor_inc.height}'
+    });
+</script>
+
+
+<script>
+//回复帖子
+function jump_post(obj){
+    var _this   = $(obj);
+    var pid     = _this.data('pid');
+    var user    = _this.data('user');
+    var avatar  = _this.data('avatar');
+    var time    = _this.data('time');
+    var content = $('#pid-'+pid);
+
+    window.rep_pid = pid;
+
+    $('.rep-user').text(user);
+    $('.rep-time').text(time);
+    $('.rep-avatar').attr('src',avatar);
+    
+    $('.rep-content').html(content.html());
+
+    $('.rep-box').show();
+
+    $("body,html").animate({
+        scrollTop:$('.rep-box').offset().top //让body的scrollTop等于pos的top，就实现了滚动
+    });
+}
+function stop_post(){
+    $('.rep-box').hide();
+    window.rep_pid = 0;
+}
+
+$(function(){
+    var edit_bool = function(){};
+
+    $("#post_post").click(function(){
+        var _obj = $(this);
+        _obj.attr('disabled','disabled');
+        _obj.text("提交中...");
+
+        var forum = $("#forum").val();
+        $.ajax({
+            url: '{php HYBBS_URL('post','post')}',
+            type:"POST",
+            cache: false,
+            data:{
+                id:{$tid},
+                pid:window.rep_pid,
+                content:editor.getValue(),
+                {hook p_editor_thread_index_data}
+                },
+            dataType: 'json'
+        }).then(function(e) {
+            if(e.error){
+                window.location.reload();
+            }else{
+                _obj.removeAttr('disabled');
+                _obj.text("发 表");
+                swal(e.error?"发表成功":"发表失败", e.info, e.error?"success": "error");
+            }
+        }, function() {
+            _obj.removeAttr('disabled');
+            _obj.text("发 表");
+            swal("失败", "请尝试重新提交", "error");
+        });
+    })
+})
+</script>
+{/if}
+{hook p_editor_thread_index_footer}
