@@ -15,7 +15,8 @@
         <!--[if lte IE 8 ]>
         <script src="{#WWW}public/js/jquery1.11.3.min.js"></script>
         <![endif]-->
-
+        <script src="{#WWW}public/js/sweet-alert.min.js"></script>
+        <link href="{#WWW}public/css/alert.css" rel="stylesheet">
 
         <!--{hook t_user_header}-->
         <script>
@@ -37,6 +38,7 @@
 
 <div class="dashboard-head">
     <nav>
+        {hook t_user_header_menu_top}
         {if in_array($method,['thread','post']) !== false {hook t_user_header_menu_post_if}}
         <a href="{php HYBBS_URL('my',$data['user'],'thread');}" {if $method == 'thread'}class="active"{/if}>{$_LANG['我的文章']}</a>
         <a href="{php HYBBS_URL('my',$data['user'],'post');}" {if $method == 'post'}class="active"{/if}>{$_LANG['帖子评论']}</a>
@@ -49,7 +51,14 @@
 
         {/if}
 
+        {if in_array($method,['message']) !== false {hook t_user_header_menu_message_if}}
+        <a href="{php HYBBS_URL('my',$data['user'],['message'=>'index']);}" {if X('get.message') == 'index'}class="active"{/if}>最新消息
+        </a>
+        <a href="{php HYBBS_URL('my',$data['user'],['message'=>'follow']);}" {if X('get.message') == 'follow'}class="active"{/if}>我的关注</a>
+        <a href="{php HYBBS_URL('my',$data['user'],['message'=>'fans']);}" {if X('get.message') == 'fans'}class="active"{/if}>我的粉丝</a>
+        {/if}
 
+        {hook t_user_header_menu_bottom}
         
     </nav>
 </div>

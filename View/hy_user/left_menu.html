@@ -57,6 +57,9 @@
                     <li class="tab-profile {if in_array($method,['op','log','file']) !== false}active{/if}">
                     <a href="{php HYBBS_URL('my',$data['user'],'op');}"><i class="icon icon-user-info"></i>我的信息</a>
                     </li>
+                    <li class="tab-profile {if in_array($method,['message']) !== false}active{/if}">
+                    <a href="{php HYBBS_URL('my',$data['user'],['message'=>'index']);}"><i class="icon icon-message2"></i>我的消息</a>
+                    </li>
                 {/if}
                 {if NOW_GID == C("ADMIN_GROUP")}
                     <li class="tab-message">
