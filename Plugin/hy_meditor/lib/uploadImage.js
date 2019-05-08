@@ -24,7 +24,7 @@ HY_editor_addBtn({
 			        reader.onload = function(e) {
 			        	var tmp_id = _this.getTmpId();
 			        	
-			        	var ImgHtml = '&nbsp;<span id="'+tmp_id+'" contenteditable="false" class="hy-editor-upimg-box"><img src="'+e.target.result+'"><span class="hy-editor-upimg-box-c"></span><span class="hy-editor-upimg-box-progress"></span><span class="hy-editor-upimg-box-progress-text"></span></span><br>&nbsp;';
+			        	var ImgHtml = '<span id="'+tmp_id+'" contenteditable="false" class="hy-editor-upimg-box"><img src="'+e.target.result+'"><span class="hy-editor-upimg-box-c"></span><span class="hy-editor-upimg-box-progress"></span><span class="hy-editor-upimg-box-progress-text"></span></span><br><p><br></p>';
 			        	if(_this.execCommand('insertHTML',false,ImgHtml)){
 			        		
 				            

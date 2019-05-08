@@ -136,6 +136,7 @@ $(function(){
             cache: false,
             data:{
                 id:{$tid},
+                pid:window.rep_pid,
                 content:utf16toEntities(editor.getValue()),
                 {hook p_m_editor_thread_index_data}
             },
