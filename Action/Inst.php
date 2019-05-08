@@ -160,6 +160,7 @@ DROP TABLE IF EXISTS hy_vote_thread;
     ('2.1.0', 1),
     ('2.1.3', 1),
     ('2.2', 1),
+    ('2.2.1', 1),
     ('thread', 0);
 
 
@@ -175,6 +176,7 @@ DROP TABLE IF EXISTS hy_vote_thread;
     `filename` text NOT NULL COMMENT '附件名称',
     `md5name` text NOT NULL COMMENT '附件随机名',
     `filesize` int(10) UNSIGNED NOT NULL COMMENT '文件大小',
+    `file_type` int(11) NOT NULL DEFAULT '0',
     `atime` int(10) UNSIGNED NOT NULL COMMENT '添加时间',
     PRIMARY KEY (`id`,`uid`) USING BTREE
     ) ENGINE={$table_type} DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
@@ -259,6 +261,7 @@ DROP TABLE IF EXISTS hy_vote_thread;
     `uid2` int(10) UNSIGNED NOT NULL,
     `c` int(11) NOT NULL DEFAULT '0',
     `atime` int(10) UNSIGNED NOT NULL DEFAULT '0',
+    `update_time` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `state` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
     PRIMARY KEY (`uid1`,`uid2`) USING BTREE,
     KEY `uid2` (`uid2`,`state`) USING BTREE
@@ -469,6 +472,19 @@ DROP TABLE IF EXISTS hy_vote_thread;
     PRIMARY KEY (`uid`,`tid`) USING BTREE
     ) ENGINE={$table_type} DEFAULT CHARSET=utf8;
 
+    -- --------------------------------------------------------
+
+    --
+    -- 表的结构 `hy_file_type`
+    --
+
+    CREATE TABLE `hy_file_type` ( 
+    `id` INT NOT NULL , 
+    `name` VARCHAR(12) NOT NULL , 
+    UNIQUE KEY `id` (`id`),
+    ) ENGINE={$table_type} DEFAULT CHARSET=utf8;
+
+    INSERT INTO `hy_file_type` (`id`, `name`) VALUES ('0', '未知'),('1', '图片'), ('2', '附件');
     
     ");
     if($result->errorCode() ==0)
