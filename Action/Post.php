@@ -206,7 +206,7 @@ class Post extends HYBBS {
 
 
 			//获取提交数据
-            $forum = X("post.forum",'-1'); if(empty($forum))$forum=-1;
+            $forum = X("post.forum",'-1');
             $title = trim(X("post.title"));
             $title = htmlspecialchars($title);
             $tgold = intval(X("post.tgold"));
