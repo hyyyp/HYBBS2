@@ -4,5 +4,5 @@ return array(
     'user' => 'krabs',
     'mess' => '官方手机模板',
     'code' => '',
-    'version' => '2.6',
+    'version' => '2.7',
 );
