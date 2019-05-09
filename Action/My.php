@@ -118,7 +118,7 @@ class My extends HYBBS {
     		$count = (!$count)?1:$count;
     		$page_count = ($count % 10 != 0)?(intval($count/10)+1) : intval($count/10);
             //{hook a_my_empty_8}
-            $this->v("title",$data['user']);
+            $this->v("title",'我的主题');
             $this->v("pageid",$pageid);
     		$this->v("page_count",$page_count);
             $this->v('thread_data',$thread_data);
@@ -160,7 +160,7 @@ class My extends HYBBS {
     		$count = (!$count)?1:$count;
     		$page_count = ($count % 10 != 0)?(intval($count/10)+1) : intval($count/10);
 
-            $this->v("title",$data['user']);
+            $this->v("title",'我的帖子');
             $this->v("pageid",$pageid);
     		$this->v("page_count",$page_count);
             $this->v('post_data',$post_data);
@@ -178,7 +178,7 @@ class My extends HYBBS {
 
             //{hook a_my_empty_133}
             $this->v('data',$data);
-            $this->v("title","消息中心");
+            $this->v("title","个人资料");
             $this->display('user_op');
 
         }elseif($method == 'file'){ //文件列表
@@ -222,7 +222,7 @@ class My extends HYBBS {
             $data = $User->read($uid);
             $data['avatar'] = $this->avatar($uid);
             $this->v('data',$data);
-            $this->v("title","流水记录");
+            $this->v("title","积分日志");
 
             $Log = S('Log');
             $log_data = $Log->select('*',[
