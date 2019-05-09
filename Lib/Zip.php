@@ -5485,7 +5485,7 @@ class Zip {
     public function unzip($zip_file_path,$unzip_to_dir){
         $Pclzip = new PclZip($zip_file_path);
         
-        if($Pclzip->extract(PCLZIP_OPT_PATH,$unzip_to_dir)==0){ 
+        if($Pclzip->extract(PCLZIP_OPT_PATH,$unzip_to_dir,PCLZIP_OPT_REPLACE_NEWER)==0){ 
             return '解压失败：'.$Pclzip->errorInfo(true); 
         }
         return true;
