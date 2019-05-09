@@ -71,7 +71,7 @@
             <div class="chat-container-header">
                 <div class="chat-head">
                     <a style="flex: 1;    align-items: center;display: flex;justify-content: left;" href="">
-                        <img src="{$chat_user_data.avatar.c}" style="width: 30px;height: 30px;border-radius: 61px;">
+                        <img src="{#WWW}{$chat_user_data.avatar.c}" style="width: 30px;height: 30px;border-radius: 61px;">
                     </a>
                     <h1 style="flex: 1;align-items: center;display: flex;justify-content: center;font-weight: 400;font-size: 18px">{$chat_user_data.user}</h1>
                     <a href="javascript:;" onclick="alert('这个不是实时聊天，仅用于私信！','warning')" style="flex:1;align-items: center;display: flex;justify-content: flex-end;">
@@ -207,7 +207,7 @@
         if(prepend===true){
             $('#chat-list-ul').prepend('<li class="'+(pos == 'left' ? '' :'chat-right-box')+'">'+
                 '<div class="chat-box">'+
-                    '<img class="chat-avatar" src="'+avatar+'">'+
+                    '<img class="chat-avatar" src="{#WWW}'+avatar+'">'+
                     '<div class="chat-text">'+
                         '<div class="chat-content">'+content+'</div>'+
                         '<div class="chat-time">'+(format_time(time*1000))+'</div>'+
@@ -217,7 +217,7 @@
         }else{
             $('#chat-list-ul').append('<li class="'+(pos == 'left' ? '' :'chat-right-box')+'">'+
                 '<div class="chat-box">'+
-                    '<img class="chat-avatar" src="'+avatar+'">'+
+                    '<img class="chat-avatar" src="{#WWW}'+avatar+'">'+
                     '<div class="chat-text">'+
                         '<div class="chat-content">'+content+'</div>'+
                         '<div class="chat-time">'+(format_time(time*1000))+'</div>'+
