@@ -137,10 +137,10 @@ class User extends Model {
         //{hook m_user_update_int_3}
     }
      //获取用户头像
-    public function avatar($user){
+    public function avatar($uid){
         //{hook m_user_avatar_1}
-        $path = INDEX_PATH . 'upload/avatar/' . md5($user);
-        $path1 = 'upload/avatar/' . md5($user);
+        $path = INDEX_PATH . 'upload/avatar/' . md5($uid);
+        $path1 = 'upload/avatar/' . md5($uid);
         //{hook m_user_avatar_2}
         if(!file_exists($path.'-a.jpg'))
             return array(
