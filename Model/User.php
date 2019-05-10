@@ -92,7 +92,9 @@ class User extends Model {
             'gid'=>$gid,
             'ctime'=>NOW_TIME,
         ));
-        return $this->id();
+        $uid = $this->id();
+        //{hook m_user_add_user_3}
+        return $uid;
     }
     /**
      * 用户UID 转 用户名
