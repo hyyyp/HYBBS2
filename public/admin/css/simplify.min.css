@@ -304,9 +304,15 @@ h4 {
 }
 
 .m-left-sm .tgl-btn{
-	    float: left;
-    margin-right: 28px;
+    float: left;
+	margin-right: 28px;
 }
 .form-horizontal label {
-        margin-top: 0;
-    }
+    margin-top: 0;
+}
+.label{
+	    line-height: 14px;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+}
