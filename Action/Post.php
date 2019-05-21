@@ -372,7 +372,7 @@ class Post extends HYBBS {
 	            					'uid'		=>	NOW_UID,
 	            					'gold'		=>	isset($filegold_arr[$key]) ? intval($filegold_arr[$key]) : 0,
 	            					'hide'		=>	isset($filehide_arr[$key]) ? intval($filehide_arr[$key]) : 0,
-	            					'mess'		=>	isset($filemess_arr[$key]) ? $filemess_arr[$key] : '',
+	            					'mess'		=>	isset($filemess_arr[$key]) ? htmlspecialchars(strip_tags($filemess_arr[$key])) : '',
 	            				));
 	            			}
 
@@ -816,14 +816,14 @@ class Post extends HYBBS {
 		            			$fileid_v=intval($fileid_v);
 		            			if(empty($fileid_v)) continue;
 		            			//判断文件是否属于文章作者
-		            			if($File->is_comp($fileid_v,$post_data['uid'])){
+		            			if($File->is_comp($fileid_v,$post_data['uid']) || NOW_GID == C('ADMIN_GROUP') || is_forumg($this->_forum,NOW_UID,$post_data['fid'])){
 		            				$tmp_arr[$fileid_v]=[
 		            					'tid'	=>	$post_data['tid'],
 		            					'uid'	=>	$post_data['uid'],
 		            					'gold'	=>	isset($filegold_arr[$key]) ? intval($filegold_arr[$key]) : 0,
 		            					'hide'	=>	isset($filehide_arr[$key]) ? intval($filehide_arr[$key]) : 0,
 		            					'downs'	=>	isset($tmp_arr[$fileid_v]) ? $tmp_arr[$fileid_v]['downs'] : 0,
-		            					'mess'	=>	isset($filemess_arr[$key]) ? $filemess_arr[$key] : '',
+		            					'mess'	=>	isset($filemess_arr[$key]) ?  htmlspecialchars(strip_tags($filemess_arr[$key])) : '',
 		            					//是否被删除
 		            					'is_del'	=>	false
 		            				];
