@@ -146,7 +146,6 @@ class HY
         foreach ($translate as $key => $value) {
             $text = str_replace($key,$value,$text);
         }
-
         if($GLOBALS['Exception_save_log']){
 
             $log->log($text);
@@ -178,6 +177,11 @@ class HY
             $s = $e->getMessage();
             include C("error_404");
             
+        }else{
+            header('HTTP/1.1 404 Not Found'); 
+            header('status: 404 Not Found');
+            $s = $e->getMessage();
+            include C("error_404");
         }
         
     }
@@ -218,7 +222,7 @@ class HY
                 $s = str_replace($key,$value,$s);
             }
             $log = New \HY\Lib\Logs;
-            $log->log($s.' #错误来自于:'.$Error_file.' #行数:'.$Error_line."\r\n\r\n");
+            $log->log($s.' #错误来自于:'.$Error_file.' #行数:'.$Error_line."\r\n");
         }
 
 
