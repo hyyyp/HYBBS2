@@ -2024,12 +2024,104 @@ function plugin_uninstall(){
         $info = file_get_contents(C("PLUGIN_DOWN").'ajax/update_info');
         
         if(!empty($data)){
-            //$json = json_decode($data,true);
+            $json = json_decode($data,true);
             if($data != HYBBS_V)
-                $this->json(array('error'=>true,'info'=>$data,'json'=>json_decode($info)));
+                $this->json(['error'=>true,'info'=>$data,'json'=>json_decode($info)]);
 
         }
-        $this->json(array('error'=>false,'info'=>'无更新'));
+        $this->json(['error'=>false,'info'=>'无更新']);
+    }
+    public function GetNewVersion(){
+        $json_version = file_get_contents(C("PLUGIN_DOWN").'ajax/update3?version='.HYBBS_V);
+        //$json_info = file_get_contents(C("PLUGIN_DOWN").'ajax/update3_info?version='.HYBBS_V);
+        
+        if(!empty($json_version)){
+            $json = json_decode($json_version,true);
+            if($json['error']){
+                if(empty($json['sql'])) $json['sql']=[];
+                foreach ($json['sql'] as $key => &$value) {
+                    $value = str_replace('#SQL_STORAGE_ENGINE#',C('SQL_STORAGE_ENGINE'),$value);
+                }
+                if(empty($json['sql'])) $json['sql']=false;
+                $this->json(['error'=>true,'info'=>$json]);
+            }
+        }
+        $this->json(['error'=>false,'info'=>'无更新']);
+    }
+    public function UpdateNewFile(){
+        $version    = X('post.version');
+        $num        = intval(X('post.num'));
+
+        $json_version = file_get_contents(C("PLUGIN_DOWN").'ajax/update3?version='.$version);
+        if(!empty($json_version)){
+            $json = json_decode($json_version,true);
+            if($json['error']){
+                if(empty($json['file']))
+                    $this->json(['error'=>true,'info'=>'ok']);
+
+                if(!isset($json['file'][$num]))
+                    $this->json(['error'=>false,'info'=>'找不到这个文件ID：'.$num]);
+                http_down(INDEX_PATH . trim($json['file'][$num]['file'],'/'),$json['file'][$num]['downurl']);
+                if(count($json['file']) == $num +1)
+                    $this->json(['error'=>true,'info'=>'ok']);
+                $this->json(['error'=>true,'info'=>'下载完成']);
+            }
+            $this->json(['error'=>false,'info'=>'无更新']);
+        }
+
+        $this->json(['error'=>false,'info'=>'更新内容获取失败']);
+    }
+    public function UpdateNewSql(){
+        $version    = X('post.version');
+        $num        = intval(X('post.num'));
+
+        $json_version = file_get_contents(C("PLUGIN_DOWN").'ajax/update3?version='.$version);
+        if(!empty($json_version)){
+            $json = json_decode($json_version,true);
+            if($json['error']){
+                if(empty($json['sql']))
+                    $this->json(['error'=>true,'info'=>'更新完成','end'=>true]);
+
+                if(!isset($json['sql'][$num]))
+                    $this->json(['error'=>false,'info'=>'找不到这条ID：'.$num,'end'=>false]);
+
+                $query = $json['sql'][$num];
+                $query = str_replace('#SQL_STORAGE_ENGINE#',C('SQL_STORAGE_ENGINE'),$query);
+
+                $sql = S("Plugin");
+                $result = $sql->query($query);
+                $end = false;
+                if(count($json['sql']) == $num +1)
+                    $end=true;
+
+                if($result->errorCode() != 0){
+                    if(strpos($result->errorInfo()[2],'Duplicate column') !== false || strpos($result->errorInfo()[2],'already exists') !== false){
+                        $this->json(['error'=>true,'info'=>'重复','message'=>$result->errorInfo()[2],'code'=>$result->errorCode(),'end'=>$end]);
+                    }
+                    $this->json(['error'=>false,'info'=>'SQL报错['.$result->errorCode().']：'.$result->errorInfo()[2],'end'=>$end]);
+                }
+                
+                $this->json(['error'=>true,'info'=>'更新完成','end'=>$end]);
+            }
+            $this->json(['error'=>false,'info'=>'无更新','end'=>false]);
+        }
+        $this->json(['error'=>false,'info'=>'更新SQL获取失败','end'=>false]);
+    }
+    public function UpdateNewIndex(){
+        $version    = X('post.version');
+        $json_version = file_get_contents(C("PLUGIN_DOWN").'ajax/update3?version='.$version);
+        if(!empty($json_version)){
+            $json = json_decode($json_version,true);
+            if($json['error']){
+                if(!isset($json['index']))
+                    $this->json(['error'=>false,'info'=>'找不到这个版本号：'.$version]);
+                http_down(INDEX_PATH . 'index.php',$json['index']);
+                $this->json(['error'=>true,'info'=>'更新版本号完成']);
+            }
+            $this->json(['error'=>false,'info'=>'无更新']);
+        }
+
+        $this->json(['error'=>false,'info'=>'更新内容获取失败']);
     }
     public function update2(){
         if(IS_POST){
@@ -2232,7 +2324,10 @@ function plugin_uninstall(){
     public function is_rewrite(){
         die('on');
     }
+    public function updatebbs(){
 
+        $this->display('updatebbs');
+    }
 
 
     //{hook a_admin_fun}
