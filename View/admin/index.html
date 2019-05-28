@@ -378,17 +378,30 @@ foreach ($able as $key=>$value) {
 	function add_mess(info,on){
 		$("#open-mess").html($("#open-mess").html()+'<label class="label label-'+on+'" style="margin-bottom:5px;display: ;    line-height: 3;">'+info+'</label>\r\n');
 	}
-
-	$.get("{php HYBBS_URL('admin','hybbsupdate2')}",function(e){
-		if(e.error){
-			var html ='';
-			for(o in e.json){
-				html+= '<li>' + e.json[o] + '</li>';
+	$.ajax({
+		url:'{#WWW}admin{#EXP}GetNewVersion',
+		type:'get',
+		dataType:'json',
+		success:function(e){
+			if(e.error){
+				$("#mess").html('<div class="alert alert-success alert-custom alert-dismissible" role="alert"><i class="fa fa-check-circle m-right-xs"></i><strong>有新版本更新</strong> 当前论坛版本：{#HYBBS_V}，论坛有新版本: '+e.info.version+' 更新吗？ <a class="label label-danger" href="{php HYBBS_URL('admin','updatebbs')}">跳转更新页</a> </div>');
 			}
-			$("#mess").html('<div class="alert alert-success alert-custom alert-dismissible" role="alert"><i class="fa fa-check-circle m-right-xs"></i><strong>信息!</strong> 论坛有新版本: '+e.info+' 更新吗？ <a class="label label-danger" data-toggle="modal" data-target="#normalModal">点击更新</a> <a class="label label-primary" data-toggle="modal" data-target="#normalModal">展开更新日志</a><div><h3>更新日志</h3><ul style="margin-left:20px">'+html+'</ul></div></div>');
+			
+			
+		},error:function(xhr,ts){
+			$('#re').html('<label class="label label-danger"><i class="fa fa-close"></i> 运行出错，请查看日志！</label>');
 		}
+	})
+	// $.get("{php HYBBS_URL('admin','hybbsupdate2')}",function(e){
+	// 	if(e.error){
+	// 		var html ='';
+	// 		for(o in e.json){
+	// 			html+= '<li>' + e.json[o] + '</li>';
+	// 		}
+	// 		$("#mess").html('<div class="alert alert-success alert-custom alert-dismissible" role="alert"><i class="fa fa-check-circle m-right-xs"></i><strong>信息!</strong> 论坛有新版本: '+e.info+' 更新吗？ <a class="label label-danger" href="{php HYBBS_URL('admin','updatebbs')}">跳转更新页</a> <div><h3>更新日志</h3><ul style="margin-left:20px">'+html+'</ul></div></div>');
+	// 	}
 
-	},'json');
+	// },'json');
 	
 	$.get('{php HYBBS_URL('admin','getip')}',function(e){
 		$("#ip").text(e.ip);
