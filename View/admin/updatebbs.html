@@ -1,0 +1,294 @@
+{include header}
+<script type="text/javascript">
+	window.page_id = 1;
+
+</script>
+<div class="wrapper">
+    {include header_menu}
+    {include left_menu}
+    <div class="main-container">
+        <div class="padding-md">
+            <h2 class="header-text">
+                升级论坛
+                <small>Update HYBBS</small>
+            </h2>
+
+            <div class="smart-widget">
+				<div class="smart-widget-header" id="pan-title">
+					<i class="fa fa-spinner fa-spin fa-lg fa-fw "></i> 获取版本号中...
+				</div>
+				<div class="smart-widget-inner">
+					<div class="smart-widget-body">
+						<div id="mess" style="display: none" class="alert alert-success alert-custom alert-dismissible" role="alert">
+							<h5><i class="fa fa-info-circle m-right-xs"></i>更新日志</h5>
+							<ul style="margin-left:20px" id="mess-ul">
+								
+							</ul>
+						</div>
+
+						<div class="progress progress-striped active">
+						  <div id="jdt" class="progress-bar progress-bar-success" role="progressbar" style="width: 1%">
+						    <span class="sr-only">80% Complete (success)</span>
+						  </div>
+						</div>
+						<table class="table table-hover">
+							<thead>
+								<tr>
+						            <th>文件名</th>
+						            <th title="内容由Github提供，可能网络因素无法访问该链接">代码变动详情</th>
+						            <th>文件大小</th>
+						            <th width="120">状态</th>
+						        </tr>
+							</thead>
+						    <tbody id="tbody">
+						        
+						    </tbody>
+						</table>
+						<table class="table table-hover">
+							<thead>
+								<tr>
+						            <th>SQL语句</th>
+						            <th width="120">状态</th>
+						        </tr>
+							</thead>
+						    <tbody id="tbody-sql">
+						        
+						    </tbody>
+						</table>
+						<button id="btn-update" onclick="update(this)" class="btn btn-success btn-" disabled="">开始更新</button>
+					</div>
+				</div>
+			</div>
+		
+			
+       
+
+        </div>
+    </div><!-- ENd box  -->
+    <style type="text/css">
+    	.table .fa{
+    		margin-right: 10px;
+    	}
+    	.table .fa-pause{
+			color: #0ae;
+    	}
+    	.table .fa-spinner{
+    		color: #e36159;
+    		margin-right: 5px;
+    	}
+    	.table .fa-check{
+    		color: #3c763d;
+    	}
+    	.table .fa-close{
+    		color: #de5e5c;
+    	}
+    	.table .fa-warning{
+    		color: #eaaa41;
+    	}
+    	.social-tooltip{
+    		position: relative;
+    	}
+    	/*.social-tooltip { color: #fff; color: rgba(255,255,255,0.7); font-size: 24px; display: inline; position: relative; z-index: 98; }*/
+		/*.social-tooltip:hover { color: #fff; text-decoration: none; }*/
+		.social-tooltip:hover:after { top: -36px; background: #fff; font-size: 14px; color: #666; content: attr(title); display: block; right: 0; padding: 5px 15px; position: absolute; white-space: nowrap;
+-webkit-border-radius: 3px; border-radius: 3px;
+-webkit-box-shadow: 0 0 2px rgba(0,0,0,0.2); box-shadow: 0 0 2px rgba(0,0,0,0.2); }
+		.social-tooltip:hover:before { top: -10px; right: 8px; border: solid; border-color: #fff transparent; border-width: 5px 5px 0 5px; content: ""; display: block; position: absolute; z-index: 1; }
+		#mess-ul li{
+			list-style: disc;
+		}
+    </style>
+
+{include footer}
+<script type="text/javascript">
+
+	$(function(){
+		$.ajax({
+			url:'{#WWW}admin{#EXP}GetNewVersion',
+			type:'get',
+			dataType:'json',
+			success:function(e){
+				if(e.error){
+					$('#btn-update').removeAttr('disabled','disabled');
+					$('#pan-title').html('待更新版本号：<span class="label label-success">'+e.info.version+'</span>');
+					var tbody = $('#tbody');
+					var tbody_sql = $('#tbody-sql');
+					//var i = 0;
+					window.update_num = 1;
+					window.now_num = 0;
+
+					$('#mess').show();
+					for(var o in e.info.info){
+						$('#mess-ul').append('<li>'+e.info.info[o]+'</li>');
+					}
+
+					if(!e.info.file)
+						tbody.append('<tr><td>无文件更新</td></tr>');
+					for(var o in e.info.file){
+						tbody.append('<tr data-num="'+o+'">'+
+						    '<td><a title="查看本次更新文件完整代码" href="'+e.info.file[o].downurl+'" target="_blank">'+e.info.file[o].file+'</a></td>'+
+						    '<td><a href="'+e.info.file[o].commitsurl+'" target="_blank">查看详情</a></td>'+
+						    '<td>'+e.info.file[o].filesize+'</td>'+
+						    '<td class="social-tooltip" id="td'+o+'"><span class="fa fa-pause text-blue upzt"></span><span class="margin-left upztt">等待更新</span></td>'+
+						    '</tr>');
+						window.update_num++;
+						//i++;
+					}
+					if(!e.info.sql)
+						tbody_sql.append('<tr><td>无SQL更新</td></tr>');
+					for(var o in e.info.sql){
+						tbody_sql.append('<tr data-num="'+o+'">'+
+						    '<td>'+e.info.sql[o]+'</td>'+
+						    '<td class="social-tooltip" id="tdsql'+o+'"><span class="fa fa-pause text-blue upzt"></span><span class="margin-left upztt">等待更新</span></td>'+
+						    '</tr>');
+						window.update_num++;
+					}
+				}else{
+					$('#pan-title').html('无更新');
+				}
+			},error:function(xhr,ts){
+				$('#pan-title').html('获取版本号失败，也许本地服务器连接不上HY官方服务器！');
+			}
+		});
+
+	});
+	window.HYBBS_V = '{#HYBBS_V}';
+	function update(obj){
+		var _this = $(obj);
+		_this.attr('disabled','disabled').html('<i class="fa fa-spinner fa-spin fa-lg fa-fw "></i> 更新中...');
+		var file_num=[];
+		var sql_num=[];
+		var count = 0;
+		var count_sql = 0;
+		$('#tbody tr').each(function(){
+			$tr = $(this);
+			var num = $tr.data('num');
+			file_num.push(num);
+			count++;
+		});
+		$('#tbody-sql tr').each(function(){
+			$tr = $(this);
+			var num = $tr.data('num');
+			sql_num.push(num);
+			count_sql++;
+		});
+		var i=0;
+		function UpdateNewFile(num){
+			var $td = $('#td'+i);
+			$td.html('<i class="fa fa-spinner fa-spin fa-lg fa-fw "></i> 更新中...');
+			i++;
+			$.ajax({
+				url:'{php HYBBS_URL('admin','UpdateNewFile')}',
+				type:'post',
+				data:{
+					version:window.HYBBS_V,
+					num:num
+				},
+				dataType:'json',
+				success:function(e){
+					if(e.error){
+						$td.html('<i class="fa fa-check "></i> 更新完成');
+						update_progress();
+						if(e.info == 'ok'){
+							i=0;
+							return UpdateNewSql(sql_num[i]);
+						}
+						UpdateNewFile(file_num[i]);
+						
+					}else{
+						
+						$td.html('<i class="fa fa-close "></i> 更新失败');
+						swal(e.info);
+						
+						
+					}
+				},
+				error:function(e){
+					$td.html('<i class="fa fa-close "></i> 更新失败');
+					_this.removeAttr('disabled','disabled').html('开始更新');
+					swal('更新文件出错','程序出错或网络链接中断('+e.statusText+')','error');
+				}
+			});
+		}
+		UpdateNewFile(file_num[i]);
+
+		function UpdateNewSql(num){
+			var $td = $('#tdsql'+i);
+			$td.html('<i class="fa fa-spinner fa-spin fa-lg fa-fw "></i> 更新中...');
+			i++;
+			$.ajax({
+				url:'{php HYBBS_URL('admin','UpdateNewSql')}',
+				type:'post',
+				data:{
+					version:window.HYBBS_V,
+					num:num
+				},
+				dataType:'json',
+				success:function(e){
+					if(e.error){
+						if(e.info == '重复'){
+							$td.html('<i class="fa fa-warning "></i> 忽略执行').attr('title','['+e.code+']：'+e.message);
+						}else{
+							$td.html('<i class="fa fa-check "></i> 更新完成');
+						}
+						update_progress();
+						if(e.end){
+							
+							return UpdateNewIndex();
+						}
+						UpdateNewSql(sql_num[i]);
+					}else{
+						$td.html('<i class="fa fa-close "></i> 更新失败');
+						swal(e.info);
+					}
+				},
+				error:function(e){
+					$td.html('<i class="fa fa-close "></i> 更新失败');
+					_this.removeAttr('disabled','disabled').html('开始更新');
+					swal('更新SQL出错','程序出错或网络链接中断('+e.statusText+')','error');
+				}
+			});
+		}
+
+		function UpdateNewIndex(){
+			_this.html('<i class="fa fa-spinner fa-spin fa-lg fa-fw "></i> 更新版本号中...');
+
+			$.ajax({
+				url:'{php HYBBS_URL('admin','UpdateNewIndex')}',
+				type:'post',
+				data:{
+					version:window.HYBBS_V
+				},
+				dataType:'json',
+				success:function(e){
+					if(e.error){
+						_this.html('<i class="fa fa-check fa-lg fa-fw "></i> 更新完成');
+						update_progress();
+						swal('更新成功',e.info,'success');
+						
+					}else{
+						_this.html('<i class="fa fa-close fa-lg fa-fw "></i> 更新版本号失败');
+						swal('更新版本号出错',e.info,'error');
+						
+					}
+				},
+				error:function(e){
+					_this.html('<i class="fa fa-close fa-lg fa-fw "></i> 更新版本号失败');
+					_this.removeAttr('disabled','disabled').html('开始更新');
+					swal('更新版本号出错','程序出错或网络链接中断('+e.statusText+')','error');
+				}
+			});
+		}
+
+		function update_progress(){
+
+			window.now_num++;
+			console.log(window.now_num , window.update_num)
+			$('#jdt').css({
+				width: ((window.now_num / window.update_num) * 100)+'%'
+			});
+		}
+
+	}
+
+</script>
