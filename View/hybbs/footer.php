@@ -67,6 +67,7 @@
         <!--{hook right_box_bottom}-->
     </div>
     {/if}
+    <div class="clearfix"></div>
 </div>
 <footer>
     <div class="container">
