@@ -555,6 +555,12 @@ function HY_editor(selector,config){
 	//console.log(this.$toolbar.width());
 	this.$toolbar.css('width',this.$editor.width());
 
+	//当前悬浮状态
+	this.nowToolFixed=false;
+
+	this.$now_select = null;
+	this.$now_btn = null;
+
 	if(this.config.toolbarFixed){
 		//var toolbar_top = _this.$toolbar.offset().top;
 
@@ -567,11 +573,26 @@ function HY_editor(selector,config){
 			//console.log($(document).scrollTop() , toolbar_top + toolbar_height);
 			if($(document).scrollTop() >= _this.$editor.offset().top && $(document).scrollTop()<= _this.$editor.offset().top + _this.$editor.height() ){
 				_this.$toolbar.addClass('hy-editor-toolbar-fix');
+				_this.$dialog_container.addClass('hy-editor-dialog-container-fix');
 				_this.$editor.css('padding-top',toolbar_height+container_top);
+				_this.nowToolFixed=true;
+				
+				_this.$now_select.css({
+					left:_this.$now_btn.position().left,
+					top: _this.$now_btn.height() + _this.$now_btn.position().top
+				});
+
 				//pre_top = _this.$toolbar.offset().top;
 			}else{
 				_this.$toolbar.removeClass('hy-editor-toolbar-fix');
+				_this.$dialog_container.removeClass('hy-editor-dialog-container-fix');
 				_this.$editor.css('padding-top','0');
+				_this.nowToolFixed=false;
+
+				_this.$now_select.css({
+					left:_this.$now_btn.position().left,
+					top: ((0 - _this.$toolbar.height()) + _this.$now_btn.height()) + _this.$now_btn.position().top
+				});
 			}
 		  
 		});
@@ -819,18 +840,30 @@ HY_editor.prototype.bindEvents_ = function(){
 						_this.getConfig(name).select.onclose(_this,$select);
 					$select.removeClass('hy-editor-select-show');
 			        $btn.removeClass('active-select');
+			        _this.$now_select = null;
+					_this.$now_btn = null;
 				}else{
 					//移动下拉菜单位置
-					$select.css({
-						left:$btn.position().left,
-						top: ((0 - _this.$toolbar.height()) + $btn.height()) + $btn.position().top
-					});
+					//console.log(_this.nowToolFixed);
+					if(_this.nowToolFixed){
+						$select.css({
+							left:$btn.position().left,
+							top:  $btn.height() + $btn.position().top
+						});
+					}else{
+						$select.css({
+							left:$btn.position().left,
+							top: ((0 - _this.$toolbar.height()) + $btn.height()) + $btn.position().top
+						});
+					}
 						
 					//显示下拉菜单
 					if(_this.getConfig(name).select.onshow!==undefined)
 						_this.getConfig(name).select.onshow(_this,$select);
 					$select.addClass('hy-editor-select-show');
 					$btn.addClass('active-select');
+					_this.$now_select = $select;
+					_this.$now_btn = $btn;
 				}
 
 				//点击其他 隐藏下拉菜单
@@ -842,6 +875,8 @@ HY_editor.prototype.bindEvents_ = function(){
 							_this.getConfig(name).select.onclose(_this,$select);
 			        	$select.removeClass('hy-editor-select-show');
 			        	$btn.removeClass('active-select');
+			        	_this.$now_select = null;
+						_this.$now_btn = null;
 			        }
 			        
 			    });

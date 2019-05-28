@@ -22,9 +22,12 @@
     position: fixed;
     top:0;
 }
-
 .hy-editor-dialog-container{
     position: relative;
+}
+.hy-editor-dialog-container-fix{
+    position: fixed;
+    top:0;
 }
 .hy-editor-separator{
 	padding: 0;

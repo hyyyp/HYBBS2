@@ -4,5 +4,5 @@ return array(
     'user' => 'admin',
     'icon' => '',
     'mess' => 'PC电脑版发表帖子需要用到的富文本编辑器',
-    'version' => '1.0',
+    'version' => '1.1',
 );
