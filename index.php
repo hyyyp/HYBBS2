@@ -4,7 +4,7 @@ if(version_compare(PHP_VERSION,'5.4.0','<')){
 	die('HYPHP2.0 不支持 5.4以下的PHP版本.  当前你的PHP版本：' . PHP_VERSION);
 }
 
-define('HYBBS_V'			,'2.2.1');
+define('HYBBS_V'			,'2.2.2');
 define('INDEX_PATH' 		, str_replace('\\', '/', dirname(__FILE__)).'/');
 define('DEBUG'      ,(is_file(INDEX_PATH . 'DEBUG'))?false:true);
 define('PLUGIN_ON'  ,true);
@@ -14,16 +14,15 @@ define('PLUGIN_MORE_LANG_ON',true);
 require  'HY/HYPHP.php';
 /*
 
-优化 - 修改头像获取方式 增加函数get_avatar($uid);
-优化 - 个人中心增加tab导航
-优化 - 个人中心增加用户组显示 且使用后台用户组新自定义颜色以及css
-优化 - 个人中心增加用户组升级进度条
-优化 - 个人中心增加私信页面
+优化 - 更新升级论坛方式换新 采用单文件逐个更新，不再使用全量解压覆盖更新。
+修复 - 个人中心私信头像问题
+修复 - 管理员无法编辑用户帖子内的附件
+修复 - 默认登录页面 新头像算法 不显示头像的问题
+修复 - 更新HYEditor编辑器 悬浮菜单 不动的问题
+修复 - 默认模板侧边栏悬浮突出底部的问题
 
-修复 - 百度编辑器多图上传 在Mac谷歌非https环境下 无法使用的问题
+框架 - 解决日志不换行问题
 
-框架 - 优化文件缓存 修改缓存文件后缀名为.cache
-框架 - 优化Model增加查询缓存，数据缓存
 
 s上传文件记录数据库
 
