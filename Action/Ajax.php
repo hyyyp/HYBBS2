@@ -53,9 +53,10 @@ class Ajax extends HYBBS {
     }
     //传用户UID 返回头像JSON
     public function useravatar(){
-        $uid = X("get.uid");
+        $user = X("get.user");
+        $User = M('User');
+        $uid = $User->user_to_uid($user);
         //{hook a_ajax_useravatar_v}
-        //print_r($this->avatar($user));return;
         return $this->json($this->avatar($uid));
     }
 
