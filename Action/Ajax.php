@@ -113,18 +113,23 @@ class Ajax extends HYBBS {
 
         //{hook a_ajax_downfile_10}
         //附件下载链接
-        $path = INDEX_PATH.'upload/userfile/'.$fileinfo_data['uid'].'/'.$file_data['md5name'];
-        $downlink = WWW.'upload/userfile/'.$fileinfo_data['uid'].'/'.$file_data['md5name'];
-
-        if(IS_AJAX){
-            $this->json(array('error'=>true,'info'=>$downlink));
+        $path       = INDEX_PATH.'upload/userfile/'.$fileinfo_data['uid'].'/'.$file_data['md5name'];
+        $downlink   = WWW.'upload/userfile/'.$fileinfo_data['uid'].'/'.$file_data['md5name'];
+        if(!is_file($path)){//兼容新附件
+            $StorageThreadDir  = GetStorageThreadFileDir($fileinfo_data['tid']);
+            $path           = INDEX_PATH . $StorageThreadDir . $file_data['md5name'];
+            $downlink       = WWW . $StorageThreadDir . $file_data['md5name'];
         }
         //{hook a_ajax_downfile_11}
         if(!is_file($path)) {
             $this->json(array('error'=>false,'info'=>'附件文件不见了!','errorid'=>4));
         }
-        //获取附件大小
-        //$filesize = filesize($path);
+
+        if(IS_AJAX){
+            $this->json(array('error'=>true,'info'=>$downlink));
+        }
+        
+        
         //{hook a_ajax_downfile_12}
         if(stripos($_SERVER["HTTP_USER_AGENT"], 'MSIE') !== FALSE) {
             $file_data['filename'] = urlencode($file_data['filename']);
