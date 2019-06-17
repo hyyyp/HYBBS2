@@ -89,6 +89,8 @@ DROP TABLE IF EXISTS hy_user;
 DROP TABLE IF EXISTS hy_usergroup;
 DROP TABLE IF EXISTS hy_vote_post;
 DROP TABLE IF EXISTS hy_vote_thread;
+DROP TABLE IF EXISTS hy_file_type;
+
 
 
 
@@ -173,12 +175,19 @@ DROP TABLE IF EXISTS hy_vote_thread;
     CREATE TABLE `hy_file` (
     `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '附件ID',
     `uid` int(10) UNSIGNED NOT NULL COMMENT '附件主人UID',
+    `tid` int(10) UNSIGNED NOT NULL DEFAULT '0',
+    `pid` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `filename` text NOT NULL COMMENT '附件名称',
     `md5name` text NOT NULL COMMENT '附件随机名',
+    `md5` char(32) DEFAULT NULL,
     `filesize` int(10) UNSIGNED NOT NULL COMMENT '文件大小',
     `file_type` int(11) NOT NULL DEFAULT '0',
     `atime` int(10) UNSIGNED NOT NULL COMMENT '添加时间',
-    PRIMARY KEY (`id`,`uid`) USING BTREE
+    PRIMARY KEY (`id`,`uid`) USING BTREE,
+    KEY `tid` (`tid`),
+    KEY `pid` (`pid`),
+    UNIQUE KEY `md5` (`md5`) USING BTREE,
+    UNIQUE KEY `uid_md5` (`uid`,`md5`)
     ) ENGINE={$table_type} DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
     -- --------------------------------------------------------
@@ -314,6 +323,7 @@ DROP TABLE IF EXISTS hy_vote_thread;
     `content` longtext NOT NULL,
     `atime` int(10) UNSIGNED NOT NULL,
     `etime` int(10) UNSIGNED NOT NULL DEFAULT '0',
+    `euid` int(10) UNSIGNED DEFAULT '0',
     `goods` int(10) UNSIGNED DEFAULT '0',
     `nos` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `posts` int(10) UNSIGNED NOT NULL DEFAULT '0',
@@ -351,6 +361,7 @@ DROP TABLE IF EXISTS hy_vote_thread;
     `summary` text NOT NULL,
     `atime` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `etime` int(10) UNSIGNED NOT NULL DEFAULT '0',
+    `euid` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `btime` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `buid` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `views` int(10) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'view_size',
@@ -437,7 +448,7 @@ DROP TABLE IF EXISTS hy_vote_thread;
     `name` varchar(12) NOT NULL,
     `font_color` varchar(30) NOT NULL DEFAULT '',
     `font_css` longtext NOT NULL,
-    `json` varchar(120) NOT NULL,
+    `json` text NOT NULL,
     PRIMARY KEY (`gid`) USING BTREE
     ) ENGINE={$table_type} DEFAULT CHARSET=utf8;
 
@@ -484,7 +495,7 @@ DROP TABLE IF EXISTS hy_vote_thread;
     UNIQUE KEY `id` (`id`),
     ) ENGINE={$table_type} DEFAULT CHARSET=utf8;
 
-    INSERT INTO `hy_file_type` (`id`, `name`) VALUES ('0', '未知'),('1', '图片'), ('2', '附件');
+    INSERT INTO `hy_file_type` (`id`, `name`) VALUES ('0', '未知'),('1', '图片'), ('2', '附件'), ('3', '视频'), ('2', '音频');
     
     ");
     if($result->errorCode() ==0)
