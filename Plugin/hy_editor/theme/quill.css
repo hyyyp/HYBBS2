@@ -1,0 +1,28 @@
+.hy-editor{
+	border:0;
+}
+.hy-editor-toolbar{
+	background: #FFF;
+}
+.hy-editor-btn {
+	width: 28px;
+    height: 35px;
+}
+.hy-editor-separator{
+	height: 14px;
+    vertical-align: top;
+    background: #FFF
+}
+.hy-editor-select:before{
+	width: 28px;
+}
+.hy-editor-btn i{
+	color: #444;
+	font-size: 15px;
+}
+.hy-editor-btn:hover{
+	background: #FFF;
+}
+.hy-editor-btn:hover i{
+	color: #06c;
+}

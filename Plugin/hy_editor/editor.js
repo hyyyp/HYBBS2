@@ -483,8 +483,10 @@ window.HY_editor_config={
 	//初始化函数列表
 	initFun:{},
 	updateEditorFun:{},
-	containerKeyup:{},
-	containerClick:{},
+	containerKeyup:{}, //编辑器输入内容
+	containerClick:{}, //编辑器编辑区被点击
+	containerModalShow:{}, //模态框显示
+	containerModalHide:{}, //模态框隐藏
 }
 window.HY_editor_rand_i = 0 ;
 window.HY_editor_int_i = 0 ;
@@ -546,6 +548,9 @@ function HY_editor(selector,config){
 	if(window.hy_editor_modal_evt !== true){
 		$(document).keyup(function(event) {
 			if(event.keyCode==27){
+				for(var containerModalHide in window.HY_editor_config.containerModalHide){
+					window.HY_editor_config.containerModalHide[containerModalHide](this);
+				}
 				$('.hy-editor-modal').removeClass('hy-editor-modal-show');
 			}
 		});
@@ -576,23 +581,23 @@ function HY_editor(selector,config){
 				_this.$dialog_container.addClass('hy-editor-dialog-container-fix');
 				_this.$editor.css('padding-top',toolbar_height+container_top);
 				_this.nowToolFixed=true;
-				
-				_this.$now_select.css({
-					left:_this.$now_btn.position().left,
-					top: _this.$now_btn.height() + _this.$now_btn.position().top
-				});
-
-				//pre_top = _this.$toolbar.offset().top;
+				if(_this.$now_select != null){
+					_this.$now_select.css({
+						left:_this.$now_btn.position().left,
+						top: _this.$now_btn.height() + _this.$now_btn.position().top
+					});
+				}
 			}else{
 				_this.$toolbar.removeClass('hy-editor-toolbar-fix');
 				_this.$dialog_container.removeClass('hy-editor-dialog-container-fix');
 				_this.$editor.css('padding-top','0');
 				_this.nowToolFixed=false;
-
-				_this.$now_select.css({
-					left:_this.$now_btn.position().left,
-					top: ((0 - _this.$toolbar.height()) + _this.$now_btn.height()) + _this.$now_btn.position().top
-				});
+				if(_this.$now_select != null){
+					_this.$now_select.css({
+						left:_this.$now_btn.position().left,
+						top: ((0 - _this.$toolbar.height()) + _this.$now_btn.height()) + _this.$now_btn.position().top
+					});
+				}
 			}
 		  
 		});
@@ -702,8 +707,12 @@ HY_editor.prototype.init_ = function(selector){
 					//console.log(o,_this.toolbar[o],_this.toolbar);
 					$modal.removeClass('hy-editor-modal-show');
 					//$modal.selectNode = _this.selection.anchorNode;
-					if(_this.getConfig(name).modal.onclose!==undefined)
+					if(_this.getConfig(name).modal.onclose!==undefined){
+						for(var containerModalHide in window.HY_editor_config.containerModalHide){
+							window.HY_editor_config.containerModalHide[containerModalHide](this);
+						}
 						_this.getConfig(name).modal.onclose(_this,$modal);
+					}
 				}
 				//点击 确定 按钮
 				if($target.hasClass('modal-ok')){
@@ -885,8 +894,13 @@ HY_editor.prototype.bindEvents_ = function(){
 				var id = $btn.data('doc-id');
 				var $modal = _this.modal_arr[id];
 				$modal.selectNode = _this.selection.anchorNode;
-				if(_this.getConfig(name).modal.onshow!==undefined)
+				if(_this.getConfig(name).modal.onshow!==undefined){
+					//执行全局回调
+					for(var o in window.HY_editor_config.containerModalShow){
+						window.HY_editor_config.containerModalShow[o](this);
+					}
 					_this.getConfig(name).modal.onshow(_this,$modal);
+				}
 				$modal.addClass('hy-editor-modal-show');
 				
 				break;
@@ -1280,7 +1294,7 @@ HY_editor.prototype.getHtml=function(){
 
 HY_editor.prototype.setEditRange_=function(){
     // 设置最后光标对象
-    //console.log(this.lastEditRange);
+    console.log('最后光标：',this.lastEditRange);
     this.lastEditRange = this.selection.getRangeAt(0);
 }
 HY_editor.prototype.updateEditor_ =function(){
@@ -1342,6 +1356,14 @@ HY_editor.prototype.getTmpInt=function(){
 }
 HY_editor.prototype.execCommand = function(aCommandName, aShowDefaultUI, aValueArgument){
 	//console.log(this.lastEditRange);
+	if(this.lastEditRange===false){
+		this.$container.focus();
+	}else if(this.lastEditRange==false){
+		console.log('需要触发',this.lastEditRange);
+		this.selection.removeAllRanges();
+        this.selection.addRange(this.lastEditRange);
+	}
+	
 	aShowDefaultUI=aShowDefaultUI||false;
 	aValueArgument=aValueArgument||null;
 	if(!document.execCommand(aCommandName, aShowDefaultUI, aValueArgument)){

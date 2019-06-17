@@ -1,0 +1,20 @@
+.hy-editor{
+	border: 1px solid rgb(201, 216, 219);
+    padding-top: 0px;
+    border-radius: 0;
+}
+.hy-editor-toolbar{
+	background: #FFF;
+    border-bottom: 1px solid #eeeeee;
+}
+.hy-editor-btn i{
+	color: #333;
+	opacity: 0.6;
+	font-size: 16px;
+}
+.hy-editor-btn:hover{
+	background: #FFF;
+}
+.hy-editor-btn:hover i{
+	opacity: 1;
+}

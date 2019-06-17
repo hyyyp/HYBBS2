@@ -1,14 +1,20 @@
 {hook p_editor_thread_index_header}
 <?php $editor_inc = get_plugin_inc('hy_editor');?>
+<?php $tmp_md5 = rand_str(5); ?>
 {if $editor_inc['post'] == 1}
 <!-- HYBBS公用编辑器UI资源 -->
 <link href="{#WWW}public/css/editor.ui.css?ver=1.0" type="text/css" rel="stylesheet">
 
 <link rel="stylesheet" type="text/css" href="{#WWW}Plugin/hy_editor/icon/iconfont.css">
-<link rel="stylesheet" type="text/css" href="{#WWW}Plugin/hy_editor/editor.css">
-<script type="text/javascript" src="{#WWW}Plugin/hy_editor/editor.js"></script>
-<script type="text/javascript" src="{#WWW}Plugin/hy_editor/lib/uploadImage.js"></script>
-<script type="text/javascript" src="{#WWW}Plugin/hy_editor/lib/help.js"></script>
+<link rel="stylesheet" type="text/css" href="{#WWW}Plugin/hy_editor/editor.css?ver=1.2">
+{if $editor_inc['theme']!=''}
+<link href="{#WWW}Plugin/hy_editor/theme/{$editor_inc.theme}.css?ver=1.2" type="text/css" rel="stylesheet">
+{/if}
+<script type="text/javascript" src="{#WWW}Plugin/hy_editor/editor.js?ver=1.2"></script>
+<script type="text/javascript" src="{#WWW}Plugin/hy_editor/lib/uploadImage2.js?ver=1.2"></script>
+<script type="text/javascript" src="{#WWW}Plugin/hy_editor/lib/uploadVideo.js?ver=1.2"></script>
+<script type="text/javascript" src="{#WWW}Plugin/hy_editor/lib/uploadAudio.js?ver=1.2"></script>
+<script type="text/javascript" src="{#WWW}Plugin/hy_editor/lib/help.js?ver=1.2"></script>
 
 
 <a name="post"></a>
@@ -34,11 +40,37 @@
 <button style="margin-top: 10px" type="button" class="editor-btn editor-btn-primary" id="post_post"><i class="am-icon-check"></i> 发 表</button>
 {hook p_editor_thread_index_postbtn_footer}
 
-
 <script type="text/javascript">
     var editor = new HY_editor('.hy-editor',{
         toolbar:'{$editor_inc.toolbar_post}',
         upload_image_path:'{php HYBBS_URL('Post','upload')}',
+        upload_image_input_name:'photo',
+        upload_image_argv:{
+            tmp_md5:'{$tmp_md5}',
+        },
+        upload_image_maxsize:<?php echo kb2b(mb2kb($this->conf['uploadimagemax']));  ?>,
+        upload_image_suffix:<?php echo json_encode(explode(",",trim($this->conf['uploadimageext'],','))); ?>,
+
+        //上传视频
+        upload_video_path:'{php HYBBS_URL('Post','uploadvideo')}',
+        upload_video_input_name:'video',
+        upload_video_argv:{
+            tmp_md5:'{$tmp_md5}',
+        },
+        upload_video_maxsize:<?php echo kb2b(mb2kb($this->conf['upload_video_size']));  ?>,
+        upload_video_suffix:<?php echo json_encode(explode(",",trim($this->conf['upload_video_ext'],','))); ?>,
+
+        //上传音频
+        upload_audio_path:'{php HYBBS_URL('Post','uploadaudio')}',
+        upload_audio_input_name:'audio',
+        upload_audio_argv:{
+            tmp_md5:'{$tmp_md5}',
+        },
+        upload_audio_maxsize:<?php echo kb2b(mb2kb($this->conf['upload_audio_size']));  ?>,
+        upload_audio_suffix:<?php echo json_encode(explode(",",trim($this->conf['upload_audio_ext'],','))); ?>,
+
+
+
         toolbarFixed:true,
 
         width:'{$editor_inc.width}',
@@ -93,6 +125,7 @@ $(function(){
                 id:{$tid},
                 pid:window.rep_pid,
                 content:editor.getValue(),
+                tmp_md5:'{$tmp_md5}',
                 {hook p_editor_thread_index_data}
                 },
             dataType: 'json'

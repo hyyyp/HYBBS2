@@ -21,6 +21,7 @@
 .hy-editor-toolbar-fix{
     position: fixed;
     top:0;
+    z-index: 1;
 }
 .hy-editor-dialog-container{
     position: relative;
@@ -28,6 +29,7 @@
 .hy-editor-dialog-container-fix{
     position: fixed;
     top:0;
+    z-index: 1;
 }
 .hy-editor-separator{
 	padding: 0;
@@ -245,7 +247,7 @@
     border: 0;
     border-top: 1px solid #eee;
 }
-.hy-editor-container img{
+.hy-editor-container img,.hy-editor-container video,.hy-editor-container audio{
     max-width: 100%
 }
 .hy-editor-container .selected {
@@ -258,56 +260,7 @@
 }
 
 
-/* 图片处理 */
-.hy-editor-upimg{display:none;position:absolute;border:1px solid #000;cursor:hand;}
-.hy-editor-upimg span{position:absolute;left:0;top:0;width:7px;height:7px;overflow:hidden;font-size:0px;display:block;background-color:#fff;border: solid 1px #000;}
-.hy-editor-upimg .hy-editor-upimg-0{cursor:nw-resize;top:0;margin-top:-4px;left:0;margin-left:-4px;}
-.hy-editor-upimg .hy-editor-upimg-1{cursor:n-resize;top:0;margin-top:-4px;left:50%;margin-left:-4px;}
-.hy-editor-upimg .hy-editor-upimg-2{cursor:ne-resize;top:0;margin-top:-4px;left:100%;margin-left:-3px;}
-.hy-editor-upimg .hy-editor-upimg-3{cursor:w-resize;top:50%;margin-top:-4px;left:0;margin-left:-4px;}
-.hy-editor-upimg .hy-editor-upimg-4{cursor:e-resize;top:50%;margin-top:-4px;left:100%;margin-left:-3px;}
-.hy-editor-upimg .hy-editor-upimg-5{cursor:sw-resize;top:100%;margin-top:-3px;left:0;margin-left:-4px;}
-.hy-editor-upimg .hy-editor-upimg-6{cursor:s-resize;top:100%;margin-top:-3px;left:50%;margin-left:-4px;}
-.hy-editor-upimg .hy-editor-upimg-7{cursor:se-resize;top:100%;margin-top:-3px;left:100%;margin-left:-3px;}
-.hy-editor-upimg-box{
-	position: relative;
-	display: inline-block;
-	    width: 230px;
-    height: 120px;
-}
-.hy-editor-upimg-box img{
-	width: 230px;
-    height: 120px;
-}
-.hy-editor-upimg-box-c{
-	width: 230px;
-    height: 120px;
-	position: absolute;
-	left: 0;
-	top: 0;
-	opacity: 0.8;
-	border: solid 1px #b5b5b5;
-	background-color: #fff;
-}
-.hy-editor-upimg-box-progress{
-	position: absolute;
-    left: 0;
-    bottom: 0;
-    background-color: seagreen;
-    height: 2px;
-    width: 0%;
-}
-.hy-editor-upimg-box-progress-text{
-	position: absolute;
-    left: 1px;
-    bottom: 2px;
-    right: 1px;
-    text-align: center;
-    background: #eaeaea;
-    opacity: 0.8;
-    font-size: 14px;
-    color: seagreen;
-}
+
     
 /*Modal*/
 
@@ -332,6 +285,9 @@
     -ms-transition: all .3s ease;
     -o-transition: all .3s ease;
 
+    overflow-x: hidden;
+    overflow-y: auto;
+
 }
 .hy-editor-modal-show{
         visibility: visible;
@@ -349,6 +305,11 @@
     -webkit-box-shadow: 0 5px 15px rgba(0,0,0,.5);
     box-shadow: 0 5px 15px rgba(0,0,0,.5);
     width: 600px;
+}
+.modal-dialog {
+    position: relative;
+    width: auto;
+    margin: 10px;
 }
 .hy-editor-modal-header{
     padding: 15px;
@@ -461,7 +422,16 @@
     -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
     -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
     transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    outline: 0;
 }
+input.form-control:focus {
+    border-color: #66afe9;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
+}
+
+
 
 .hy-editor-full{
     position: fixed;
@@ -492,6 +462,58 @@
     padding: 0px 10px;
     border: 0;
 }
+/*tab 选项卡*/
+.hy-editor-tabs{
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+    padding-left: 0;
+    list-style: none;
+        width: 100%;
+}
+.hy-editor-tabs>li {
+    float: left;
+    margin-bottom: -1px;
+    position: relative;
+    display: block;
+}
+.hy-editor-tabs>li>a{
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    margin-right: 2px;
+    line-height: 1.42857143;
+    border: 1px solid transparent;
+    border-radius: 4px 4px 0 0;
+}
+.hy-editor-tabs>li.active>a{
+    color: #555;
+    cursor: default;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
+}
+.hy-editor-tab-pane{
+    display: none
+}
+.hy-editor-tab-pane.active{
+    display: block;
+}
+
+
+.clearfix:before,
+.clearfix:after,
+.hy-editor-tabs
+{
+    display: table;
+    content: " ";
+}
+.clearfix:after,
+.hy-editor-tabs
+{
+    clear: both;
+}
+
 
 /*.btn-close{
     color: #fff;

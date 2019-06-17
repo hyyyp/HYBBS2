@@ -8,7 +8,7 @@ HY_editor_addBtn({
 	modal:{
 		title:'关于本编辑器',
 		body:'<form onsubmit="return false;">'+
-		'<p>本编辑器来自于 hyphp.cn 开发<p>'+
+		'<p>HY-Editor编辑器来自于 <a href="http://hyphp.cn" target="_blank">hyphp.cn</a> 开发<p>'+
 		'</form>',
 		onshow:function(_this) {
 			

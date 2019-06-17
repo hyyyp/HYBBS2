@@ -153,7 +153,7 @@ HY_editor_addBtn({
 			        reader.onload = function(e) {
 			        	var tmp_id = _this.getTmpId();
 			        	
-			        	var ImgHtml = '&nbsp;<span id="'+tmp_id+'" contenteditable="false" class="hy-editor-upimg-box"><img src="'+e.target.result+'"><span class="hy-editor-upimg-box-c"></span><span class="hy-editor-upimg-box-progress"></span><span class="hy-editor-upimg-box-progress-text"></span></span><br>&nbsp;';
+			        	var ImgHtml = '&nbsp;<span id="'+tmp_id+'" contenteditable="false" class="hy-editor-upimg-box"><img src="'+e.target.result+'"><span class="hy-editor-upimg-box-c"></span><span class="hy-editor-upimg-box-progress"></span><span class="hy-editor-upimg-box-progress-text"></span></span><p><br></p>';
 			        	if(_this.execCommand('insertHTML',false,ImgHtml)){
 			        		/*$('#'+tmp_id).click(function(){
 			        			
@@ -183,7 +183,14 @@ HY_editor_addBtn({
 				            	var $span_progress = $span.children('.hy-editor-upimg-box-progress');
 
 				            	var fd = new FormData();
-						        fd.append("photo", file);
+						        fd.append(_this.config.upload_image_input_name, file);
+
+						        if(_this.config.upload_image_argv != undefined){
+						        	for(var o in _this.config.upload_image_argv){
+						        		fd.append(o, _this.config.upload_image_argv[o]);
+						        	}
+						        }
+
 						        var xhr = new XMLHttpRequest();
 						        xhr.upload.addEventListener("progress", function(evt){
 						        	if (evt.lengthComputable) {
