@@ -247,6 +247,13 @@ class Upload {
             $file['name']  = strip_tags($file['name']);
             if(!isset($file['key']))   $file['key']    =   $key;
             /* 通过扩展获取文件类型，可解决FLASH上传$FILES数组返回文件类型错误的问题 */
+            
+            if(empty($file['tmp_name'])){
+                $this->error = 'PHP.ini 上传环境出错：检查最大上传文件字节，最大POST字节！';
+                continue;
+            }
+
+
             if(isset($finfo)){
                 $file['type']   =   finfo_file ( $finfo ,  $file['tmp_name'] );
             }
