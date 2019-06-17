@@ -1021,23 +1021,25 @@ class Post extends HYBBS {
 
 				//处理不使用的旧文件
 				$StorageThreadDir = GetStorageThreadDir($tid,false);
-				$dh = opendir(INDEX_PATH . $StorageThreadDir);
+				if(is_dir($StorageThreadDir)){
+					$dh = opendir(INDEX_PATH . $StorageThreadDir);
 
-				while ($filename = readdir($dh)) {
-					$fullpath = INDEX_PATH . $StorageThreadDir . $filename;
-					if ($filename != "." && $filename != ".." && !is_dir($fullpath)) {
-						$IsDel = true;
-						foreach ($SrcFileList as $v) {
-							if(strpos($v,$filename) !== false){ //正在使用
-								$IsDel = false;
-								break;
+					while ($filename = readdir($dh)) {
+						$fullpath = INDEX_PATH . $StorageThreadDir . $filename;
+						if ($filename != "." && $filename != ".." && !is_dir($fullpath)) {
+							$IsDel = true;
+							foreach ($SrcFileList as $v) {
+								if(strpos($v,$filename) !== false){ //正在使用
+									$IsDel = false;
+									break;
+								}
 							}
-						}
-						if($IsDel){ //删除不使用的文件
-							delete_file($fullpath);
-							$FileInfo = pathinfo($fullpath);
-							$FileName = $FileInfo['filename'];
-							$File->delete(['md5'=>$FileName]);
+							if($IsDel){ //删除不使用的文件
+								delete_file($fullpath);
+								$FileInfo = pathinfo($fullpath);
+								$FileName = $FileInfo['filename'];
+								$File->delete(['md5'=>$FileName]);
+							}
 						}
 					}
 				}
