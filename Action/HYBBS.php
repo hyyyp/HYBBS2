@@ -256,14 +256,25 @@ class HYBBS extends Action {
             'emailpass'     =>  '',
             'emailport'     =>  '',
             
-            'uploadfileext'     =>  'zip,rar',
-            'uploadimageext'    =>  'jpg,gif,png,jpeg,bmp',
-            'post_image_size'    =>  5,
-            'adminforum'        =>  10,
-            'adminthread'        =>  10,
-            'post_post_show_size'   =>5,
-            'admin_show_post'     =>10,
-            'admin_show_post_post'     =>10,
+            //上传相关
+            'uploadfileext'         =>  'zip,rar',
+            'uploadimageext'        =>  'jpg,gif,png,jpeg,bmp',
+            'post_image_size'       =>  9,
+            'uploadimagemax'        =>  3,
+            'uploadfilemax'         =>  3,
+            'allow_upload_video'    =>  0,
+            'upload_video_ext'      =>  'mp4',
+            'upload_video_size'     =>  5,
+            'allow_upload_audio'    =>  0,
+            'upload_audio_ext'      =>  'mp3',
+            'upload_audio_size'     =>  3,
+
+
+            'adminforum'            =>  10,
+            'adminthread'           =>  10,
+            'post_post_show_size'   =>  5,
+            'admin_show_post'       =>  10,
+            'admin_show_post_post'  =>10,
 
             'adminuser'        =>  10,
             
@@ -282,8 +293,7 @@ class HYBBS extends Action {
             //调试相关
             'debug_page'        => 1,
             'debug'             => 1,
-            'uploadimagemax'    =>  3,
-            'uploadfilemax'     => 3,
+            
             'key'     => '',
 
         );
