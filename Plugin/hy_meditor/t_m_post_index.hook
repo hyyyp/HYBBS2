@@ -1,15 +1,18 @@
 {hook p_m_editor_post_index_header}
 <?php $editor_inc = get_plugin_inc('hy_meditor');?>
-
+<?php $tmp_md5 = rand_str(5); ?>
 <!-- HYBBS公用编辑器UI资源 -->
-<link href="{#WWW}public/css/editor.ui.css?ver=1.0" type="text/css" rel="stylesheet">
+<link href="{#WWW}public/css/editor.ui.css?ver=1.2" type="text/css" rel="stylesheet">
 
 <!-- 编辑器资源 -->
-<link rel="stylesheet" type="text/css" href="{#WWW}Plugin/hy_meditor/icon/iconfont.css?ver=1.0">
-<link rel="stylesheet" type="text/css" href="{#WWW}Plugin/hy_meditor/editor.css?ver=1.0">
-<script type="text/javascript" src="{#WWW}Plugin/hy_meditor/editor.js?ver=1.0"></script>
-<script type="text/javascript" src="{#WWW}Plugin/hy_meditor/lib/uploadImage.js?ver=test1"></script>
-<script type="text/javascript" src="{#WWW}Plugin/hy_meditor/lib/help.js?ver=1.0"></script>
+<link rel="stylesheet" type="text/css" href="{#WWW}Plugin/hy_meditor/icon/iconfont.css?ver=1.2">
+<link rel="stylesheet" type="text/css" href="{#WWW}Plugin/hy_meditor/editor.css?ver=1.2">
+<script type="text/javascript" src="{#WWW}Plugin/hy_meditor/editor.js?ver=1.2"></script>
+<!-- <script type="text/javascript" src="{#WWW}Plugin/hy_editor/lib/uploadImage.js?ver=1.0"></script> -->
+<script type="text/javascript" src="{#WWW}Plugin/hy_meditor/lib/uploadImage2.js?ver=1.2"></script>
+<script type="text/javascript" src="{#WWW}Plugin/hy_meditor/lib/uploadVideo.js?ver=1.2"></script>
+<script type="text/javascript" src="{#WWW}Plugin/hy_meditor/lib/uploadAudio.js?ver=1.2"></script>
+<script type="text/javascript" src="{#WWW}Plugin/hy_meditor/lib/help.js?ver=1.2"></script>
 
 <?php
 function select_forum($v,$forum){
@@ -156,7 +159,31 @@ $(function(){
   var editor = new HY_editor('.hy-editor',{
         toolbar:'{$editor_inc.toolbar}',
         upload_image_path:'{php HYBBS_URL('Post','upload')}',
-        toolbarFixed:true,
+        upload_image_input_name:'photo',
+        upload_image_argv:{
+            tmp_md5:'{$tmp_md5}',
+        },
+        upload_image_maxsize:<?php echo kb2b(mb2kb($this->conf['uploadimagemax']));  ?>,
+        upload_image_suffix:<?php echo json_encode(explode(",",trim($this->conf['uploadimageext'],','))); ?>,
+
+        //上传视频
+        upload_video_path:'{php HYBBS_URL('Post','uploadvideo')}',
+        upload_video_input_name:'video',
+        upload_video_argv:{
+            tmp_md5:'{$tmp_md5}',
+        },
+        upload_video_maxsize:<?php echo kb2b(mb2kb($this->conf['upload_video_size']));  ?>,
+        upload_video_suffix:<?php echo json_encode(explode(",",trim($this->conf['upload_video_ext'],','))); ?>,
+
+        //上传音频
+        upload_audio_path:'{php HYBBS_URL('Post','uploadaudio')}',
+        upload_audio_input_name:'audio',
+        upload_audio_argv:{
+            tmp_md5:'{$tmp_md5}',
+        },
+        upload_audio_maxsize:<?php echo kb2b(mb2kb($this->conf['upload_audio_size']));  ?>,
+        upload_audio_suffix:<?php echo json_encode(explode(",",trim($this->conf['upload_audio_ext'],','))); ?>,
+
 
         width:'{$editor_inc.width}',
         height:'{$editor_inc.height}'
@@ -217,6 +244,7 @@ $(function(){
                 title:$("#title").val(),
                 content:utf16toEntities(editor.getValue()),
                 forum:forum,
+                tmp_md5:'{$tmp_md5}',
                 fileid:fileid,
                 filegold:filegold,
                 filemess:filemess,
@@ -248,6 +276,7 @@ $(function(){
 function uploadFile(obj){
 
     var fd = new FormData();
+    fd.append("tmp_md5", "{$tmp_md5}");
     fd.append("photo", obj.files[0]);
     var xhr = new XMLHttpRequest();
     xhr.upload.addEventListener("progress", function(evt){

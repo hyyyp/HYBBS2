@@ -484,11 +484,13 @@ window.HY_editor_config={
 			value:'p'
 		}
 	],
-	//初始化函数列表
+	//初始化函数列表 动作回调
 	initFun:{},
 	updateEditorFun:{},
-	containerKeyup:{},
-	containerClick:{},
+	containerKeyup:{}, //编辑器输入内容
+	containerClick:{}, //编辑器编辑区被点击
+	containerModalShow:{}, //模态框显示
+	containerModalHide:{}, //模态框隐藏
 }
 window.HY_editor_rand_i = 0 ;
 window.HY_editor_int_i = 0 ;
@@ -550,6 +552,9 @@ function HY_editor(selector,config){
 	if(window.hy_editor_modal_evt !== true){
 		$(document).keyup(function(event) {
 			if(event.keyCode==27){
+				for(var containerModalHide in window.HY_editor_config.containerModalHide){
+					window.HY_editor_config.containerModalHide[containerModalHide](this);
+				}
 				$('.hy-editor-modal').removeClass('hy-editor-modal-show');
 			}
 		});
@@ -702,8 +707,12 @@ HY_editor.prototype.init_ = function(selector){
 					//console.log(o,_this.toolbar[o],_this.toolbar);
 					$modal.removeClass('hy-editor-modal-show');
 					//$modal.selectNode = _this.selection.anchorNode;
-					if(_this.getConfig(name).modal.onclose!==undefined)
+					if(_this.getConfig(name).modal.onclose!==undefined){
+						for(var containerModalHide in window.HY_editor_config.containerModalHide){
+							window.HY_editor_config.containerModalHide[containerModalHide](this);
+						}
 						_this.getConfig(name).modal.onclose(_this,$modal);
+					}
 				}
 				//点击 确定 按钮
 				if($target.hasClass('modal-ok')){
@@ -896,8 +905,13 @@ HY_editor.prototype.bindEvents_ = function(){
 				var id = $btn.data('doc-id');
 				var $modal = _this.modal_arr[id];
 				$modal.selectNode = _this.selection.anchorNode;
-				if(_this.getConfig(name).modal.onshow!==undefined)
+				if(_this.getConfig(name).modal.onshow!==undefined){
+					//执行全局回调
+					for(var o in window.HY_editor_config.containerModalShow){
+						window.HY_editor_config.containerModalShow[o](this);
+					}
 					_this.getConfig(name).modal.onshow(_this,$modal);
+				}
 				$modal.addClass('hy-editor-modal-show');
 				
 				break;
@@ -1396,7 +1410,14 @@ HY_editor.prototype.getTmpInt=function(){
 	return window.HY_editor_int_i++;
 }
 HY_editor.prototype.execCommand = function(aCommandName, aShowDefaultUI, aValueArgument){
-	console.log(this.lastEditRange);
+	//console.log(this.lastEditRange);
+	if(this.lastEditRange===false){
+		this.$container.focus();
+	}else if(this.lastEditRange==false){
+		console.log('需要触发',this.lastEditRange);
+		this.selection.removeAllRanges();
+        this.selection.addRange(this.lastEditRange);
+	}
 	aShowDefaultUI=aShowDefaultUI||false;
 	aValueArgument=aValueArgument||null;
 	if(!document.execCommand(aCommandName, aShowDefaultUI, aValueArgument)){
