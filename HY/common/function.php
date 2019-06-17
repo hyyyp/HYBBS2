@@ -6,6 +6,13 @@ function A($name){
 }
 function X($name,$default = ''){
     $data = explode(".",$name);
+    if(strpos($name,'.') === false){
+        if(isset($_GET[$name]))
+            return $_GET[$name];
+        if(isset($_POST[$name]))
+            return $_POST[$name];
+    }
+
     if(count($data) == 2){
         $v = $data[1];
         if($data[0]=='get'){
