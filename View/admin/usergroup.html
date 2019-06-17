@@ -320,6 +320,34 @@
                             {/foreach}
                         </tr>
                         <tr>
+                            <td>上传视频</td>
+                            {foreach $data as $v}
+                            <td>
+                                {if $v['gid'] != 3}
+                                <label class="mui-switch-box">
+                                    
+                                    <input data-type="uploadvideo" data-gid="{$v.gid}" class='tgl tgl-ios' id='uploadvideo-{$v.gid}' type='checkbox' {if $v['json']['uploadvideo']}checked{/if}>
+                                    <label class='tgl-btn' for='uploadvideo-{$v.gid}'></label>
+                                </label>
+                                {/if}
+                            </td>
+                            {/foreach}
+                        </tr>
+                        <tr>
+                            <td>上传音频</td>
+                            {foreach $data as $v}
+                            <td>
+                                {if $v['gid'] != 3}
+                                <label class="mui-switch-box">
+                                    
+                                    <input data-type="uploadaudio" data-gid="{$v.gid}" class='tgl tgl-ios' id='uploadaudio-{$v.gid}' type='checkbox' {if $v['json']['uploadaudio']}checked{/if}>
+                                    <label class='tgl-btn' for='uploadaudio-{$v.gid}'></label>
+                                </label>
+                                {/if}
+                            </td>
+                            {/foreach}
+                        </tr>
+                        <tr>
                             <td>隐藏帖子</td>
                             {foreach $data as $v}
                             <td>
