@@ -444,7 +444,7 @@ function HYBBS_URL($action, $method = '', $age = [], $ext = '') {
 function HYBBS_URLA($action, $method = '', $age = [], $ext = '') {
 	return WWW . (C('REWRITE') ? '' : '?') . URL($action, $method, $age, $ext);
 }
-
+//传入用户UID获取头像
 function get_avatar($uid){
 	$path = INDEX_PATH . 'upload/avatar/' . md5($uid);
     $path1 = 'upload/avatar/' . md5($uid);
@@ -460,3 +460,94 @@ function get_avatar($uid){
         "c"=>$path1."-c.jpg"
     );
 }
+//过滤HTML标签 
+function filter_html($content){
+	return htmlspecialchars(strip_tags($content));
+}
+//创建目录 自动递归
+function create_dir($path,$chmod = 0777){
+	return mkdir($path,$chmod,true);
+}
+
+function GetUserTmpUploadPath($uid,$key=''){
+	$uid=intval($uid);
+	if($key===''){
+		$key = X('post.tmp_md5','');
+	}
+	$UserTmpUploadPath =  'upload/userfile/' . $uid.'/tmp/' . md5($key . C('MD5_KEY')) . '/';
+	if(!is_dir(INDEX_PATH . $UserTmpUploadPath))
+		create_dir(INDEX_PATH . $UserTmpUploadPath);
+	return $UserTmpUploadPath;
+}
+//获取用户主题目录路径
+function GetStorageThreadDir($tid,$IsCreate = true){
+	$tid=intval($tid);
+	$UserThreadDir =  'upload/tid/' . $tid . '/';
+	if($IsCreate){
+		if(!is_dir(INDEX_PATH . $UserThreadDir))
+			create_dir(INDEX_PATH . $UserThreadDir);
+	}
+	return $UserThreadDir;
+}
+//获取用户主题附件存放目录路径
+function GetStorageThreadFileDir($tid,$IsCreate = true){
+	$tid=intval($tid);
+	$UserThreadDir =  'upload/tid/' . $tid . '/file/';
+	if($IsCreate){
+		if(!is_dir(INDEX_PATH . $UserThreadDir))
+			create_dir(INDEX_PATH . $UserThreadDir);
+	}
+	return $UserThreadDir;
+}
+//获取用户主题包含帖子目录路径
+function GetStoragePostDir($tid,$pid,$IsCreate = true){
+	$tid=intval($tid);
+	$pid=intval($pid);
+	$UserPostDir =  'upload/tid/' . $tid . '/pid/' . $pid . '/';
+	if($IsCreate){
+		if(!is_dir(INDEX_PATH . $UserPostDir))
+			create_dir(INDEX_PATH . $UserPostDir);
+	}
+	return $UserPostDir;
+}
+
+//删除文件
+function delete_file($path){
+	if(is_file($path))
+		return unlink($path);
+	return false;
+}
+//移动文件，如果目标存在则删除再移动。某些环境下rename不具备覆盖功能
+function move_file($file1,$file2){
+	if(!is_file($file1))
+		return false;
+	if(is_file($file2))
+		unlink($file2);
+	return rename($file1,$file2);
+}
+function move_dir($dir1,$dir2){
+	if(!is_dir($dir1))
+		return false;
+	//if(is_dir($dir2))
+	//	deldir($dir2,false,true);
+	return rename($dir1,$dir2);
+}
+
+//单位MB转KB
+function mb2kb($i){
+	return $i * 1024;
+}
+//单位KB转B
+function kb2b($i){
+	return $i * 1024;
+}
+
+
+
+
+
+
+
+
+
+
