@@ -379,7 +379,7 @@ foreach ($able as $key=>$value) {
 		$("#open-mess").html($("#open-mess").html()+'<label class="label label-'+on+'" style="margin-bottom:5px;display: ;    line-height: 3;">'+info+'</label>\r\n');
 	}
 	$.ajax({
-		url:'{#WWW}admin{#EXP}GetNewVersion',
+		url:'{php HYBBS_URL('admin','GetNewVersion')}',
 		type:'get',
 		dataType:'json',
 		success:function(e){

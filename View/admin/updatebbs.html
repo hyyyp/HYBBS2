@@ -104,7 +104,7 @@
 
 	$(function(){
 		$.ajax({
-			url:'{#WWW}admin{#EXP}GetNewVersion',
+			url:'{php HYBBS_URL('admin','GetNewVersion')}',
 			type:'get',
 			dataType:'json',
 			success:function(e){

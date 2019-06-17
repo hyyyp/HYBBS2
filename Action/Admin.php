@@ -2141,7 +2141,7 @@ function plugin_uninstall(){
                     $end=true;
 
                 if($result->errorCode() != 0){
-                    if(strpos($result->errorInfo()[2],'Duplicate column') !== false || strpos($result->errorInfo()[2],'already exists') !== false){
+                    if(strpos($result->errorInfo()[2],'Duplicate column') !== false || strpos($result->errorInfo()[2],'already exists') !== false || strpos($result->errorInfo()[2],'Duplicate entry') !== false){
                         $this->json(['error'=>true,'info'=>'重复','message'=>$result->errorInfo()[2],'code'=>$result->errorCode(),'end'=>$end]);
                     }
                     $this->json(['error'=>false,'info'=>'SQL报错['.$result->errorCode().']：'.$result->errorInfo()[2],'end'=>$end]);
