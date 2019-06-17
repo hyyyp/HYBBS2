@@ -388,6 +388,9 @@ span.pics {
 	max-width: 100% !important;
     height: auto !important;
 }
+.thread-cen video,.thread-cen audio{
+max-width: 100% !important;
+}
 .postlist{
 	padding:0 10px;
 }
@@ -449,6 +452,9 @@ span.pics {
 }
 .postlist .ce img{
 	max-width: 100%
+}
+.postlist .ce video,.postlist .ce audio{
+    max-width: 100%
 }
 
 .hy-btn-nav{
