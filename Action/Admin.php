@@ -362,7 +362,13 @@ class Admin extends HYBBS {
                 //{hook a_admin_user_6}
                 $uid = intval(X("post.id"));
                 $User->delete(['uid'=>$uid]);
-
+                $tid_list = S("Thread")->select('tid',['uid'=>$uid]);
+                if(!empty($tid_list)){
+                    foreach ($tid_list as $tid) {
+                        $StorageThreadDir = GetStorageThreadDir($tid);
+                        deldir(INDEX_PATH . $StorageThreadDir,false,true);
+                    }
+                }
                 S("Thread")->delete(array('uid'=>$uid));
                 S("Post")->delete(array('uid'=>$uid));
                 
@@ -378,6 +384,9 @@ class Admin extends HYBBS {
                 S("Vote_post")->delete(array('uid'=>$uid));
                 S("Vote_thread")->delete(array('uid'=>$uid));
                 deldir(INDEX_PATH. "upload/userfile/".$uid,false,true);
+                
+                
+                
                 return $this->json(array('error'=>true,'info'=>'删除成功'));
             }elseif($gn == 'del_more'){ //删除勾选用户
                 if(X('post.del_post') == 'on'){ //确认删除
@@ -398,6 +407,14 @@ class Admin extends HYBBS {
                         $Vote_thread = S("Vote_thread");
                         foreach ($uid as $v) {
                             $User->delete(['uid'=>$v]);
+                            $tid_list = S("Thread")->select('tid',['uid'=>$uid]);
+                            if(!empty($tid_list)){
+                                foreach ($tid_list as $tid) {
+                                    $StorageThreadDir = GetStorageThreadDir($tid);
+                                    deldir(INDEX_PATH . $StorageThreadDir,false,true);
+                                }
+                            }
+                            
                             $Thread->delete(array('uid'=>$v));
                             $Post->delete(array('uid'=>$v));
                             $Chat->delete(array('OR'=>array('uid1'=>$v,'uid2'=>$v)));
@@ -527,6 +544,9 @@ class Admin extends HYBBS {
                 isset($v['json']['thide']) or $v['json']['thide'] = 0;
                 isset($v['json']['tgold']) or $v['json']['tgold'] = 0;
                 isset($v['json']['nogold']) or $v['json']['nogold'] = 0;
+
+                isset($v['json']['uploadvideo']) or $v['json']['uploadvideo'] = 0;
+                isset($v['json']['uploadaudio']) or $v['json']['uploadaudio'] = 0;
             }
 
 
@@ -558,7 +578,9 @@ class Admin extends HYBBS {
                         'hide'=>1,
                         'thide'=>1,
                         'tgold'=>1,
-                        'nogold'=>0
+                        'nogold'=>0,
+                        'uploadvideo'=>0,
+                        'uploadaudio'=>0
                     ))
                 ));
                 return $this->mess("添加成功");
@@ -593,6 +615,7 @@ class Admin extends HYBBS {
                 $json = $Usergroup->find("json",[
                     'gid'=>$gid,
                 ]);
+                echo $json;
                 if(empty($json))
                     $json='{}';
                     //return $this->json(array('error'=>false,'info'=>'修改失败'));
@@ -627,14 +650,14 @@ class Admin extends HYBBS {
                 $tid_list = X("post.id");
                 if(!empty($tid_list)){
 
-                    $File = M("File");
-                    $Fileinfo = S("Fileinfo");
-                    $Filegold = S('Filegold');
-                    $User = M('User');
-                    $Post = S('Post');
-                    $Vote_thread = S('Vote_thread');
+                    $File       = M("File");
+                    $Fileinfo   = S("Fileinfo");
+                    $Filegold   = S('Filegold');
+                    $User       = M('User');
+                    $Post       = S('Post');
+                    $Vote_thread= S('Vote_thread');
                     $Threadgold = S('Threadgold');
-                    $Post_post = S('Post_post');
+                    $Post_post  = S('Post_post');
 
                     foreach ($tid_list as $tid) {
                         //删除附件
@@ -660,6 +683,11 @@ class Admin extends HYBBS {
                                 if(is_file($FilePath)){
                                     unlink($FilePath);
                                 }
+                                //删除附件 兼容新版本
+                                $FilePath = INDEX_PATH . GetStorageThreadFileDir($tid,false) . $FileData['md5name'];
+                                if(is_file($FilePath)){
+                                    unlink($FilePath);
+                                }
 
                             }
                         }
@@ -667,6 +695,11 @@ class Admin extends HYBBS {
                         $Thread->delete(['tid'=>$tid]);
                         //删除评论数据
                         $Post->delete(['tid'=>$tid]);
+
+                        //删除所有图片
+                        $StorageThreadDir = GetStorageThreadDir($tid);
+                        deldir(INDEX_PATH . $StorageThreadDir,false,true);
+                        $File->delete(['tid'=>$tid]);
 
 
                         $Vote_thread    ->delete(['tid'=>$tid]);
@@ -759,19 +792,24 @@ class Admin extends HYBBS {
 
     }
     public function post(){
-        $Post = S('Post');
+        $Post = M('Post');
         if(IS_POST){
             $gn = X("post.gn");
-            if($gn == 'del'){
-                $pid = X("post.id");
-                if(!empty($pid)){
-                    foreach ($pid as &$v) {
-                        $v=intval($v);
+            if($gn == 'del'){ //删除评论
+                $pid_list = X("post.id");
+                if(!empty($pid_list)){
+                    $File = S('File');
+                    foreach ($pid_list as $pid) {
+                        $tid = $Post->get_row($pid,'tid');
+                        $StoragePostDir = GetStoragePostDir($tid,$pid);
+                        deldir(INDEX_PATH . $StoragePostDir,false,true);
+                        $File->delete(['pid'=>$pid]);
                     }
                     
-                    $Post             ->delete(['OR'=>['pid'=>$pid]]);
-                    S("Vote_post")    ->delete(['OR'=>['pid'=>$pid]]);
-                    S("Post_post")    ->delete(['OR'=>['pid'=>$pid]]);
+
+                    $Post             ->delete(['pid'=>$pid_list]);
+                    S("Vote_post")    ->delete(['pid'=>$pid_list]);
+                    S("Post_post")    ->delete(['pid'=>$pid_list]);
                 }
             }
         }
@@ -783,7 +821,6 @@ class Admin extends HYBBS {
             $x = '?uid' . $x[1];
         else
             $x='';
-        //var_dump($_SERVER);
         
         $this->v('x',$x);
         $pageid = intval(X('get.pageid',1));
@@ -1193,9 +1230,6 @@ class Admin extends HYBBS {
             $keywords   = X("post.keywords");
             $de         = X("post.de");
          
-            //$userview    = X("post.userview"); 用户模板
-            //$messview    = X("post.messview"); 消息模板
-            //$userview2    = X("post.userview2"); 注册模板
 
             $gold_thread    = intval(X("post.gold_thread"));
             $gold_post      = intval(X("post.gold_post"));
@@ -1233,22 +1267,25 @@ class Admin extends HYBBS {
             $post_image_size    = X("post.post_image_size");
             $uploadimageext     = X("post.uploadimageext");
             $uploadfileext      = X("post.uploadfileext");
+            $uploadimagemax     = X("post.uploadimagemax");
+            $uploadfilemax      = X("post.uploadfilemax");
+            $allow_upload_video = X('post.allow_upload_video');
+            $upload_video_ext   = X('post.upload_video_ext');
+            $upload_video_size  = X('post.upload_video_size');
+            $allow_upload_audio = X('post.allow_upload_audio');
+            $upload_audio_ext   = X('post.upload_audio_ext');
+            $upload_audio_size  = X('post.upload_audio_size');
 
             $adminforum         = X("post.adminforum");
 
-            //$wapview    = X("post.wapview"); 手机模板
-            //$wapuserview    = X("post.wapuserview");
-            //$wapuserview2    = X("post.wapuserview2");
-            //$wapmessview    = X("post.wapmessview");
+        
 
             $cache_type     = X("post.cache_type");
             $cache_table    = X("post.cache_table");
             $cache_key      = X("post.cache_key");
             $cache_time     = X("post.cache_time");
             $cache_pr       = X("post.cache_pr");
-
             $cache_ys       = X("post.cache_ys");
-            
             $cache_outtime      = X("post.cache_outtime");
             $cache_redis_ip     = X("post.cache_redis_ip");
             $cache_redis_port   = X("post.cache_redis_port");
@@ -1259,8 +1296,7 @@ class Admin extends HYBBS {
             $debug_page     = X("post.debug_page");
             $debug          = X("post.debug");
 
-            $uploadimagemax    = X("post.uploadimagemax");
-            $uploadfilemax     = X("post.uploadfilemax");
+            
 
             $adminthread    = X("post.adminthread");
             $admin_show_post    = X("post.admin_show_post");
@@ -1282,53 +1318,57 @@ class Admin extends HYBBS {
 
             }
 
+            $this->conf['title']        =  $title;
+            $this->conf['logo']         =  $logo;
+            $this->conf['title2']       =  $title2;
+            $this->conf['keywords']     =  $keywords;
+            $this->conf['description']  =  $de;
 
-            //$conf = file(CONF_PATH . 'conf.php');
-            //$this->conf = json_decode($conf[1],true);
-            $this->conf['title']=$title;
-            $this->conf['logo']=$logo;
-            $this->conf['title2']=$title2;
-            $this->conf['keywords']=$keywords;
-            $this->conf['description']=$de;
-           
-            //$this->conf['userview']=$userview;
-            //$this->conf['messview']=$messview;
-            //$this->conf['userview2']=$userview2;
-
-            $this->conf['send_email_s']=$send_email_s;
-            $this->conf['out_s']=$out_s;
-            $this->conf['mp3_system']=$mp3_system;
-            $this->conf['mp3_friend']=$mp3_friend;
-            $this->conf['user_have_badword']=$user_have_badword;
+            $this->conf['send_email_s']     =   $send_email_s;
+            $this->conf['out_s']            =   $out_s;
+            $this->conf['mp3_system']       =   $mp3_system;
+            $this->conf['mp3_friend']       =   $mp3_friend;
+            $this->conf['user_have_badword']=   $user_have_badword;
             
             
 
-            $this->conf['gold_thread']=$gold_thread;
-            $this->conf['gold_post']=$gold_post;
-            $this->conf['credits_thread']=$credits_thread;
-            $this->conf['credits_post']=$credits_post;
+            $this->conf['gold_thread']      =   $gold_thread;
+            $this->conf['gold_post']        =   $gold_post;
+            $this->conf['credits_thread']   =   $credits_thread;
+            $this->conf['credits_post']     =   $credits_post;
             
-            $this->conf['homelist']=$homelist;
-            $this->conf['forumlist']=$forumlist;
-            $this->conf['postlist']=$postlist;
-            $this->conf['searchlist']=$searchlist;
-            $this->conf['search_key_size']=$search_key_size;
+            $this->conf['homelist']         =   $homelist;
+            $this->conf['forumlist']        =   $forumlist;
+            $this->conf['postlist']         =   $postlist;
+            $this->conf['searchlist']       =   $searchlist;
+            $this->conf['search_key_size']  =   $search_key_size;
 
 
             
-            $this->conf['titlesize']=$titlesize;
-            $this->conf['titlemin']=$titlemin;
-            $this->conf['summary_size']=$summary_size;
-            $this->conf['emailhost']=$emailhost;
-            $this->conf['emailuser']=$emailuser;
-            $this->conf['emailpass']=$emailpass;
-            $this->conf['emailport']=$emailport;
-            $this->conf['emailtitle']=$emailtitle;
-            $this->conf['emailcontent']=$emailcontent;
-            $this->conf['post_image_size']=$post_image_size;
-            $this->conf['uploadfileext']=$uploadfileext;
-            $this->conf['uploadimageext']=$uploadimageext;
-            $this->conf['adminforum']=$adminforum;
+            $this->conf['titlesize']        =   $titlesize;
+            $this->conf['titlemin']         =   $titlemin;
+            $this->conf['summary_size']     =   $summary_size;
+            $this->conf['emailhost']        =   $emailhost;
+            $this->conf['emailuser']        =   $emailuser;
+            $this->conf['emailpass']        =   $emailpass;
+            $this->conf['emailport']        =   $emailport;
+            $this->conf['emailtitle']       =   $emailtitle;
+            $this->conf['emailcontent']     =   $emailcontent;
+
+            $this->conf['post_image_size']  =   $post_image_size;
+            $this->conf['uploadfileext']    =   $uploadfileext;
+            $this->conf['uploadimageext']   =   $uploadimageext;
+            $this->conf['uploadimagemax']   =   $uploadimagemax;
+            $this->conf['uploadfilemax']    =   $uploadfilemax;
+
+            $this->conf['allow_upload_video']   =   $allow_upload_video;
+            $this->conf['upload_video_ext']     =   $upload_video_ext;
+            $this->conf['upload_video_size']    =   $upload_video_size;
+            $this->conf['allow_upload_audio']   =   $allow_upload_audio;
+            $this->conf['upload_audio_ext']     =   $upload_audio_ext;
+            $this->conf['upload_audio_size']    =   $upload_audio_size;
+
+            $this->conf['adminforum']   =   $adminforum;
 
 
             //$this->conf['wapview']=$wapview;
@@ -1337,37 +1377,35 @@ class Admin extends HYBBS {
             //$this->conf['wapuserview']=$wapuserview;
             
 
-            $this->conf['cache_type']=$cache_type;
-            $this->conf['cache_table']=$cache_table;
-            $this->conf['cache_key']=$cache_key;
-            $this->conf['cache_time']=$cache_time;
-            $this->conf['cache_pr']=$cache_pr;
-            $this->conf['cache_ys']=$cache_ys;
-            $this->conf['cache_outtime']=$cache_outtime;
-            $this->conf['cache_redis_ip']=$cache_redis_ip;
-            $this->conf['cache_redis_port']=$cache_redis_port;
-            $this->conf['cache_mem_ip']=$cache_mem_ip;
-            $this->conf['cache_mem_port']=$cache_mem_port;
-            $this->conf['cache_memd_ip']=$cache_memd_ip;
+            $this->conf['cache_type']       =   $cache_type;
+            $this->conf['cache_table']      =   $cache_table;
+            $this->conf['cache_key']        =   $cache_key;
+            $this->conf['cache_time']       =   $cache_time;
+            $this->conf['cache_pr']         =   $cache_pr;
+            $this->conf['cache_ys']         =   $cache_ys;
+            $this->conf['cache_outtime']    =   $cache_outtime;
+            $this->conf['cache_redis_ip']   =   $cache_redis_ip;
+            $this->conf['cache_redis_port'] =   $cache_redis_port;
+            $this->conf['cache_mem_ip']     =   $cache_mem_ip;
+            $this->conf['cache_mem_port']   =   $cache_mem_port;
+            $this->conf['cache_memd_ip']    =   $cache_memd_ip;
 
-            $this->conf['debug']=$debug;
-            $this->conf['debug_page']=$debug_page;
+            $this->conf['debug']        =   $debug;
+            $this->conf['debug_page']   =   $debug_page;
 
 
-            $this->conf['uploadimagemax']=$uploadimagemax;
-            $this->conf['uploadfilemax']=$uploadfilemax;
-
-            $this->conf['adminthread']=$adminthread;
-            $this->conf['admin_show_post']=$admin_show_post;
-            $this->conf['admin_show_post_post']=$admin_show_post_post;
-            $this->conf['post_post_show_size']=$post_post_show_size;
             
-            $this->conf['adminuser']=$adminuser;
-            $this->conf['key']=$key;
+
+            $this->conf['adminthread']          =   $adminthread;
+            $this->conf['admin_show_post']      =   $admin_show_post;
+            $this->conf['admin_show_post_post'] =   $admin_show_post_post;
+            $this->conf['post_post_show_size']  =   $post_post_show_size;
+            
+            $this->conf['adminuser']    =   $adminuser;
+            $this->conf['key']          =   $key;
 
 
             //{hook a_admin_op_3}
-
             file_put_contents(CONF_PATH . 'conf.php' , "<?php die(); ?>\r\n".json_encode($this->conf));
             $this->json(array('error'=>true,'info'=>'修改配置成功'));
         }//END IF
@@ -1641,16 +1679,24 @@ function plugin_uninstall(){
                 }
 
                 return $this->mess("插件建立成功,请打开" . PLUGIN_PATH . $name2 . '进行开发吧');
-            }elseif($gn == 'apply_code'){
+            }elseif($gn == 'apply_code'){ //修改插件开启状态
                 $name = X("post.name");
                 $state = X("post.state");
 
-                if($state == 'on'){
+                $path = PLUGIN_PATH . "/{$name}/function.php";
+                if(is_file($path))
+                    include $path;
+
+                if($state == 'on'){//关闭插件
                     if(is_file(PLUGIN_PATH . $name . '/on'))
                         unlink(PLUGIN_PATH . $name . '/on');
+                    if(function_exists('plugin_off'))
+                        plugin_off();
                 }
-                else{
+                else{//开启插件
                     file_put_contents(PLUGIN_PATH . $name . '/on','');
+                    if(function_exists('plugin_on'))
+                        plugin_on();
                 }
 
 
