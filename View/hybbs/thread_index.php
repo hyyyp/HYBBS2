@@ -265,7 +265,7 @@
 	            	</p>
 		            <div class="text typo editor-style">
 		            <!--{hook t_post_content_top}-->
-		            	{if $v['rpid']}
+		            	{if $v['rpid'] && !empty($quote_data)}
 		            	<div class="quote-bx quote-box" style="display: block;">
 						    
 						    <div class="quote-bx">
