@@ -370,6 +370,60 @@
 										<span class="help-block">单位（ M ）.如输入3 则限制3M以下附件上传，输入0为无限制大小</span>
 									</div>
 								</div>
+								<div class="form-group">
+									<label class="col-lg-2 control-label">允许上传视频</label>
+									<div class="col-lg-10">
+										<div class="checkbox inline-block">
+											<div class="custom-checkbox">
+												<input type="checkbox" name="allow_upload_video" id="allow-upload-video" class="checkbox-red" {if $conf['allow_upload_video']}checked="checked"{/if}>
+												<label for="allow-upload-video"></label>
+											</div>
+											<div class="inline-block vertical-top">
+												视频资源比较消耗资源，请确认您的服务器能承受这些资源！
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-lg-2 control-label">视频上传允许格式</label>
+									<div class="col-lg-10">
+										<input class="form-control" type="text" name="upload_video_ext" value="{$conf.upload_video_ext}">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-lg-2 control-label">视频上传大小限制</label>
+									<div class="col-lg-10">
+										<input class="form-control" type="text" name="upload_video_size" value="{$conf.upload_video_size}">
+										<span class="help-block">单位（ M ）.如输入3 则限制3M以下视频上传，输入0为无限制大小</span>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-lg-2 control-label">允许上传音频</label>
+									<div class="col-lg-10">
+										<div class="checkbox inline-block">
+											<div class="custom-checkbox">
+												<input type="checkbox" name="allow_upload_audio" id="allow-upload-audio" class="checkbox-red" {if $conf['allow_upload_audio']}checked="checked"{/if}>
+												<label for="allow-upload-audio"></label>
+											</div>
+											<div class="inline-block vertical-top">
+												音频资源比较消耗资源，请确认您的服务器能承受这些资源！
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-lg-2 control-label">音频上传允许格式</label>
+									<div class="col-lg-10">
+										<input class="form-control" type="text" name="upload_audio_ext" value="{$conf.upload_audio_ext}">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-lg-2 control-label">音频上传大小限制</label>
+									<div class="col-lg-10">
+										<input class="form-control" type="text" name="upload_audio_size" value="{$conf.upload_audio_size}">
+										<span class="help-block">单位（ M ）.如输入3 则限制3M以下音频上传，输入0为无限制大小</span>
+									</div>
+								</div>
 								<h4>当前PHP.ini配置上传文件最大字节：<label class="label label-success">{php echo ini_get('upload_max_filesize')}</label> 与 POST提交字节最大限制为：<label class="label label-success">{php echo ini_get('post_max_size')}</label></h4><hr><h4>特别提醒，你在本页配置的限制只是局部的，全局控制上传大小在php.ini中修改！ 可在网上搜索一下 php.ini 上传大小限制</h4>
 								<hr>PHP.ini <h4>upload_max_filesize : <label class="label label-success">{php echo ini_get('upload_max_filesize')}</label> </h4><h4>post_max_size : <label class="label label-success">{php echo ini_get('post_max_size')}</label></h4>
 							</div>
