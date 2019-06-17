@@ -199,7 +199,8 @@ class Thread extends HYBBS {
             //附件处理结束
 
             //增加主题点击数
-            $Thread->update_int($tid,'views');
+            //if(NOW_UID != $thread_data['uid'])
+                $Thread->update_int($tid,'views');
 
             $count = $thread_data['posts'];
     		$count = (!$count)?1:$count;
@@ -348,13 +349,10 @@ class Thread extends HYBBS {
         //删除属于该主题的消息
         S("Mess")->delete(array('tid'=>$tid));
 
-        //删除主题下所有评论
-        //if($thread_data['posts']){ //存在评论
         $Post = M('Post');
         //删除当前主题的所有评论
         $Post->del_thread_all_post($tid);
 
-        //}
         //帖子作者-1
         $User = M('User');
         $User->update_int($thread_data['uid'],'threads','-');
@@ -390,9 +388,19 @@ class Thread extends HYBBS {
                 if(is_file($FilePath)){
                     unlink($FilePath);
                 }
+                //删除附件 兼容新版本
+                $FilePath = INDEX_PATH . GetStorageThreadFileDir($tid,false) . $FileData['md5name'];
+                if(is_file($FilePath)){
+                    unlink($FilePath);
+                }
 
             }
         }
+
+        //删除图片
+        $StorageThreadDir = GetStorageThreadDir($tid);
+        deldir(INDEX_PATH . $StorageThreadDir,false,true);
+        S('File')->delete(['tid'=>$tid]);
 
 
         S('Vote_thread')    ->delete(['tid'=>$tid]);
@@ -423,7 +431,7 @@ class Thread extends HYBBS {
             //删除帖子独立缓存
             $pid_list = $Post->select('pid',['tid'=>$tid]);
             if(empty($pid_list)) $pid_list = [];
-            foreach ($$pid_list as $key => $v) {
+            foreach ($pid_list as $key => $v) {
                 $this->CacheObj->rm('post_data_'.$v);
             }
         }
