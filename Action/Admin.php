@@ -2107,7 +2107,9 @@ function plugin_uninstall(){
 
                 if(!isset($json['file'][$num]))
                     $this->json(['error'=>false,'info'=>'找不到这个文件ID：'.$num]);
-                http_down(INDEX_PATH . trim($json['file'][$num]['file'],'/'),$json['file'][$num]['downurl']);
+                if(http_down(INDEX_PATH . trim($json['file'][$num]['file'],'/'),$json['file'][$num]['downurl']) === false)
+                    $this->json(['error'=>false,'info'=>'这个文件下载失败，检查网络以及本地文件夹权限！']);
+
                 if(count($json['file']) == $num +1)
                     $this->json(['error'=>true,'info'=>'ok']);
                 $this->json(['error'=>true,'info'=>'下载完成']);

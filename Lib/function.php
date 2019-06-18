@@ -246,9 +246,15 @@ function http_down($save_to, $file_url) {
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	$file_content = curl_exec($ch);
 	curl_close($ch);
+	if(empty($file_content))
+		return false;
 	$downloaded_file = fopen($save_to, 'w');
-	fwrite($downloaded_file, $file_content);
+	if(!$downloaded_file)
+		return false;
+	if(!write($downloaded_file, $file_content))
+		return false;
 	fclose($downloaded_file);
+	return true;
 
 }
 function http_get_app($url, $data = array()) {
