@@ -251,7 +251,7 @@ function http_down($save_to, $file_url) {
 	$downloaded_file = fopen($save_to, 'w');
 	if(!$downloaded_file)
 		return false;
-	if(!write($downloaded_file, $file_content))
+	if(!fwrite($downloaded_file, $file_content))
 		return false;
 	fclose($downloaded_file);
 	return true;
