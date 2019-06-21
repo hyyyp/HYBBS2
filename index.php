@@ -4,7 +4,7 @@ if(version_compare(PHP_VERSION,'5.4.0','<')){
 	die('HYPHP2.0 不支持 5.4以下的PHP版本.  当前你的PHP版本：' . PHP_VERSION);
 }
 
-define('HYBBS_V'			,'2.2.5');
+define('HYBBS_V'			,'2.2.6');
 define('INDEX_PATH' 		, str_replace('\\', '/', dirname(__FILE__)).'/');
 define('DEBUG'      ,(is_file(INDEX_PATH . 'DEBUG'))?false:true);
 define('PLUGIN_ON'  ,true);
@@ -14,15 +14,19 @@ define('PLUGIN_MORE_LANG_ON',true);
 require  'HY/HYPHP.php';
 /*
 
-优化 - 更新机制 跳过重复执行SQL insert主键语句
+优化 - 后台删除用户 删除头像数据
+优化 - 后台删除用户附件清理机制 优化代码
+优化 - Post新内容增加hook点 为了修复部分 附件处理插件
 
-修复 - 编辑帖子出现目录不存在的BUG
-修复 - 新升级机制 可能下载文件为空 还保存 导致的更新空白文件的BUG
-修复 - 新升级机制检查更新URL写错的问题 导致部分用户 没有伪静态环境的升级不了
-
+修复 - 下载附件的代码出现自动生成无用的文件夹的问题
 
 需要修复 部分隐藏插件
 
+七牛
+图片远程下载
+压缩上传图片
+上传图片添加水印
+屏蔽IP发帖
 
 收藏帖子
 
