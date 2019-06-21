@@ -255,12 +255,33 @@ C(array(
 			'src' => true,
 			'width' => true,
 		),
-		'embed'=>array(
-			'src'=>true,
-			'autostart'=>true,
-			'width'=>true,
-			'height'=>true,
-		)
+		'video' => array(
+			'autoplay' => true,
+			'controls' => true,
+			'height' => true,
+			'loop' => true,
+			'muted' => true,
+			'poster' => true,
+			'preload' => true,
+			'src' => true,
+			'width' => true,
+		),
+		'audio' => array(
+			'controls' => true,
+			'height' => true,
+			'loop' => true,
+			'muted' => true,
+			'poster' => true,
+			'preload' => true,
+			'src' => true,
+			'width' => true,
+		),
+		// 'embed'=>array(
+		// 	'src'=>true,
+		// 	'autostart'=>true,
+		// 	'width'=>true,
+		// 	'height'=>true,
+		// )
 	),
 
 ));
