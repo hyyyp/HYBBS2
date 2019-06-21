@@ -385,7 +385,21 @@ class Admin extends HYBBS {
                 S("Vote_thread")->delete(array('uid'=>$uid));
                 deldir(INDEX_PATH. "upload/userfile/".$uid,false,true);
                 
-                
+                $path_avatar = INDEX_PATH . 'upload/avatar/' . md5($uid);
+                $path_user_avatar = 'upload/avatar/' . md5($uid);
+                if(is_file($path_user_avatar.".jpg")){
+                    unlink($path_user_avatar.".jpg");
+                }
+                if(is_file($path_user_avatar."-a.jpg")){
+                    unlink($path_user_avatar."-a.jpg");
+                }
+                if(is_file($path_user_avatar."-b.jpg")){
+                    unlink($path_user_avatar."-b.jpg");
+                }
+                if(is_file($path_user_avatar."-c.jpg")){
+                    unlink($path_user_avatar."-c.jpg");
+                }
+
                 
                 return $this->json(array('error'=>true,'info'=>'删除成功'));
             }elseif($gn == 'del_more'){ //删除勾选用户
@@ -407,7 +421,7 @@ class Admin extends HYBBS {
                         $Vote_thread = S("Vote_thread");
                         foreach ($uid as $v) {
                             $User->delete(['uid'=>$v]);
-                            $tid_list = S("Thread")->select('tid',['uid'=>$uid]);
+                            $tid_list = S("Thread")->select('tid',['uid'=>$v]);
                             if(!empty($tid_list)){
                                 foreach ($tid_list as $tid) {
                                     $StorageThreadDir = GetStorageThreadDir($tid);
@@ -429,6 +443,21 @@ class Admin extends HYBBS {
                             $Vote_post->delete(array('uid'=>$v));
                             $Vote_thread->delete(array('uid'=>$v));
                             deldir(INDEX_PATH. "upload/userfile/" . $v,false,true);
+
+                            $path_avatar = INDEX_PATH . 'upload/avatar/' . md5($v);
+                            $path_user_avatar = 'upload/avatar/' . md5($v);
+                            if(is_file($path_user_avatar.".jpg")){
+                                unlink($path_user_avatar.".jpg");
+                            }
+                            if(is_file($path_user_avatar."-a.jpg")){
+                                unlink($path_user_avatar."-a.jpg");
+                            }
+                            if(is_file($path_user_avatar."-b.jpg")){
+                                unlink($path_user_avatar."-b.jpg");
+                            }
+                            if(is_file($path_user_avatar."-c.jpg")){
+                                unlink($path_user_avatar."-c.jpg");
+                            }
 
                         }
                         header('Location: '. X("server.HTTP_REFERER"));
