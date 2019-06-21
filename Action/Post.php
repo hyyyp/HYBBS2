@@ -105,8 +105,6 @@ class Post extends HYBBS {
 		if(!$Post->has(['pid'=>$rpid]) || $thread_data['pid'] == $rpid)
 			$rpid = 0;
 
-		
-
 
 		$Post->insert(array(
 			'tid'	=> $tid,
@@ -118,6 +116,7 @@ class Post extends HYBBS {
 			'etime'	  => NOW_TIME
 		));
 		$this->pid = $pid = $Post->id();
+		//{hook a_post_post_61}
 
 		//处理临时文件
 		$UserTmpUploadPath 	= 	GetUserTmpUploadPath(NOW_UID);
@@ -127,24 +126,26 @@ class Post extends HYBBS {
 		if(isset($matchsrc[1][0])){
 			$SrcFileList=$matchsrc[1];
 		}
-
+		//{hook a_post_post_62}
 		$MoveFileList = [];
 		if(!empty($SrcFileList)){
 			$StoragePostDir 		=	GetStoragePostDir($tid,$pid);
 			foreach ($SrcFileList as $v) {
-				if(strpos($v,$UserTmpUploadPath) !== false){//确定为临时文件
-					$TmpFilePath = INDEX_PATH . str_replace(WWW,'',$v);
+				$TmpFilePath = realpath(INDEX_PATH . str_replace(WWW,'',$v));
+				if(strpos($TmpFilePath,$UserTmpUploadPath) !== false){//确定为临时文件
 					$NewFilePath = str_replace($UserTmpUploadPath,$StoragePostDir,$TmpFilePath);
 					//移动临时文件到正式目录
 					if(move_file($TmpFilePath, $NewFilePath)){
 						$MoveFileList[] = $NewFilePath;
 					}
+					
 				}
 			}
 			//替换临时文件路径为正式文件路径
 			$content = str_replace($UserTmpUploadPath,$StoragePostDir,$content);
 		}
 
+		//{hook a_post_post_63}
 		if(!empty($MoveFileList)){
         	$File=M('File');
         	foreach ($MoveFileList as $v) {
@@ -158,7 +159,7 @@ class Post extends HYBBS {
 				]);
             }
         }
-
+        //{hook a_post_post_64}
 		//@用户
 		$this->ante_type = 'post';
 		if($UsergroupLib->read(NOW_GID,'mess',$this->_usergroup))
@@ -218,13 +219,13 @@ class Post extends HYBBS {
 		$this->CacheObj->rm("index_index_Btime_1");
 		$this->CacheObj->rm("index_index_{$thread_data['fid']}_1_Btime");
 		$this->CacheObj->rm('thread_data_'.$tid);
-
+		//{hook a_post_post_10}
 		$count = intval(($thread_data['posts'] /  $this->conf['postlist']) + 1)+1;
         for ($i=0; $i < $count; $i++) {
             $this->CacheObj->rm("post_list_{$tid}_DESC_{$i}");
             $this->CacheObj->rm("post_list_{$tid}_ASC_{$i}");
         }
-
+        //{hook a_post_post_11}
 
 		//用户组升级检测
 		M('Usergroup')->check_up(NOW_UID);
@@ -293,7 +294,7 @@ class Post extends HYBBS {
 
             //{hook a_post_index_5}
 			$tmp = str_replace('&nbsp;','',$content);
-			$tmp = trim(strip_tags($tmp,'<img><iframe><embed><video>'));
+			//$tmp = trim(strip_tags($tmp,'<img><iframe><embed><video>'));
             if(empty($tmp))
 				return $this->json(array('error'=>false,'info'=>'内容不能为空'));
 
@@ -378,13 +379,13 @@ class Post extends HYBBS {
 			if(isset($matchsrc[1][0])){
 				$SrcFileList=$matchsrc[1];
 			}
-
+			//{hook a_post_index_101}
 			$MoveFileList = [];
 			if(!empty($SrcFileList)){
 				$StorageThreadDir 		=	GetStorageThreadDir($tid);
 				foreach ($SrcFileList as $v) {
-					if(strpos($v,$UserTmpUploadPath) !== false){//确定为临时文件
-						$TmpFilePath = INDEX_PATH . str_replace(WWW,'',$v);
+					$TmpFilePath = realpath(INDEX_PATH . str_replace(WWW,'',$v));
+					if(strpos($TmpFilePath,$UserTmpUploadPath) !== false){//确定为临时文件
 						$NewFilePath = str_replace($UserTmpUploadPath,$StorageThreadDir,$TmpFilePath);
 						//移动临时文件到正式目录
 						if(move_file($TmpFilePath, $NewFilePath)){ //移动成功
@@ -397,6 +398,7 @@ class Post extends HYBBS {
 				$content = str_replace($UserTmpUploadPath,$StorageThreadDir,$content);
 				$img 	 = str_replace($UserTmpUploadPath,$StorageThreadDir,$img);
 			}
+			//{hook a_post_index_102}
             
 
             //主题帖子数据
@@ -451,6 +453,7 @@ class Post extends HYBBS {
 
 	            		$File = M("File");
 	            		$Fileinfo = S("Fileinfo");
+	            		$MoveFileList = [];
 	            		foreach ($fileid_arr as $key => $v) {
 	            			//{hook a_post_index_15}
 	            			$v=intval($v);
@@ -470,22 +473,25 @@ class Post extends HYBBS {
 	            					'hide'		=>	isset($filehide_arr[$key]) ? intval($filehide_arr[$key]) : 0,
 	            					'mess'		=>	isset($filemess_arr[$key]) ? filter_html($filemess_arr[$key]) : '',
 	            				));
+	            				//{hook a_post_index_151}
 	            				$FileMd5Name 	= $File->get_row($v,'md5name');
 	            				$FileTmpPath 	= INDEX_PATH . $UserTmpUploadPath . $FileMd5Name;
 	            				$StorageThreadFileDir = GetStorageThreadFileDir($tid);
-	            				move_file($FileTmpPath, INDEX_PATH . $StorageThreadFileDir . $FileMd5Name);
-
-	            				$FileInfo = pathinfo($FileMd5Name);
-								$FileName = $FileInfo['filename'];
-	            				$File->update([
-									'tid'	=> $tid,
-									'pid'	=> $pid,
-								],[
-									'AND'=>['uid'=>NOW_UID,'md5'=>$FileName]
-								]);
-
+	            				
+	            				if(move_file($FileTmpPath, INDEX_PATH . $StorageThreadFileDir . $FileMd5Name)){
+	            					$MoveFileList[] = INDEX_PATH . $StorageThreadFileDir . $FileMd5Name;
+	            					$FileInfo = pathinfo($FileMd5Name);
+									$FileName = $FileInfo['filename'];
+		            				$File->update([
+										'tid'	=> $tid,
+										'pid'	=> $pid,
+									],[
+										'AND'=>['uid'=>NOW_UID,'md5'=>$FileName]
+									]);
+	            				}
+	            				//{hook a_post_index_152}
 	            			}
-
+	            			//{hook a_post_index_153}
 	            		}
 	            		//{hook a_post_index_16}
 	            	}
@@ -505,7 +511,7 @@ class Post extends HYBBS {
 			$User->update_int(NOW_UID,'gold','+',$this->conf['gold_thread']);
 			//用户增加 积分
 			$User->update_int(NOW_UID,'credits','+',$this->conf['credits_thread']);
-
+			//{hook a_post_index_18}
 			if($this->conf['gold_thread'] != 0 || $this->conf['credits_thread'] != 0){
 				S("Log")->insert(array(
 					'uid'=>NOW_UID,
@@ -518,7 +524,7 @@ class Post extends HYBBS {
 
 			//分类板块 帖子数量++
 			M("Forum")->update_int($forum);
-
+			//{hook a_post_index_19}
 			//更新分类缓存
 			$this->_forum[$forum]['threads']++;
 			$this->CacheObj->forum = $this->_forum;
@@ -536,7 +542,7 @@ class Post extends HYBBS {
 			$this->CacheObj->rm("index_index_{$forum}_1_Btime");
 			$this->CacheObj->rm("index_index_{$forum}_1_New");
 			
-
+			//{hook a_post_index_20}
 
 			//用户组升级检测
 			M('Usergroup')->check_up(NOW_UID);
@@ -546,9 +552,6 @@ class Post extends HYBBS {
 
 			//{hook a_post_index_v}
             $this->json(array('error'=>true,'info'=>'发表成功','id'=>$tid));
-
-
-
 
         }
 
@@ -642,10 +645,12 @@ class Post extends HYBBS {
 		$user = substr($tagStr,1);
 		$User = M("User");
 		$Chat = M("Chat");
+		//{hook a_post_ante_callback_2}
 		static $tmp_user=array(); //@发送一次
 		if($user != NOW_USER){ //不能发送给自己
 			if(!isset($tmp_user[$user])){ //本帖未@过该用户名
 				if($User->is_user($user)/* && isset($tmp_user[$user])*/){ //判断用户是否存在
+					//{hook a_post_ante_callback_3}
 					$tmp_user[$user]=true;
 					if($this->ante_type == 'thread')
 						$Chat->sys_send($User->user_to_uid($user),'<a href="'. HYBBS_URLA('my',NOW_USER).'" target="_blank">['.NOW_USER.']</a> 在发表主题 <a href="'. HYBBS_URLA('thread',$this->tid).'" target="_blank">['.$this->title.']</a> 的时候@了你');
@@ -653,9 +658,10 @@ class Post extends HYBBS {
 						$Chat->sys_send($User->user_to_uid($user),'<a href="'. HYBBS_URLA('my',NOW_USER).'" target="_blank">['.NOW_USER.']</a> 在评论 <a href="'. HYBBS_URLA('thread','post',$this->pid).'" target="_blank">['.$this->title.']</a> 的时候@了你');
 					elseif($this->ante_type == 'post_post')
 						$Chat->sys_send($User->user_to_uid($user),'<a href="'. HYBBS_URLA('my',NOW_USER).'" target="_blank">['.NOW_USER.']</a> 回复评论 <a href="'. HYBBS_URLA('thread','post',$this->pid).'" target="_blank">['.$this->title.']</a> 的时候@了你');
-					
+					//{hook a_post_ante_callback_4}
 				}
 			}
+			//{hook a_post_ante_callback_5}
 			return '<span class="label label-primary">'.$tagStr.'</span>';
 		}
 		return $tagStr;
@@ -681,7 +687,6 @@ class Post extends HYBBS {
 
         $info   =   $upload->upload();
         //{hook a_post_uploadfile_4}
-        //$id = 0;
         if($info) {
         	$file_size = $info['photo']['size'] / 1024; //得到kb单位
 			if($file_size < 1 && $file_size > 0) //如果值为 0.x 则算作 1kb
@@ -735,10 +740,12 @@ class Post extends HYBBS {
 		
 		$d=array("success"=>true,'msg'=>"上传成功!","file_path"=>'');
 		if(!$info) {
+			//{hook a_post_upload_41}
 			$d['success']	= false;
         	$d['msg']		= $upload->getError();
 
 		}else{ //上传成功
+			//{hook a_post_upload_31}
 			$file_size = $info['photo']['size'] / 1024;
 			//得到kb单位
 			if($file_size < 1 && $file_size > 0) //如果值为 0.x 则算作 1kb
@@ -746,7 +753,7 @@ class Post extends HYBBS {
 			if($this->_user['file_size'] + $file_size  > $this->_usergroup[NOW_GID]['space_size']){
 				return $this->json(array("success"=>false,'msg'=>"您已经没有空间上传文件了!需要提升用户组哦!",'state'=>"您已经没有空间上传文件了!需要提升用户组哦!","file_path"=>''));
 			}
-
+			//{hook a_post_upload_32}
 			$File = S('File');
         	$File->insert(array(
         		'uid'		=>	NOW_UID,
@@ -757,7 +764,7 @@ class Post extends HYBBS {
         		'file_type'	=>	1,//图片
         		'atime'		=>	NOW_TIME
         	));
-
+        	//{hook a_post_upload_33}
 			$d['file_path'] = WWW . $UserTmpUploadPath .$info['photo']['savename'];
 			
 			M("User")->update_int(NOW_UID,'file_size','+',$file_size);
@@ -794,10 +801,12 @@ class Post extends HYBBS {
 		
 		$json=array("error"=>true,'info'=>"上传成功!");
 		if(!$info) {
+			//{hook a_post_uploadvideo_31}
 			$json['error']	= false;
         	$json['info']		= $upload->getError();
 
 		}else{ //上传成功
+			//{hook a_post_uploadvideo_32}
 			$file_size = $info['video']['size'] / 1024;
 			//得到kb单位
 			if($file_size < 1 && $file_size > 0) //如果值为 0.x 则算作 1kb
@@ -805,7 +814,7 @@ class Post extends HYBBS {
 			if($this->_user['file_size'] + $file_size  > $this->_usergroup[NOW_GID]['space_size']){
 				return $this->json(["error"=>false,'info'=>"您已经没有空间上传文件了!需要提升用户组哦!"]);
 			}
-
+			//{hook a_post_uploadvideo_33}
 			$File = S('File');
         	$File->insert(array(
         		'uid'		=>	NOW_UID,
@@ -817,7 +826,7 @@ class Post extends HYBBS {
         		'atime'		=>	NOW_TIME
         	));
 			$json['file_path'] = WWW . $UserTmpUploadPath .$info['video']['savename'];
-			
+			//{hook a_post_uploadvideo_34}
 			M("User")->update_int(NOW_UID,'file_size','+',$file_size);
 
 		}
@@ -849,10 +858,12 @@ class Post extends HYBBS {
 		
 		$json=array("error"=>true,'info'=>"上传成功!");
 		if(!$info) {
+			//{hook a_post_uploadaudio_31}
 			$json['error']	= false;
         	$json['info']		= $upload->getError();
 
 		}else{ //上传成功
+			//{hook a_post_uploadaudio_32}
 			$file_size = $info['audio']['size'] / 1024;
 			//得到kb单位
 			if($file_size < 1 && $file_size > 0) //如果值为 0.x 则算作 1kb
@@ -860,7 +871,7 @@ class Post extends HYBBS {
 			if($this->_user['file_size'] + $file_size  > $this->_usergroup[NOW_GID]['space_size']){
 				return $this->json(["error"=>false,'info'=>"您已经没有空间上传文件了!需要提升用户组哦!"]);
 			}
-
+			//{hook a_post_uploadaudio_33}
 			$File = S('File');
         	$File->insert(array(
         		'uid'		=>	NOW_UID,
@@ -871,6 +882,7 @@ class Post extends HYBBS {
         		'file_type'	=>	4,//音频
         		'atime'		=>	NOW_TIME
         	));
+        	//{hook a_post_uploadaudio_34}
 			$json['file_path'] = WWW . $UserTmpUploadPath .$info['audio']['savename'];
 			
 			M("User")->update_int(NOW_UID,'file_size','+',$file_size);
@@ -898,7 +910,8 @@ class Post extends HYBBS {
 			//$content = preg_replace('/(<img.*?)((width)=[\'"]+[0-9]+[\'"]+)/is','$1', $content);
 			$content = preg_replace('/(<img.*?)((height)=[\'"]+[0-9]+[\'"]+)/is','$1', $content);
 			$content = preg_replace( '/\p{Thai}/u' , '' , $content );
-			$tmp 	 = strip_tags($content,'<img><iframe><embed><video>');
+			// $tmp 	 = strip_tags($content,'<iframe><embed>');
+			$tmp = str_replace('&nbsp;','',$content);
 			if(empty($tmp))
 				return $this->json(array('error'=>false,'info'=>'内容不能为空'));
 			//{hook a_post_edit_3}
@@ -974,7 +987,7 @@ class Post extends HYBBS {
 
 				
 				
-
+				//{hook a_post_edit_371}
 				//处理临时文件
 				$UserTmpUploadPath 	= GetUserTmpUploadPath(NOW_UID);
 				$tmp_file_expression= "/src=\"(.*?)\"/i";
@@ -983,16 +996,14 @@ class Post extends HYBBS {
 				if(isset($matchsrc[1][0])){
 					$SrcFileList=$matchsrc[1];
 				}
-
+				//{hook a_post_edit_372}
 				$MoveFileList = [];
 				if(!empty($SrcFileList)){
 					$StorageThreadDir 		=	GetStorageThreadDir($tid);
 					foreach ($SrcFileList as $v) {
-						if(strpos($v,$UserTmpUploadPath) !== false){//确定为临时文件
-							$TmpFilePath = INDEX_PATH . str_replace(WWW,'',$v);
+						$TmpFilePath = realpath(INDEX_PATH . str_replace(WWW,'',$v));
+						if(strpos($TmpFilePath,$UserTmpUploadPath) !== false){//确定为临时文件
 							$NewFilePath = str_replace($UserTmpUploadPath,$StorageThreadDir,$TmpFilePath);
-
-
 							//移动临时文件到正式目录
 							if(move_file($TmpFilePath, $NewFilePath)){
 								$MoveFileList[] = $NewFilePath;
@@ -1004,6 +1015,7 @@ class Post extends HYBBS {
 					$content = str_replace($UserTmpUploadPath,$StorageThreadDir,$content);
 					$img 	 = str_replace($UserTmpUploadPath,$StorageThreadDir,$img);
 				}
+				//{hook a_post_edit_373}
 				//更新文件使用帖子
 				$File=M('File');
 				if(!empty($MoveFileList)){
@@ -1018,7 +1030,7 @@ class Post extends HYBBS {
 						]);
 		            }
 	            }
-
+	            //{hook a_post_edit_374}
 				//处理不使用的旧文件
 				$StorageThreadDir = GetStorageThreadDir($tid,false);
 				if(is_dir($StorageThreadDir)){
@@ -1103,14 +1115,14 @@ class Post extends HYBBS {
 		            				'is_del'	=> true
 		            			];
 		            		}
+		            		//{hook a_post_edit_411}
 
-
-		            		
 	            			foreach ($fileid_arr as $key => $fileid_v) {
 		            			$fileid_v=intval($fileid_v);
 		            			if(empty($fileid_v)) continue;
 		            			//判断文件是否属于文章作者 跳过管理员 版主
 		            			if($File->is_comp($fileid_v,$post_data['uid']) || NOW_GID == C('ADMIN_GROUP') || is_forumg($this->_forum,NOW_UID,$post_data['fid'])){
+		            				//{hook a_post_edit_412}
 		            				$tmp_arr[$fileid_v]=[
 		            					'tid'	=>	$tid,
 		            					'uid'	=>	$post_data['uid'],
@@ -1126,9 +1138,12 @@ class Post extends HYBBS {
 
 		            		}
 		            		$i = 0;
-		            		
+		            		//{hook a_post_edit_413}
+		            		$MoveFileList = [];
 		            		foreach($tmp_arr as $key => $v){
+		            			//{hook a_post_edit_4131}
 		            			if($v['is_del']){//删除附件
+		            				//{hook a_post_edit_414}
 		            				$Fileinfo->delete(['fileid'=>$key]);
 		            				$Filegold->delete(['fileid'=>$key]);
 		            				$FileData = $File->read($key,['uid','md5name','filesize']);
@@ -1156,6 +1171,7 @@ class Post extends HYBBS {
 
 		            				}
 		            			}else{ //更新或插入新附件
+		            				//{hook a_post_edit_415}
 		            				$i++;
 		            				if($Fileinfo->has(['fileid'=>$key])){ //存在旧附件
 		            					$Fileinfo->update([
@@ -1177,35 +1193,39 @@ class Post extends HYBBS {
 		            						'downs'		=>	$v['downs'],
 		            						'mess'		=>	$v['mess']
 		            					]);
-
+		            					//{hook a_post_edit_416}
 		            					$FileMd5Name 	= $File->get_row($key,'md5name');
 			            				$FileTmpPath 	= INDEX_PATH . $UserTmpUploadPath . $FileMd5Name;
-			            				//$StorageThreadDir 	= GetStorageThreadDir($tid);
+			            				
+			            				//{hook a_post_edit_417}
 			            				$StorageThreadFileDir = GetStorageThreadFileDir($tid);
-			            				move_file($FileTmpPath, INDEX_PATH . $StorageThreadFileDir . $FileMd5Name);
-			            				$FileInfo = pathinfo($FileMd5Name);
-										$FileName = $FileInfo['filename'];
-			            				$File->update([
-											'tid'	=> $tid,
-											'pid'	=> $pid,
-										],[
-											'AND'=>['uid'=>NOW_UID,'md5'=>$FileName]
-										]);
+			            				if(move_file($FileTmpPath, INDEX_PATH . $StorageThreadFileDir . $FileMd5Name)){
+			            					$MoveFileList[] = INDEX_PATH . $StorageThreadFileDir . $FileMd5Name;
+				            				$FileInfo = pathinfo($FileMd5Name);
+											$FileName = $FileInfo['filename'];
+				            				$File->update([
+												'tid'	=> $tid,
+												'pid'	=> $pid,
+											],[
+												'AND'=>['uid'=>NOW_UID,'md5'=>$FileName]
+											]);
+										}
+										//{hook a_post_edit_418}
 		            				}
 		            			}
+		            			//{hook a_post_edit_419}
 		            		}
-		            		
-
-
 		            		
 		            		//{hook a_post_edit_43}
 		            		$Thread->update(['files'=>$i],['tid'=>$tid]); //更新主题附件数量
 		            	}
 		            }else{ //清空附件
+		            	//{hook a_post_edit_431}
 		            	$FileinfoList = $Fileinfo->select('*',['tid'=>$tid]);
 		            	if(empty($FileinfoList)) $FileinfoList=[];
 
 		            	foreach($FileinfoList as $v){
+		            		//{hook a_post_edit_432}
 		            		$Fileinfo->delete(['fileid'=>$v['fileid']]);
 		            		$Filegold->delete(['fileid'=>$v['fileid']]);
             				$FileData = $File->read($v['fileid'],['uid','md5name','filesize']);
@@ -1219,7 +1239,7 @@ class Post extends HYBBS {
             					],[
             						'uid'=>$FileData['uid']
             					]);
-
+            					//{hook a_post_edit_433}
             					//文件路劲
             					$FilePath = INDEX_PATH . 'upload/userfile/' . $FileData['uid'] . '/' . $FileData['md5name'];
             					if(is_file($FilePath)){
@@ -1230,11 +1250,12 @@ class Post extends HYBBS {
             					if(is_file($FilePath)){
             						unlink($FilePath);
             					}
+            					//{hook a_post_edit_434}
 
             				}
 		            	}
 
-	            		
+	            		//{hook a_post_edit_435}
 	            		$Thread->update(['files'=>0],['tid'=>$tid]); //更新主题附件数量
 
 	            	}
@@ -1242,6 +1263,7 @@ class Post extends HYBBS {
 
 			}//修改主题结束
 			else{ //编辑帖子不是主题
+				//{hook a_post_edit_436}
 				$thread_data_posts = S("Thread")->find('posts',['tid'=>$post_data['tid']]);
 
 				$pattern="/\<img.*?src\=\"(.*?)\"[^>]*>/i";
@@ -1255,6 +1277,7 @@ class Post extends HYBBS {
 						$img_all[]=$v;
 					}
 				}
+				//{hook a_post_edit_437}
 
 				//处理临时文件
 				$UserTmpUploadPath 	= 	GetUserTmpUploadPath(NOW_UID);
@@ -1264,13 +1287,13 @@ class Post extends HYBBS {
 				if(isset($matchsrc[1][0])){
 					$SrcFileList=$matchsrc[1];
 				}
-
+				//{hook a_post_edit_438}
 				$MoveFileList = [];
 				if(!empty($SrcFileList)){
 					$StoragePostDir 		=	GetStoragePostDir($tid,$pid);
 					foreach ($SrcFileList as $v) {
-						if(strpos($v,$UserTmpUploadPath) !== false){//确定为临时文件
-							$TmpFilePath = INDEX_PATH . str_replace(WWW,'',$v);
+						$TmpFilePath = realpath(INDEX_PATH . str_replace(WWW,'',$v));
+						if(strpos($TmpFilePath,$UserTmpUploadPath) !== false){//确定为临时文件
 							$NewFilePath = str_replace($UserTmpUploadPath,$StoragePostDir,$TmpFilePath);
 							//移动临时文件到正式目录
 							if(move_file($TmpFilePath, $NewFilePath)){
@@ -1281,6 +1304,7 @@ class Post extends HYBBS {
 					//替换临时文件路径为正式文件路径
 					$content = str_replace($UserTmpUploadPath,$StoragePostDir,$content);
 				}
+				//{hook a_post_edit_439}
 				$File=M('File');
 				if(!empty($MoveFileList)){
 	            	foreach ($MoveFileList as $v) {
@@ -1294,7 +1318,7 @@ class Post extends HYBBS {
 						]);
 		            }
 	            }
-
+	            //{hook a_post_edit_461}
 
 				//处理不使用的旧文件
 				$StoragePostDir = GetStoragePostDir($tid,$pid,false);
@@ -1302,6 +1326,7 @@ class Post extends HYBBS {
 				while ($filename = readdir($dh)) {
 					$fullpath = INDEX_PATH . $StoragePostDir . $filename;
 					if ($filename != "." && $filename != ".." && !is_dir($fullpath)) {
+						//{hook a_post_edit_462}
 						$IsDel = true;
 						foreach ($SrcFileList as $v) {
 							if(strpos($v,$filename) !== false){ //正在使用
@@ -1309,6 +1334,7 @@ class Post extends HYBBS {
 								break;
 							}
 						}
+						//{hook a_post_edit_463}
 						if($IsDel){
 							delete_file($fullpath);
 							$FileInfo = pathinfo($fullpath);
@@ -1317,7 +1343,7 @@ class Post extends HYBBS {
 						}
 					}
 				}
-
+				//{hook a_post_edit_464}
 
 
 				$count = intval(($thread_data_posts /  $this->conf['postlist']) + 1)+1;
@@ -1381,17 +1407,12 @@ class Post extends HYBBS {
 				foreach ($file_list as &$v) {
 					$v['filename']=$File->get_name($v['fileid']);
 				}
-				
 
 			}
 			$this->v("file_list",$file_list);
 		}
 		
 		//{hook a_post_edit_7}
-		
-
-		
-		
 		
 		$this->v('id',$pid);
 		$this->v("data",$data);
@@ -1408,11 +1429,12 @@ class Post extends HYBBS {
 		if(!in_array($type,['thread1','thread2','post1','post2']))
             return $this->json(["error"=>false,"info"=>"投票类型不符"]);
 		$type1=substr($type,0,-1);
-
+		//{hook a_post_vote_2}
 		if($type1 == 'thread'){
 			$Thread = S("Thread");
 			if(!$Thread->has(['tid'=>$id]))
 				return $this->json(["error"=>false,"info"=>"不存在该主题"]);
+			//{hook a_post_vote_3}
 			$obj = S("Vote_thread");
 			if(!$obj->has([
 				'AND'=>[
@@ -1425,24 +1447,27 @@ class Post extends HYBBS {
 					$Thread->update(['goods[+]'=>1],['tid'=>$id]);
 				else
 					$Thread->update(['nos[+]'=>1],['tid'=>$id]);
+				//{hook a_post_vote_4}
 				$obj->insert(array(
 					'uid'	=>	NOW_UID,
 					'tid'	=>	$id,
 					'atime'	=>	NOW_TIME,
 				));
 				$this->CacheObj->rm('thread_data_'.$id);
-
+				//{hook a_post_vote_5}
 				return $this->json(["error"=>true,"info"=>"投票成功"]);
 				
 
 			}
+			//{hook a_post_vote_6}
 			return $this->json(["error"=>false,"info"=>"你投过了"]);
 			
 		}elseif($type1 == 'post'){
+			//{hook a_post_vote_7}
 			$Post = S("Post");
 			if(!$Post->has(['pid'=>$id]))
 				return $this->json(["error"=>false,"info"=>"不存在该评论"]);
-
+			//{hook a_post_vote_8}
 			$obj = S("Vote_post");
 			if(!$obj->has([
 				'AND'=>[
@@ -1455,13 +1480,16 @@ class Post extends HYBBS {
 					$Post->update(['goods[+]'=>1],['pid'=>$id]);
 				else
 					$Post->update(['nos[+]'=>1],['pid'=>$id]);
+				//{hook a_post_vote_9}
 				$obj->insert([
 					'uid'	=>	NOW_UID,
 					'pid'	=>	$id,
 					'atime'	=>	NOW_TIME,
 				]);
+				//{hook a_post_vote_10}
 				return $this->json(["error"=>true,"info"=>"投票成功"]);
 			}
+			//{hook a_post_vote_11}
 			return $this->json(["error"=>false,"info"=>"你投过了"]);
 			
 		}
@@ -1500,6 +1528,7 @@ class Post extends HYBBS {
 		)
             return $this->json(array('error'=>false,'info'=>'你没有权限操作这个评论'));
 
+        //{hook a_post_del_5}
         //删除该ID评论
         $Post->del($pid);
         //主题评论数-1
@@ -1512,7 +1541,7 @@ class Post extends HYBBS {
 		$this->CacheObj->forum = $this->_forum;
 		$this->_count['post']--;
 		$this->CacheObj->bbs_count = $this->_count;
-
+		//{hook a_post_del_6}
 		//发送删除帖子消息
         if(NOW_UID != $post_data['uid']){
 	        M("Chat")->sys_send(
@@ -1520,13 +1549,13 @@ class Post extends HYBBS {
 	            '您的评论被删除 所在主题<a href="'.HYBBS_URLA('thread',$tid).'" target="_blank">['.$Thread->get_title($tid).']</a> 操作者:'.NOW_USER
 	        );
         }
-
+        //{hook a_post_del_7}
       	//删除附件
       	$StoragePostDir = GetStoragePostDir($tid,$pid);
       	deldir(INDEX_PATH . $StoragePostDir,false,true);
       	S('File')->delete(['pid'=>$pid]);
       	
-        
+        //{hook a_post_del_8}
         //删除缓存
         $count = intval(($Thread->get_row($tid,'posts') /  $this->conf['postlist']) + 1)+1;
         for ($i=0; $i < $count; $i++) {
