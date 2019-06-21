@@ -116,7 +116,7 @@ class Ajax extends HYBBS {
         $path       = INDEX_PATH.'upload/userfile/'.$fileinfo_data['uid'].'/'.$file_data['md5name'];
         $downlink   = WWW.'upload/userfile/'.$fileinfo_data['uid'].'/'.$file_data['md5name'];
         if(!is_file($path)){//兼容新附件
-            $StorageThreadDir  = GetStorageThreadFileDir($fileinfo_data['tid']);
+            $StorageThreadDir  = GetStorageThreadFileDir($fileinfo_data['tid'],false);
             $path           = INDEX_PATH . $StorageThreadDir . $file_data['md5name'];
             $downlink       = WWW . $StorageThreadDir . $file_data['md5name'];
         }
