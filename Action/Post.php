@@ -71,8 +71,7 @@ class Post extends HYBBS {
 		//去除泰文音标
 		$content = preg_replace( '/\p{Thai}/u' , '' , $content );
 		$tmp = str_replace('&nbsp;','',$content);
-		$tmp = trim(strip_tags($tmp,'<img><iframe><embed><video>'));
-
+		$tmp = trim(strip_tags($tmp,'<img><iframe><embed><video><audio>'));
 		if(empty($tmp) || $tmp == '&nbsp;')
 			return $this->json(array('error'=>false,'info'=>'内容不能为空'));
 		//{hook a_post_post_4}
@@ -132,6 +131,7 @@ class Post extends HYBBS {
 			$StoragePostDir 		=	GetStoragePostDir($tid,$pid);
 			foreach ($SrcFileList as $v) {
 				$TmpFilePath = realpath(INDEX_PATH . str_replace(WWW,'',$v));
+				$TmpFilePath = str_replace("\\",'/',$TmpFilePath);
 				if(strpos($TmpFilePath,$UserTmpUploadPath) !== false){//确定为临时文件
 					$NewFilePath = str_replace($UserTmpUploadPath,$StoragePostDir,$TmpFilePath);
 					//移动临时文件到正式目录
@@ -294,7 +294,7 @@ class Post extends HYBBS {
 
             //{hook a_post_index_5}
 			$tmp = str_replace('&nbsp;','',$content);
-			//$tmp = trim(strip_tags($tmp,'<img><iframe><embed><video>'));
+			$tmp = trim(strip_tags($tmp,'<img><iframe><embed><video><audio>'));
             if(empty($tmp))
 				return $this->json(array('error'=>false,'info'=>'内容不能为空'));
 
@@ -385,15 +385,19 @@ class Post extends HYBBS {
 				$StorageThreadDir 		=	GetStorageThreadDir($tid);
 				foreach ($SrcFileList as $v) {
 					$TmpFilePath = realpath(INDEX_PATH . str_replace(WWW,'',$v));
+					$TmpFilePath = str_replace("\\",'/',$TmpFilePath);
 					if(strpos($TmpFilePath,$UserTmpUploadPath) !== false){//确定为临时文件
 						$NewFilePath = str_replace($UserTmpUploadPath,$StorageThreadDir,$TmpFilePath);
+						
 						//移动临时文件到正式目录
 						if(move_file($TmpFilePath, $NewFilePath)){ //移动成功
 							$MoveFileList[] = $NewFilePath;
 						}
 
 					}
+
 				}
+				
 				//替换临时文件路径为正式文件路径
 				$content = str_replace($UserTmpUploadPath,$StorageThreadDir,$content);
 				$img 	 = str_replace($UserTmpUploadPath,$StorageThreadDir,$img);
@@ -910,8 +914,8 @@ class Post extends HYBBS {
 			//$content = preg_replace('/(<img.*?)((width)=[\'"]+[0-9]+[\'"]+)/is','$1', $content);
 			$content = preg_replace('/(<img.*?)((height)=[\'"]+[0-9]+[\'"]+)/is','$1', $content);
 			$content = preg_replace( '/\p{Thai}/u' , '' , $content );
-			// $tmp 	 = strip_tags($content,'<iframe><embed>');
 			$tmp = str_replace('&nbsp;','',$content);
+			$tmp = trim(strip_tags($tmp,'<img><iframe><embed><video><audio>'));
 			if(empty($tmp))
 				return $this->json(array('error'=>false,'info'=>'内容不能为空'));
 			//{hook a_post_edit_3}
@@ -1002,6 +1006,7 @@ class Post extends HYBBS {
 					$StorageThreadDir 		=	GetStorageThreadDir($tid);
 					foreach ($SrcFileList as $v) {
 						$TmpFilePath = realpath(INDEX_PATH . str_replace(WWW,'',$v));
+						$TmpFilePath = str_replace("\\",'/',$TmpFilePath);
 						if(strpos($TmpFilePath,$UserTmpUploadPath) !== false){//确定为临时文件
 							$NewFilePath = str_replace($UserTmpUploadPath,$StorageThreadDir,$TmpFilePath);
 							//移动临时文件到正式目录
@@ -1088,6 +1093,9 @@ class Post extends HYBBS {
 		            
 		            $Fileinfo = S("Fileinfo");
 		            $Filegold = S('Filegold');
+		            //删除附件文件路径列表
+		            $DelFileList=[];
+		            //{hook a_post_edit_391}
 		            if(!empty($fileid)){
 		            	//{hook a_post_edit_40}
 
@@ -1157,17 +1165,20 @@ class Post extends HYBBS {
 		            					],[
 		            						'uid'=>$FileData['uid']
 		            					]);
-
+		            					//{hook a_post_edit_4141}
 		            					//文件路劲
 		            					$FilePath = INDEX_PATH . 'upload/userfile/' . $FileData['uid'] . '/' . $FileData['md5name'];
 		            					if(is_file($FilePath)){
 		            						unlink($FilePath);
 		            					}
+		            					$DelFileList[]='upload/userfile/' . $FileData['uid'] . '/' . $FileData['md5name'];
 		            					//删除附件 兼容新版本
 		            					$FilePath = INDEX_PATH . GetStorageThreadFileDir($tid,false) . $FileData['md5name'];
 		            					if(is_file($FilePath)){
 		            						unlink($FilePath);
 		            					}
+		            					$DelFileList[]=GetStorageThreadFileDir($tid,false) . $FileData['md5name'];
+		            					//{hook a_post_edit_4142}
 
 		            				}
 		            			}else{ //更新或插入新附件
@@ -1245,11 +1256,13 @@ class Post extends HYBBS {
             					if(is_file($FilePath)){
             						unlink($FilePath);
             					}
+            					$DelFileList[]='upload/userfile/' . $FileData['uid'] . '/' . $FileData['md5name'];
             					//删除附件 兼容新版本
             					$FilePath = INDEX_PATH . GetStorageThreadFileDir($tid,false) . $FileData['md5name'];
             					if(is_file($FilePath)){
             						unlink($FilePath);
             					}
+            					$DelFileList[]=GetStorageThreadFileDir($tid,false) . $FileData['md5name'];
             					//{hook a_post_edit_434}
 
             				}
@@ -1258,9 +1271,10 @@ class Post extends HYBBS {
 	            		//{hook a_post_edit_435}
 	            		$Thread->update(['files'=>0],['tid'=>$tid]); //更新主题附件数量
 
-	            	}
-				}//结束附件信息
-
+	            	}//结束附件相关
+	            	//{hook a_post_edit_381}
+				}//结束判断附件权限
+				//{hook a_post_edit_382}
 			}//修改主题结束
 			else{ //编辑帖子不是主题
 				//{hook a_post_edit_436}
@@ -1293,6 +1307,7 @@ class Post extends HYBBS {
 					$StoragePostDir 		=	GetStoragePostDir($tid,$pid);
 					foreach ($SrcFileList as $v) {
 						$TmpFilePath = realpath(INDEX_PATH . str_replace(WWW,'',$v));
+						$TmpFilePath = str_replace("\\",'/',$TmpFilePath);
 						if(strpos($TmpFilePath,$UserTmpUploadPath) !== false){//确定为临时文件
 							$NewFilePath = str_replace($UserTmpUploadPath,$StoragePostDir,$TmpFilePath);
 							//移动临时文件到正式目录
@@ -1304,6 +1319,7 @@ class Post extends HYBBS {
 					//替换临时文件路径为正式文件路径
 					$content = str_replace($UserTmpUploadPath,$StoragePostDir,$content);
 				}
+
 				//{hook a_post_edit_439}
 				$File=M('File');
 				if(!empty($MoveFileList)){
@@ -1318,6 +1334,7 @@ class Post extends HYBBS {
 						]);
 		            }
 	            }
+
 	            //{hook a_post_edit_461}
 
 				//处理不使用的旧文件
