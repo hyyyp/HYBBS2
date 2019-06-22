@@ -678,7 +678,7 @@ class Admin extends HYBBS {
             if($gn == 'del'){ //删除主题
                 $tid_list = X("post.id");
                 if(!empty($tid_list)){
-
+                    //{hook a_admin_thread_11}
                     $File       = M("File");
                     $Fileinfo   = S("Fileinfo");
                     $Filegold   = S('Filegold');
@@ -689,10 +689,12 @@ class Admin extends HYBBS {
                     $Post_post  = S('Post_post');
 
                     foreach ($tid_list as $tid) {
+                        //{hook a_admin_thread_12}
                         //删除附件
                         $FileinfoList = $Fileinfo->select('*',['tid'=>$tid]);
                         if(empty($FileinfoList)) $FileinfoList=[];
                         foreach($FileinfoList as $v){
+                            //{hook a_admin_thread_13}
                             $Fileinfo->delete(['fileid'=>$v['fileid']]);
                             $Filegold->delete(['fileid'=>$v['fileid']]);
                             $FileData = $File->read($v['fileid'],['uid','md5name','filesize']);
@@ -706,7 +708,7 @@ class Admin extends HYBBS {
                                 ],[
                                     'uid'=>$FileData['uid']
                                 ]);
-
+                                //{hook a_admin_thread_14}
                                 //文件路劲
                                 $FilePath = INDEX_PATH . 'upload/userfile/' . $FileData['uid'] . '/' . $FileData['md5name'];
                                 if(is_file($FilePath)){
@@ -717,9 +719,11 @@ class Admin extends HYBBS {
                                 if(is_file($FilePath)){
                                     unlink($FilePath);
                                 }
+                                //{hook a_admin_thread_15}
 
                             }
                         }
+                        //{hook a_admin_thread_16}
                         //删除主题数据
                         $Thread->delete(['tid'=>$tid]);
                         //删除评论数据
@@ -730,15 +734,17 @@ class Admin extends HYBBS {
                         deldir(INDEX_PATH . $StorageThreadDir,false,true);
                         $File->delete(['tid'=>$tid]);
 
-
+                        //{hook a_admin_thread_16}
                         $Vote_thread    ->delete(['tid'=>$tid]);
                         $Threadgold     ->delete(['tid'=>$tid]);
                         $Post_post      ->delete(['tid'=>$tid]);
+                        //{hook a_admin_thread_17}
 
                     }
                     
                 }
             }
+            //{hook a_admin_thread_3}
         }
 
         if(!isset($_SERVER['REQUEST_URI']))
@@ -776,7 +782,7 @@ class Admin extends HYBBS {
             $top = X('get.top');
             $state = X('get.state');
             
-            
+            //{hook a_admin_thread_4}
 
             if(!empty($uid)){
                 $where['AND']['uid']=$uid;
@@ -801,11 +807,13 @@ class Admin extends HYBBS {
             if($state != -1 && !empty($state)){
                 $where['AND']['state']=$state-1;
             }
+            //{hook a_admin_thread_5}
             
         }
         if(empty($where['AND']))
             unset($where['AND']);
         
+        //{hook a_admin_thread_6}
         $data = $Thread->select('*',$where);
         unset($where['ORDER']);
         unset($where['LIMIT']);
@@ -821,26 +829,33 @@ class Admin extends HYBBS {
 
     }
     public function post(){
+        //{hook a_admin_post_1}
         $Post = M('Post');
         if(IS_POST){
             $gn = X("post.gn");
+            //{hook a_admin_post_2}
             if($gn == 'del'){ //删除评论
                 $pid_list = X("post.id");
                 if(!empty($pid_list)){
                     $File = S('File');
+                    //{hook a_admin_post_4}
                     foreach ($pid_list as $pid) {
+                        //{hook a_admin_post_5}
                         $tid = $Post->get_row($pid,'tid');
                         $StoragePostDir = GetStoragePostDir($tid,$pid);
                         deldir(INDEX_PATH . $StoragePostDir,false,true);
                         $File->delete(['pid'=>$pid]);
+                        //{hook a_admin_post_8}
                     }
                     
-
+                    //{hook a_admin_post_6}
                     $Post             ->delete(['pid'=>$pid_list]);
                     S("Vote_post")    ->delete(['pid'=>$pid_list]);
                     S("Post_post")    ->delete(['pid'=>$pid_list]);
+                    //{hook a_admin_post_7}
                 }
             }
+            //{hook a_admin_post_3}
         }
 
         if(!isset($_SERVER['REQUEST_URI']))
@@ -860,6 +875,7 @@ class Admin extends HYBBS {
             'ORDER'=>['pid'=>'DESC'],
             "LIMIT" => [($pageid-1) * $len, $len]
         ];
+        //{hook a_admin_post_9}
 
 
         if(X('get.search_submit')){
@@ -874,8 +890,7 @@ class Admin extends HYBBS {
             $tid = X('get.tid');
             $content = X('get.content');
             $fid = X('get.fid');
-            //$top = X('get.top');
-            //$state = X('get.state');
+            //{hook a_admin_post_10}
             
             
 
@@ -898,25 +913,20 @@ class Admin extends HYBBS {
             if($fid != -1 && $fid !==''){
                 $where['AND']['fid']=$fid;
             }
-            /*if(!empty($top)){
-                $where['AND']['top']=$top;
-            }*/
-
-            /*if($state != -1 && !empty($state)){
-                $where['AND']['state']=$state-1;
-            }*/
+            //{hook a_admin_post_11}
             
         }
         if(empty($where['AND']))
             unset($where['AND']);
         
+        //{hook a_admin_post_12}
         $data = $Post->select('*',$where);
         unset($where['ORDER']);
         unset($where['LIMIT']);
         $count = $Post->count($where);
         $count = (!$count)?1:$count;
         $page_count = ($count % $len != 0)?(intval($count/$len)+1) : intval($count/$len);
-
+        //{hook a_admin_post_v}
         $this->v("page_count",$page_count);
         $this->v("data",$data);
         $this->display('post');
