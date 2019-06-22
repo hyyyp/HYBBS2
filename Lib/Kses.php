@@ -276,12 +276,12 @@ C(array(
 			'src' => true,
 			'width' => true,
 		),
-		// 'embed'=>array(
-		// 	'src'=>true,
-		// 	'autostart'=>true,
-		// 	'width'=>true,
-		// 	'height'=>true,
-		// )
+		'embed'=>array(
+			'src'=>true,
+			'autostart'=>true,
+			'width'=>true,
+			'height'=>true,
+		)
 	),
 
 ));
