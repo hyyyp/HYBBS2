@@ -357,7 +357,7 @@ class Thread extends HYBBS {
         $User = M('User');
         $User->update_int($thread_data['uid'],'threads','-');
 
-
+        //{hook a_thread_del_551}
         //删除附件
         $File = M("File");
         $Fileinfo = S("Fileinfo");
@@ -365,7 +365,7 @@ class Thread extends HYBBS {
 
         $FileinfoList = $Fileinfo->select('*',['tid'=>$tid]);
         if(empty($FileinfoList)) $FileinfoList=[];
-
+        //{hook a_thread_del_552}
         foreach($FileinfoList as $v){
             //删除附件信息
             $Fileinfo->delete(['fileid'=>$v['fileid']]);
@@ -382,7 +382,7 @@ class Thread extends HYBBS {
                 ],[
                     'uid'=>$FileData['uid']
                 ]);
-
+                //{hook a_thread_del_553}
                 //文件路劲
                 $FilePath = INDEX_PATH . 'upload/userfile/' . $FileData['uid'] . '/' . $FileData['md5name'];
                 if(is_file($FilePath)){
@@ -393,22 +393,21 @@ class Thread extends HYBBS {
                 if(is_file($FilePath)){
                     unlink($FilePath);
                 }
+                //{hook a_thread_del_554}
 
             }
         }
-
+        //{hook a_thread_del_555}
         //删除图片
         $StorageThreadDir = GetStorageThreadDir($tid);
         deldir(INDEX_PATH . $StorageThreadDir,false,true);
         S('File')->delete(['tid'=>$tid]);
-
-
         S('Vote_thread')    ->delete(['tid'=>$tid]);
         S('Threadgold')     ->delete(['tid'=>$tid]);
         S('Post_post')      ->delete(['tid'=>$tid]);
 
 
-
+        //{hook a_thread_del_556}
 
 
         //更新缓存
@@ -420,7 +419,7 @@ class Thread extends HYBBS {
         //删除缓存
         $this->CacheObj->rm('thread_data_'.$tid);
         $this->CacheObj->rm('post_data_'.$thread_data['pid']);
-
+        //{hook a_thread_del_557}
         //删除评论列表缓存
         if($thread_data['posts'] != 0){
             $count = intval(($thread_data['posts'] /  $this->conf['postlist']) + 1)+1;
@@ -435,14 +434,14 @@ class Thread extends HYBBS {
                 $this->CacheObj->rm('post_data_'.$v);
             }
         }
-        
+        //{hook a_thread_del_558}
         //置顶缓存
         if($thread_data['top']==1) //如果是板块置顶帖子，清理该板块置顶帖子缓存
             $this->CacheObj->rm("forum_top_id_".$thread_data['fid']);
         elseif($thread_data['top']==2)
             $this->CacheObj->rm("top_data_2");
 
-
+        //{hook a_thread_del_559}
         //删除主题 消息通知
         if(NOW_UID != $thread_data['uid']){
             M("Chat")->sys_send(
