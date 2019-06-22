@@ -4,7 +4,7 @@ if(version_compare(PHP_VERSION,'5.4.0','<')){
 	die('HYPHP2.0 不支持 5.4以下的PHP版本.  当前你的PHP版本：' . PHP_VERSION);
 }
 
-define('HYBBS_V'			,'2.2.6');
+define('HYBBS_V'			,'2.2.7');
 define('INDEX_PATH' 		, str_replace('\\', '/', dirname(__FILE__)).'/');
 define('DEBUG'      ,(is_file(INDEX_PATH . 'DEBUG'))?false:true);
 define('PLUGIN_ON'  ,true);
@@ -14,19 +14,14 @@ define('PLUGIN_MORE_LANG_ON',true);
 require  'HY/HYPHP.php';
 /*
 
-优化 - 后台删除用户 删除头像数据
-优化 - 后台删除用户附件清理机制 优化代码
-优化 - Post新内容增加hook点 为了修复部分 附件处理插件
+优化 - Thread增加HOOK
 
-修复 - 下载附件的代码出现自动生成无用的文件夹的问题
+
+修复 - 2.2.6 在Windows系统主机上 无法上传图片的问题
+框架 - LOG日志缺少文件存在判断
 
 需要修复 部分隐藏插件
 
-七牛
-图片远程下载
-压缩上传图片
-上传图片添加水印
-屏蔽IP发帖
 
 收藏帖子
 
