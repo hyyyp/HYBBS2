@@ -1339,24 +1339,26 @@ class Post extends HYBBS {
 
 				//处理不使用的旧文件
 				$StoragePostDir = GetStoragePostDir($tid,$pid,false);
-				$dh = opendir(INDEX_PATH . $StoragePostDir);
-				while ($filename = readdir($dh)) {
-					$fullpath = INDEX_PATH . $StoragePostDir . $filename;
-					if ($filename != "." && $filename != ".." && !is_dir($fullpath)) {
-						//{hook a_post_edit_462}
-						$IsDel = true;
-						foreach ($SrcFileList as $v) {
-							if(strpos($v,$filename) !== false){ //正在使用
-								$IsDel = false;
-								break;
+				if(is_dir($StorageThreadDir)){
+					$dh = opendir(INDEX_PATH . $StoragePostDir);
+					while ($filename = readdir($dh)) {
+						$fullpath = INDEX_PATH . $StoragePostDir . $filename;
+						if ($filename != "." && $filename != ".." && !is_dir($fullpath)) {
+							//{hook a_post_edit_462}
+							$IsDel = true;
+							foreach ($SrcFileList as $v) {
+								if(strpos($v,$filename) !== false){ //正在使用
+									$IsDel = false;
+									break;
+								}
 							}
-						}
-						//{hook a_post_edit_463}
-						if($IsDel){
-							delete_file($fullpath);
-							$FileInfo = pathinfo($fullpath);
-							$FileName = $FileInfo['filename'];
-							$File->delete(['md5'=>$FileName]);
+							//{hook a_post_edit_463}
+							if($IsDel){
+								delete_file($fullpath);
+								$FileInfo = pathinfo($fullpath);
+								$FileName = $FileInfo['filename'];
+								$File->delete(['md5'=>$FileName]);
+							}
 						}
 					}
 				}
