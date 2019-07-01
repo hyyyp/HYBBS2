@@ -366,10 +366,8 @@ class User extends HYBBS {
         $upload->replace    =   true;
         $upload->autoSub    =   false;
         $upload->saveName   =   md5(NOW_UID);
-        if(!is_dir(INDEX_PATH. "upload"))
-			mkdir(INDEX_PATH. "upload");
         if(!is_dir($upload->rootPath))
-            mkdir($upload->rootPath);
+            create_dir($upload->rootPath);
         //{hook a_user_ava_4}
         $info   =   $upload->upload();
         
