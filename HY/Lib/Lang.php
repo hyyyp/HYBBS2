@@ -69,7 +69,7 @@ class Lang
     public function put_lang_tmpfile($name){
         global $_LANG;
         $data   =   serialize($_LANG);
-        is_dir(TMP_PATH . 'Lang/')    or mkdir(TMP_PATH . 'Lang/');
+        is_dir(TMP_PATH . 'Lang/')    or mkdir(TMP_PATH . 'Lang/',0777,true);
         return file_put_contents(TMP_PATH . 'Lang/' . $name .'.lang',$data);
     }
 }
