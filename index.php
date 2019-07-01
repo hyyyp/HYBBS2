@@ -4,7 +4,7 @@ if(version_compare(PHP_VERSION,'5.4.0','<')){
 	die('HYPHP2.0 不支持 5.4以下的PHP版本.  当前你的PHP版本：' . PHP_VERSION);
 }
 
-define('HYBBS_V'			,'2.2.7');
+define('HYBBS_V'			,'2.2.8');
 define('INDEX_PATH' 		, str_replace('\\', '/', dirname(__FILE__)).'/');
 define('DEBUG'      ,(is_file(INDEX_PATH . 'DEBUG'))?false:true);
 define('PLUGIN_ON'  ,true);
@@ -14,11 +14,7 @@ define('PLUGIN_MORE_LANG_ON',true);
 require  'HY/HYPHP.php';
 /*
 
-优化 - Thread增加HOOK
-
-
-修复 - 2.2.6 在Windows系统主机上 无法上传图片的问题
-框架 - LOG日志缺少文件存在判断
+修复 - 编辑帖子目录不存在的问题
 
 需要修复 部分隐藏插件
 
