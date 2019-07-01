@@ -1051,7 +1051,7 @@ class Admin extends HYBBS {
 
                 if(is_dir(VIEW_PATH . $name2))
                     return $this->json(array('error'=>false,'info'=>"英文名已经存在\r\n如果你想覆盖,请手动到目录中删除".$name2));
-                mkdir(VIEW_PATH . $name2);
+                create_dir(VIEW_PATH . $name2);
                 file_put_contents(VIEW_PATH . $name2 . '/conf.php',"<?php
     return array(
         'name' => '{$name}',
@@ -1693,7 +1693,7 @@ class Admin extends HYBBS {
 
                 if(is_dir(PLUGIN_PATH . $name2))
                     return $this->mess("已存在相同英文名的插件");
-                mkdir(PLUGIN_PATH . $name2);
+                create_dir(PLUGIN_PATH . $name2);
                 file_put_contents(PLUGIN_PATH . $name2 . '/conf.php',"<?php
 return array(
     'name' => '{$name}',
@@ -2092,7 +2092,7 @@ function plugin_uninstall(){
             $upload->saveName   =   'forum'.X("post.forum"); //保存文件名
             $upload->saveExt    =   'png';
             if(!is_dir(INDEX_PATH. "upload"))
-                mkdir(INDEX_PATH. "upload");
+                create_dir(INDEX_PATH. "upload");
             $info   =   $upload->upload();
             if(!$info) {
                 return $this->mess("上传失败 Error : " . $upload->getError());
