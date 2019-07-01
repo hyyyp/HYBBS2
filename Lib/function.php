@@ -472,6 +472,8 @@ function filter_html($content){
 }
 //创建目录 自动递归
 function create_dir($path,$chmod = 0777){
+	if(empty($path))
+		return false;
 	return mkdir($path,$chmod,true);
 }
 
