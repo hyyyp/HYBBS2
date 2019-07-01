@@ -39,7 +39,7 @@ class File extends Cache {
     private function init() {
         // 创建应用缓存目录
         if (!is_dir($this->options['temp'])) {
-            mkdir($this->options['temp']);
+            mkdir($this->options['temp'],0777,true);
         }
     }
 
