@@ -94,13 +94,13 @@ function cookie($name='', $value='',$expire=0) {
         }
     } else {
         if (is_null($value)) {
-            setcookie($name, '', NOW_TIME - 3600,'/');
+            setcookie($name, '', NOW_TIME - 3600,'/', NULL, NULL, TRUE);
             unset($_COOKIE[$name]); // 删除指定cookie
         } else {
             // 设置cookie
 
             $expire = !empty($expire) ? NOW_TIME + intval($expire) : 0;
-            setcookie($name, $value, $expire,'/');
+            setcookie($name, $value, $expire,'/', NULL, NULL, TRUE);
             $_COOKIE[$name] = $value;
         }
     }
