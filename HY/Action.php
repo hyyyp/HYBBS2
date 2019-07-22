@@ -27,7 +27,7 @@ abstract class Action
                         $plugin_name = $t[0];
                         $plugin_view = $t[1];
                         
-                        $tmp_path = TMP_PATH . "plugin_tmp_{$plugin_name}_{$plugin_view}_".md5("{$plugin_name}_{$plugin_view}") . C("tmp_file_suffix");
+                        $tmp_path = TMP_PATH . "plugin_tmp_{$plugin_name}_".str_replace('/','_',$plugin_view)."_".md5("{$plugin_name}_{$plugin_view}") . C("tmp_file_suffix");
 
                         
 
