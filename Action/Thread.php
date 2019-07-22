@@ -47,7 +47,7 @@ class Thread extends HYBBS {
             
 
             //添加网站描述
-            $this->conf['description'] = $thread_data['summary'];
+            $this->conf['description'] = filter_html($thread_data['summary']);
             if($thread_data['hide'] || $thread_data['gold']){
                 $this->conf['description'] = '内容需要回复 或 付费 才可浏览.';
             }
