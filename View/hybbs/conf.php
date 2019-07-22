@@ -4,5 +4,5 @@ return array(
     'user' => 'admin',
     'mess' => 'HYBBS2.0重制模板',
     'code' => '',
-    'version' => '2.0',
+    'version' => '2.1',
 );

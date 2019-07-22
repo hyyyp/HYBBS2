@@ -4,7 +4,7 @@ if(version_compare(PHP_VERSION,'5.4.0','<')){
 	die('HYPHP2.0 不支持 5.4以下的PHP版本.  当前你的PHP版本：' . PHP_VERSION);
 }
 
-define('HYBBS_V'			,'2.2.8');
+define('HYBBS_V'			,'2.2.9');
 define('INDEX_PATH' 		, str_replace('\\', '/', dirname(__FILE__)).'/');
 define('DEBUG'      ,(is_file(INDEX_PATH . 'DEBUG'))?false:true);
 define('PLUGIN_ON'  ,true);

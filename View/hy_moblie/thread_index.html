@@ -129,7 +129,7 @@
 					    
 					    <div class="quote-bx">
 					        <div class="quote-left">
-					            <img class="quote-avatar" src="{#WWW}public/images/user.gif">
+					            <img class="quote-avatar" src="{#WWW}{:get_avatar($quote_data['uid'])['b']}">
 					        </div>
 					        <div class="quote-info">
 					            <p class="quote-user">{:$User->uid_to_user($quote_data['uid'])}</sppan>
