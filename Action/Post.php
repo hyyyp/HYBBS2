@@ -90,7 +90,7 @@ class Post extends HYBBS {
 		$this->title = $thread_data['title'];
 
 		//发送消息摘要
-		$this->content = mb_substr(trim(strip_tags($content)), 0,$this->conf['summary_size']);
+		$this->content = mb_substr(trim(filter_html($content)), 0,$this->conf['summary_size']);
 
 		//{hook a_post_post_6}
 		
@@ -340,7 +340,7 @@ class Post extends HYBBS {
 			}
 			
 			//发送消息 摘要
-			$this->content = mb_substr(trim(strip_tags($content)), 0,$this->conf['summary_size']);
+			$this->content = mb_substr(trim(filter_html($content)), 0,$this->conf['summary_size']);
 
 			//{hook a_post_index_10}
 			
@@ -351,7 +351,7 @@ class Post extends HYBBS {
                 'fid'=>$forum,
                 'uid'=>NOW_UID,
                 'title'=>$title,
-                'summary'=>mb_substr(trim(strip_tags($content)), 0,$this->conf['summary_size']),
+                'summary'=>mb_substr(trim(filter_html($content)), 0,$this->conf['summary_size']),
 				'atime'	=>NOW_TIME,
 				'etime'	=>NOW_TIME,
 				'btime'	=>NOW_TIME,
@@ -1069,7 +1069,7 @@ class Post extends HYBBS {
 					'fid'		=>	$fid,
 					'title'		=>	$title,
 					'hide'		=>	$thide?1:0,
-					'summary'	=>	mb_substr(trim(strip_tags($content)), 0,$this->conf['summary_size']),
+					'summary'	=>	mb_substr(trim(filter_html($content)), 0,$this->conf['summary_size']),
 					'gold'		=>	$tgold,
 					'img'		=>	$img,
 					'img_count'	=>	$sz,
@@ -1339,7 +1339,7 @@ class Post extends HYBBS {
 
 				//处理不使用的旧文件
 				$StoragePostDir = GetStoragePostDir($tid,$pid,false);
-				if(is_dir($StorageThreadDir)){
+				if(is_dir($StoragePostDir)){
 					$dh = opendir(INDEX_PATH . $StoragePostDir);
 					while ($filename = readdir($dh)) {
 						$fullpath = INDEX_PATH . $StoragePostDir . $filename;
