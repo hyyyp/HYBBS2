@@ -69,7 +69,7 @@ class Friend extends HYBBS {
             //{hook a_friend_send_chat_3}
             //发送给ID
             $uid = intval(X("post.uid"));
-            $content = htmlspecialchars(X("post.content"));
+            $content = filter_html(X("post.content"));
             $content = str_replace('&nbsp;','',$content);
             $content = trim($content);
             if(empty($content))
