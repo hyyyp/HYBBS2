@@ -76,8 +76,8 @@ class File extends Cache {
             
             if($expire != 0 && time() > filemtime($filename) + $expire) {
                 //缓存过期删除缓存文件
-                if(is_file($filename));
-                unlink($filename);
+                if(is_file($filename))
+                    unlink($filename);
                 return false;
             }
             
