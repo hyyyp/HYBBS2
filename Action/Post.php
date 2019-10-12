@@ -1038,7 +1038,7 @@ class Post extends HYBBS {
 	            //{hook a_post_edit_374}
 				//处理不使用的旧文件
 				$StorageThreadDir = GetStorageThreadDir($tid,false);
-				if(is_dir($StorageThreadDir)){
+				if(is_dir(INDEX_PATH . $StorageThreadDir)){
 					$dh = opendir(INDEX_PATH . $StorageThreadDir);
 
 					while ($filename = readdir($dh)) {
@@ -1339,7 +1339,7 @@ class Post extends HYBBS {
 
 				//处理不使用的旧文件
 				$StoragePostDir = GetStoragePostDir($tid,$pid,false);
-				if(is_dir($StoragePostDir)){
+				if(is_dir(INDEX_PATH . $StoragePostDir)){
 					$dh = opendir(INDEX_PATH . $StoragePostDir);
 					while ($filename = readdir($dh)) {
 						$fullpath = INDEX_PATH . $StoragePostDir . $filename;
