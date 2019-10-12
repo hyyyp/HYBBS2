@@ -23,6 +23,7 @@
 		<div class="wrap-box t-info">
 			<div class="head">
 		        <h1>
+                    {if $thread_data['digest']}<span title="{$_LANG['精']}" style="color: red;">{$_LANG['精']}</span>{/if}
 		        	{$thread_data.title}
 		        	{if $thread_data['state']}<span title="{$_LANG['禁止回复']}" style="color: brown;"> - {$_LANG['已锁定']}</span>{/if}
 		        </h1>
@@ -119,7 +120,18 @@
 		                <a href="javascript:void(0);" class="btn" onclick="thread_top({$thread_data.tid},'on',1)" >{$_LANG['板块置顶']}</a>
 		                {/if}
 		            {/if}
-		          {/if}
+                    {if NOW_GID == C("ADMIN_GROUP") || is_forumg($forum,NOW_UID,$thread_data['fid'])}
+                      {if $thread_data['digest'] == 1}
+                      <a href="javascript:void(0);" class="btn btn-info is-active" onclick="thread_digest({$thread_data.tid},0)" >
+                          <i class="iconfont icon-top"></i> {$_LANG['取消加精']}
+                      </a>
+                      {else}
+                      <a href="javascript:void(0);" class="btn btn-link" onclick="thread_digest({$thread_data.tid},1)" >
+                          <i class="iconfont icon-top"></i> {$_LANG['加精']}
+                      </a>
+                      {/if}
+                    {/if}
+                  {/if}
 		      </div>
 		</div>
 		{if $thread_data['files']}
