@@ -118,7 +118,7 @@ DROP TABLE IF EXISTS hy_file_type;
     `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
     `uid1` int(10) UNSIGNED NOT NULL,
     `uid2` int(10) UNSIGNED NOT NULL,
-    `content` tinytext NOT NULL,
+    `content` tinytext,
     `atime` int(10) UNSIGNED NOT NULL,
     PRIMARY KEY (`id`),
     KEY `uid1` (`uid1`,`uid2`)
@@ -177,8 +177,8 @@ DROP TABLE IF EXISTS hy_file_type;
     `uid` int(10) UNSIGNED NOT NULL COMMENT '附件主人UID',
     `tid` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `pid` int(10) UNSIGNED NOT NULL DEFAULT '0',
-    `filename` text NOT NULL COMMENT '附件名称',
-    `md5name` text NOT NULL COMMENT '附件随机名',
+    `filename` text COMMENT '附件名称',
+    `md5name` text COMMENT '附件随机名',
     `md5` char(32) DEFAULT NULL,
     `filesize` int(10) UNSIGNED NOT NULL COMMENT '文件大小',
     `file_type` int(11) NOT NULL DEFAULT '0',
@@ -212,10 +212,10 @@ DROP TABLE IF EXISTS hy_file_type;
     `fileid` int(10) UNSIGNED NOT NULL,
     `tid` int(10) UNSIGNED NOT NULL,
     `uid` int(10) UNSIGNED NOT NULL,
-    `gold` int(10) UNSIGNED NOT NULL,
-    `hide` tinyint(1) UNSIGNED NOT NULL,
-    `downs` int(10) UNSIGNED NOT NULL,
-    `mess` text NOT NULL,
+    `gold` int(10) UNSIGNED NOT NULL DEFAULT '0',
+    `hide` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+    `downs` int(10) UNSIGNED NOT NULL DEFAULT '0',
+    `mess` text,
     PRIMARY KEY (`fileid`) USING BTREE,
     KEY `tid` (`tid`) USING BTREE,
     KEY `uid` (`uid`) USING BTREE
@@ -235,11 +235,11 @@ DROP TABLE IF EXISTS hy_file_type;
     `name2` varchar(18) NOT NULL,
     `threads` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `posts` int(10) UNSIGNED NOT NULL DEFAULT '0',
-    `forumg` text NOT NULL,
-    `json` text NOT NULL,
-    `html` longtext NOT NULL,
-    `color` varchar(30) NOT NULL,
-    `background` varchar(30) NOT NULL,
+    `forumg` text,
+    `json` text,
+    `html` longtext,
+    `color` varchar(30) NOT NULL DEFAULT '',
+    `background` varchar(30) NOT NULL DEFAULT '',
     PRIMARY KEY (`id`) USING BTREE,
     KEY `fid` (`fid`)
     ) ENGINE={$table_type} DEFAULT CHARSET=utf8;
@@ -285,9 +285,9 @@ DROP TABLE IF EXISTS hy_file_type;
     CREATE TABLE `hy_log` (
     `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
     `uid` int(10) UNSIGNED NOT NULL,
-    `gold` int(11) NOT NULL,
-    `credits` int(11) NOT NULL,
-    `content` varchar(32) NOT NULL,
+    `gold` int(11) NOT NULL DEFAULT '0',
+    `credits` int(11) NOT NULL DEFAULT '0',
+    `content` varchar(32) NOT NULL DEFAULT '',
     `atime` int(10) UNSIGNED NOT NULL,
     PRIMARY KEY (`id`),
     KEY `uid` (`uid`)
@@ -320,7 +320,7 @@ DROP TABLE IF EXISTS hy_file_type;
     `uid` int(10) UNSIGNED NOT NULL,
     `rpid` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `isthread` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
-    `content` longtext NOT NULL,
+    `content` longtext,
     `atime` int(10) UNSIGNED NOT NULL,
     `etime` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `euid` int(10) UNSIGNED DEFAULT '0',
@@ -337,7 +337,7 @@ DROP TABLE IF EXISTS hy_file_type;
       `pid` int(10) UNSIGNED NOT NULL,
       `tid` int(10) UNSIGNED NOT NULL,
       `uid` int(10) UNSIGNED NOT NULL,
-      `content` longtext NOT NULL,
+      `content` longtext,
       `atime` int(10) UNSIGNED NOT NULL,
       `goods` int(10) UNSIGNED DEFAULT '0',
       `nos` int(10) UNSIGNED NOT NULL DEFAULT '0',
@@ -358,7 +358,7 @@ DROP TABLE IF EXISTS hy_file_type;
     `uid` int(10) UNSIGNED NOT NULL COMMENT 'user_id',
     `pid` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `title` char(128) NOT NULL,
-    `summary` text NOT NULL,
+    `summary` text,
     `atime` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `etime` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `euid` int(10) UNSIGNED NOT NULL DEFAULT '0',
@@ -368,7 +368,7 @@ DROP TABLE IF EXISTS hy_file_type;
     `posts` int(10) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'post_size',
     `goods` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `nos` int(10) UNSIGNED NOT NULL DEFAULT '0',
-    `img` text NOT NULL,
+    `img` text,
     `img_count` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
     `top` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
     `files` tinyint(3) UNSIGNED NOT NULL DEFAULT '0' COMMENT '附件数量',
@@ -408,9 +408,9 @@ DROP TABLE IF EXISTS hy_file_type;
     `pass` varchar(32) NOT NULL,
     `email` varchar(100) NOT NULL,
     `salt` varchar(8) NOT NULL,
-    `threads` int(10) UNSIGNED NOT NULL,
-    `posts` int(10) UNSIGNED NOT NULL,
-    `post_ps` int(10) UNSIGNED NOT NULL,
+    `threads` int(10) UNSIGNED NOT NULL DEFAULT '0',
+    `posts` int(10) UNSIGNED NOT NULL DEFAULT '0',
+    `post_ps` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `atime` int(10) UNSIGNED NOT NULL,
     `gid` smallint(2) UNSIGNED NOT NULL DEFAULT '0',
     `gold` int(11) NOT NULL DEFAULT '0' COMMENT '金钱',
@@ -443,12 +443,12 @@ DROP TABLE IF EXISTS hy_file_type;
     `gid` int(10) UNSIGNED NOT NULL,
     `credits` int(11) NOT NULL DEFAULT '-1',
     `credits_max` int(11) NOT NULL DEFAULT '-1',
-    `space_size` int(10) UNSIGNED DEFAULT '4294967295',
+    `space_size` int(10) UNSIGNED NOT NULL DEFAULT '4294967295',
     `chat_size` int(10) UNSIGNED NOT NULL DEFAULT '4294967295',
     `name` varchar(12) NOT NULL,
     `font_color` varchar(30) NOT NULL DEFAULT '',
-    `font_css` longtext NOT NULL,
-    `json` text NOT NULL,
+    `font_css` longtext,
+    `json` text,
     PRIMARY KEY (`gid`) USING BTREE
     ) ENGINE={$table_type} DEFAULT CHARSET=utf8;
 
@@ -492,10 +492,10 @@ DROP TABLE IF EXISTS hy_file_type;
     CREATE TABLE `hy_file_type` ( 
     `id` INT NOT NULL , 
     `name` VARCHAR(12) NOT NULL , 
-    UNIQUE KEY `id` (`id`),
+    UNIQUE KEY `id` (`id`)
     ) ENGINE={$table_type} DEFAULT CHARSET=utf8;
 
-    INSERT INTO `hy_file_type` (`id`, `name`) VALUES ('0', '未知'),('1', '图片'), ('2', '附件'), ('3', '视频'), ('2', '音频');
+    INSERT INTO `hy_file_type` (`id`, `name`) VALUES ('0', '未知'),('1', '图片'), ('2', '附件'), ('3', '视频'), ('4', '音频');
     
     ");
     if($result->errorCode() ==0)
