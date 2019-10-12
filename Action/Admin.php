@@ -1274,6 +1274,8 @@ class Admin extends HYBBS {
             $gold_post      = intval(X("post.gold_post"));
             $credits_thread = intval(X("post.credits_thread"));
             $credits_post   = intval(X("post.credits_post"));
+            $gold_digest = intval(X("post.gold_digest"));
+            $credits_digest   = intval(X("post.credits_digest"));
             
             
             $homelist     = intval(X("post.homelist"));
