@@ -362,15 +362,33 @@ class Admin extends HYBBS {
                 //{hook a_admin_user_6}
                 $uid = intval(X("post.id"));
                 $User->delete(['uid'=>$uid]);
-                $tid_list = S("Thread")->select('tid',['uid'=>$uid]);
+
+                $Thread = S('Thread');
+
+                //获取主题TID列表
+                $tid_list = $Thread->select('tid',['uid'=>$uid]);
+                //删除帖子内的所有附件
                 if(!empty($tid_list)){
                     foreach ($tid_list as $tid) {
-                        $StorageThreadDir = GetStorageThreadDir($tid);
+                        $StorageThreadDir = GetStorageThreadDir($tid,false);
                         deldir(INDEX_PATH . $StorageThreadDir,false,true);
                     }
                 }
-                S("Thread")->delete(array('uid'=>$uid));
-                S("Post")->delete(array('uid'=>$uid));
+
+                $Post = S('Post');
+                //获取评论PID列表
+                $pid_list = $Post->select(['pid','tid'],['uid'=>$uid]);
+                if(!empty($pid_list)){
+                    foreach ($pid_list as $v) {
+                        $StoragePostDir = GetStoragePostDir($v['tid'],$v['pid'],false);
+                        deldir(INDEX_PATH . $StoragePostDir,false,true);
+                    }
+                }
+
+
+
+                $Thread->delete(array('uid'=>$uid));
+                $Post->delete(array('uid'=>$uid));
                 
                 S("Chat")->delete(array('OR'=>array('uid1'=>$uid,'uid2'=>$uid)));
                 S("Chat_count")->delete(array('uid'=>$uid));
@@ -424,7 +442,7 @@ class Admin extends HYBBS {
                             $tid_list = S("Thread")->select('tid',['uid'=>$v]);
                             if(!empty($tid_list)){
                                 foreach ($tid_list as $tid) {
-                                    $StorageThreadDir = GetStorageThreadDir($tid);
+                                    $StorageThreadDir = GetStorageThreadDir($tid,false);
                                     deldir(INDEX_PATH . $StorageThreadDir,false,true);
                                 }
                             }
@@ -730,7 +748,7 @@ class Admin extends HYBBS {
                         $Post->delete(['tid'=>$tid]);
 
                         //删除所有图片
-                        $StorageThreadDir = GetStorageThreadDir($tid);
+                        $StorageThreadDir = GetStorageThreadDir($tid,false);
                         deldir(INDEX_PATH . $StorageThreadDir,false,true);
                         $File->delete(['tid'=>$tid]);
 
@@ -2378,21 +2396,62 @@ function plugin_uninstall(){
             $uid = X('post.uid');
             $User = M('User');
 
-            if($type == 'del_thread'){
+            if($type == 'del_thread'){//删除所有文章
                 $Thread = S('Thread');
-                $tid = $Thread->select('tid',['uid'=>$uid]);
-                S('Post')->delete(['tid'=>$tid]);
+
+                //获取所有主题TID 删除主题内所有附件
+                $tid_list = $Thread->select('tid',['uid'=>$uid]);
+                if(!empty($tid_list)){
+                    foreach ($tid_list as $tid) {
+                        $StorageThreadDir = GetStorageThreadDir($tid,false);
+                        deldir(INDEX_PATH . $StorageThreadDir,false,true);
+                    }
+                }
+
+
+
+                S('Post')->delete(['tid'=>$tid_list]);
                 $Thread->delete(['uid'=>$uid]);
                 $User->update(['threads'=>0,'posts'=>0],['uid'=>$uid]);
                 $this->json(['error'=>true,'info'=>'删除文章成功']);
-            }elseif($type == 'del_post'){
-                S('Post')->delete(['AND'=>['uid'=>$uid,'isthread'=>0]]);
+            }elseif($type == 'del_post'){//删除所有评论
+                $Post = S('Post');
+
+                //获取所有主题TID 删除主题内所有附件
+                $pid_list = $Post->select(['pid','tid'],['uid'=>$uid]);
+                if(!empty($pid_list)){
+                    foreach ($pid_list as $v) {
+                        $StoragePostDir = GetStoragePostDir($v['tid'],$v['pid']);
+                        deldir(INDEX_PATH . $StoragePostDir,false,true);
+                    }
+                }
+
+
+                $Post->delete(['AND'=>['uid'=>$uid,'isthread'=>0]]);
                 $User->update(['posts'=>0],['uid'=>$uid]);
                 $this->json(['error'=>true,'info'=>'删除评论成功']);
-            }elseif($type == 'del_post'){
+            }elseif($type == 'del_post_post'){
                 S('Post_post')->delete(['uid'=>$uid]);
                 $this->json(['error'=>true,'info'=>'删除子评论成功']);
             }elseif($type == 'del_file') {
+                $Thread = S('Thread');
+                $tid_list = $Thread->select('tid',['uid'=>$uid]);
+                if(!empty($tid_list)){
+                    foreach ($tid_list as $tid) {
+                        $StorageThreadDir = GetStorageThreadDir($tid,false);
+                        deldir(INDEX_PATH . $StorageThreadDir,true,false);
+                    }
+                }
+                $Post = S('Post');
+                $pid_list = $Post->select(['pid','tid'],['uid'=>$uid]);
+                if(!empty($pid_list)){
+                    foreach ($pid_list as $v) {
+                        $StoragePostDir = GetStoragePostDir($v['tid'],$v['pid']);
+                        deldir(INDEX_PATH . $StoragePostDir,false,true);
+                    }
+                }
+
+
                 S('File')->delete(['uid'=>$uid]);
                 S('Fileinfo')->delete(['uid'=>$uid]);
                 deldir(INDEX_PATH. "upload/userfile/" . $uid,false,true);
