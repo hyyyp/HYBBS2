@@ -41,7 +41,7 @@
 					<img src="{#WWW}{$thread_data.avatar.b}" pos="left" width="60" height="60" class="circle js-info" uid="{$thread_data.uid}">
 		        </a>
 		      </div>
-		      <div class="content typo editor-style">
+		      <div class="content typo editor-style thread-content">
 		        <!--{hook t_thread_content_top}-->
 		        {if $thread_data['show'] && $thread_data['gold_show']}
 					{$post_data.content}
@@ -282,7 +282,7 @@
 						    </div>
 						</div>
 						{/if}
-		            	<div id="pid-{$v.pid}">
+		            	<div id="pid-{$v.pid}" class="post-content">
 						{$v.content}
 						</div>
 		            <!--{hook t_post_content_bottom}-->
