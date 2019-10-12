@@ -17,7 +17,7 @@
 		<!--{hook t_m_thread_index_5}-->
 	</div>
 	<!--{hook t_m_thread_index_6}-->
-	<div class="hy-box thread-cen">
+	<div class="hy-box thread-cen thread-content">
 	<!--{hook t_m_thread_content_top}-->
 		{if $thread_data['show'] && $thread_data['gold_show']}
 		{$post_data.content}
@@ -141,7 +141,7 @@
 					    </div>
 					</div>
 					{/if}
-  					<div id="pid-{$v.pid}">
+  					<div id="pid-{$v.pid}" class="post-content">
               		{$v.content}
               		</div>
               	<!--{hook t_m_post_content_bottom}-->
