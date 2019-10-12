@@ -25,6 +25,9 @@ require  'HY/HYPHP.php';
 重新部署 充值系统 统一页面
 	HY-editor 自制HTML5富文本编辑器（后期移动端，APP端）都会采用此编辑器！
 
+帖子加精
+ALTER TABLE `hy`.`hy_thread` ADD COLUMN `digest` tinyint(1) NOT NULL COMMENT '精华' AFTER `hide`;
+
 优化部分细节
 未完待续
 
