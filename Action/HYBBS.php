@@ -240,9 +240,11 @@ class HYBBS extends Action {
 
             'gold_thread'   =>  2,
             'gold_post'     =>  2,
+            'gold_digest'   =>  2,//帖子加精华奖励金币
             'credits_thread'   =>  2,
             'credits_post'     =>  2,
-            
+            'credits_digest'   =>  2,//帖子加精华奖励积分
+
             'homelist'      =>  10,
             'forumlist'     =>  10,
             'postlist'      =>  10,
