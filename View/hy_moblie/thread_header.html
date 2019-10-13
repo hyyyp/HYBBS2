@@ -42,7 +42,14 @@
                 {else}
                 <a onclick="thread_top({$thread_data.tid},'on',1)">{$_LANG['板块置顶']} </a>
                 {/if}
-            </li> 
+            </li>
+            <li class="hy-table-view-cell">
+                {if $thread_data['digest'] == 1}
+                <a class="hy-font-danger" onclick="thread_digest({$thread_data.tid},0)">{$_LANG['取消加精']} </a>
+                {else}
+                <a onclick="thread_digest({$thread_data.tid},1)">{$_LANG['加精']} </a>
+                {/if}
+            </li>
             {/if}
             {if $thread_data['uid'] == NOW_UID || NOW_GID == C("ADMIN_GROUP") || is_forumg($forum,NOW_UID,$thread_data['fid'])}
             <li class="hy-table-view-cell">
