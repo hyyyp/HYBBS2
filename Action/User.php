@@ -81,6 +81,33 @@ class User extends HYBBS {
             //{hook a_user_edit_4}
             cookie('HYBBS_HEX',$UserLib->set_cookie($this->_user));
             return $this->message("修改成功",true);
+        }elseif ($gn == 'edit_username'){
+            $username = trim(X('post.username'));
+            if (empty($username)){
+                return $this->message('用户名不能为空!');
+            }
+            $userModel = M("User");
+            if($userModel->is_user($username)){
+                return $this->message('该用户名以存在!');
+            }
+            $UserLib = L("User");
+            $msg = $UserLib->check_user($username);
+            //检查用户名格式是否正确
+            if(!empty($msg))
+                return $this->message($msg);
+
+            //{hook a_user_edit_5}
+
+            $userModel->update(array(
+                'user'=>$username
+            ),[
+                'uid'=>NOW_UID
+            ]);
+            $this->_user['user'] = $username;
+            cookie('HYBBS_HEX',$UserLib->set_cookie($this->_user));
+            $encode = mb_detect_encoding($username, array("ASCII",'UTF-8',"GB2312","GBK",'BIG5'));
+            $username = mb_convert_encoding($username, 'UTF-8', $encode);
+            return header("Location: " . HYBBS_URLA('my',$username,'op'));
         }
 
         

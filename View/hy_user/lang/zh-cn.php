@@ -123,6 +123,8 @@ return array(
 
 	
 
+    'usernamelength'=>'字符不能低于2个且不超过18个!',
+    'save'=>'保存',
 
 	
 
