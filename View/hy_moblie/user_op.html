@@ -40,6 +40,18 @@
 	<div class="hy-box" style="margin-top:20px">
 	<!--{hook t_m_user_op_7}-->
 		<form action="{php HYBBS_URL('user','edit');}" class="form-horizontal" role="form" method="post">
+			<input type="hidden" name="gn" value="edit_username">
+			<div class="hy-input-box">
+				<h3>{$_LANG['username']}</h3>
+			</div>
+			<div class="hy-input-box">
+				<input type="text" name="username" value="{$data.user}" placeholder="{$_LANG['请输入用户名']}">
+			</div>
+			<div class="hy-input-box">
+				<button type="submit" class="hy-btn hy-btn-danger hy-btn-block" style="padding: 8px 0;">{$_LANG['修改']}</button>
+			</div>
+		</form>
+		<form action="{php HYBBS_URL('user','edit');}" class="form-horizontal" role="form" method="post">
 		<input type="hidden" name="gn" value="ps">
 		<!--{hook t_m_user_op_8}-->
 			<div class="hy-input-box">
