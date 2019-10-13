@@ -43,6 +43,26 @@
 		</tbody>
 		</table>
 		<form class="form-horizontal" action="{php echo HYBBS_URL('user','edit');}" method="post">
+			<input type="hidden" name="gn" value="edit_username">
+			<div class="page-header">
+				<h3 id="info">{$_LANG['修改用户名']} <small></small></h3>
+			</div>
+
+			<div class="form-group">
+				<label for="display_name" class="col-sm-3 control-label">{$_LANG['用户名']}</label>
+				<div class="col-sm-9">
+					<input class="" type="text" name="username" value="{$data.user}"/>
+					<span>{$_LANG['usernamelength']}</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-3 col-sm-9">
+					<button type="submit" class="btn btn-success">{$_LANG['save']}</button>
+				</div>
+			</div>
+
+		</form>
+		<form class="form-horizontal" action="{php echo HYBBS_URL('user','edit');}" method="post">
 			<input type="hidden" name="gn" value="ps">
             <div class="page-header">
 				<h3 id="info">{$_LANG['修改资料']} <small></small></h3>
