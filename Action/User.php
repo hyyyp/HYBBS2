@@ -82,6 +82,8 @@ class User extends HYBBS {
             cookie('HYBBS_HEX',$UserLib->set_cookie($this->_user));
             return $this->message("修改成功",true);
         }elseif ($gn == 'edit_username'){
+            if(!$this->conf['on_edit_user'])
+                return $this->message('管理员已关闭修改用户名功能!');
             $username = trim(X('post.username'));
             if (empty($username)){
                 return $this->message('用户名不能为空!');

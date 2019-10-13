@@ -230,6 +230,7 @@ class HYBBS extends Action {
             'wapmessview'       =>  'hy_moblie',
             'wap_search'        =>  'search',
 
+            'on_edit_user'      =>  0,
             'user_have_badword' =>  '操,草泥马,操你,妈逼,caonima,nimabi',
             'send_email_s'      =>  '300',
             'out_s'             =>  '300',

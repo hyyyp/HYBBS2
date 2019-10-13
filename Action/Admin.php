@@ -1305,6 +1305,7 @@ class Admin extends HYBBS {
             $mp3_friend   = X('post.mp3_friend');
             $mp3_system   = X('post.mp3_system');
             $user_have_badword = X('post.user_have_badword');
+            $on_edit_user = X('post.on_edit_user');
 
 
 
@@ -1388,6 +1389,7 @@ class Admin extends HYBBS {
             $this->conf['mp3_system']       =   $mp3_system;
             $this->conf['mp3_friend']       =   $mp3_friend;
             $this->conf['user_have_badword']=   $user_have_badword;
+            $this->conf['on_edit_user']     =   $on_edit_user;
             
             
 
