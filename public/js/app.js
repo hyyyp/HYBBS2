@@ -102,6 +102,33 @@ function thread_top(id, type, top) {
         }
     );
 }
+//加精主题
+function thread_digest(id, type) {
+    swal({
+        title: "真的要这么做?",
+        text: "加精操作!",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "确定",
+        cancelButtonText: '取消',
+
+    }).then(
+        function() {
+            $.post(www + "thread" + exp + "digest", { id: id, state: type }, function(e) {
+                swal(e.error ? "操作成功" : "操作失败", e.info, e.error ? "success" : "error");
+                if (e.error) {
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1000)
+                }
+            }, 'json');
+        },
+        function() {
+
+        }
+    );
+}
 //购买主题
 function buy_thread(id, gold) {
     swal({

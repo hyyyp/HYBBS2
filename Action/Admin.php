@@ -1292,6 +1292,8 @@ class Admin extends HYBBS {
             $gold_post      = intval(X("post.gold_post"));
             $credits_thread = intval(X("post.credits_thread"));
             $credits_post   = intval(X("post.credits_post"));
+            $gold_digest = intval(X("post.gold_digest"));
+            $credits_digest   = intval(X("post.credits_digest"));
             
             
             $homelist     = intval(X("post.homelist"));
@@ -1391,9 +1393,11 @@ class Admin extends HYBBS {
 
             $this->conf['gold_thread']      =   $gold_thread;
             $this->conf['gold_post']        =   $gold_post;
+            $this->conf['gold_digest']      =   $gold_digest;
             $this->conf['credits_thread']   =   $credits_thread;
             $this->conf['credits_post']     =   $credits_post;
-            
+            $this->conf['credits_digest']   =   $credits_digest;
+
             $this->conf['homelist']         =   $homelist;
             $this->conf['forumlist']        =   $forumlist;
             $this->conf['postlist']         =   $postlist;

@@ -373,6 +373,7 @@ DROP TABLE IF EXISTS hy_file_type;
     `top` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
     `files` tinyint(3) UNSIGNED NOT NULL DEFAULT '0' COMMENT '附件数量',
     `hide` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+    `digest` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
     `gold` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `state` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
     PRIMARY KEY (`tid`) USING BTREE,
