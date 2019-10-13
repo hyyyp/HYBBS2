@@ -46,7 +46,8 @@ ALTER TABLE `hy_user` CHANGE `post_ps` `post_ps` INT(10) UNSIGNED NOT NULL DEFAU
 ALTER TABLE `hy_usergroup` CHANGE `font_css` `font_css` LONGTEXT NULL DEFAULT NULL;
 ALTER TABLE `hy_usergroup` CHANGE `json` `json` TEXT NULL DEFAULT NULL;
 
-
+帖子加精 
+ALTER TABLE `hy_thread` DROP COLUMN `digest`,ADD COLUMN `digest` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否精华' AFTER `hide`;
 
 收藏帖子
 
