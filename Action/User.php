@@ -86,8 +86,8 @@ class User extends HYBBS {
             if (empty($username)){
                 return $this->message('用户名不能为空!');
             }
-            $userSql = S("User");
-            if($userSql->has(['user'=>$username])){
+            $userModel = M("User");
+            if($userModel->is_user($username)){
                 return $this->message('该用户名以存在!');
             }
             $UserLib = L("User");
@@ -98,7 +98,7 @@ class User extends HYBBS {
 
             //{hook a_user_edit_5}
 
-            $userSql->update(array(
+            $userModel->update(array(
                 'user'=>$username
             ),[
                 'uid'=>NOW_UID
