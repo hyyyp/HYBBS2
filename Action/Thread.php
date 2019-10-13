@@ -530,6 +530,44 @@ class Thread extends HYBBS {
             return $this->json(array('error'=>true,'info'=>'操作成功!'));
         }
     }
+    //帖子加精华
+    public function digest(){
+        if (IS_POST){
+            $tid = intval(X("post.id"));
+            $state = intval(X("post.state"));
+            if (!in_array($state,[0,1]))
+                return $this->json(array('error'=>false,'info'=>'参数错误!'));
+            if(empty($tid))
+                return $this->json(array('error'=>false,'info'=>'参数错误!'));
+            $Thread = M("Thread");
+            $thread_data = $Thread->read($tid);
+            if(empty($thread_data))
+                return $this->json(array('error'=>false,'info'=>'主题不存在!'));
+            if(NOW_GID != C("ADMIN_GROUP") && !is_forumg($this->_forum,NOW_UID,$thread_data['fid']))
+                return $this->json(array('error'=>false,'info'=>'你没有权限这样做!'));
+            $Thread->update(['digest'=>$state],['tid'=>$tid]);
+            $User = M('User');
+            $gold = $state?$this->conf['gold_digest']:-$this->conf['gold_digest'];
+            $credits = $state?$this->conf['credits_digest']:-$this->conf['credits_digest'];
+            //用户增加 金钱
+            $User->update_int(NOW_UID, 'gold', '+', $gold);
+            //用户增加 积分
+            $User->update_int(NOW_UID, 'credits', '+', $credits);
+            if($this->conf['gold_digest'] != 0 || $this->conf['credits_digest'] != 0){
+                S("Log")->insert(array(
+                    'uid'=>$thread_data['uid'],
+                    'gold'=>$gold,
+                    'credits'=>$credits,
+                    'content'=>$state?'帖子加精华 文章ID['.$tid.']':'帖子取消精华 文章ID['.$tid.']',
+                    'atime'=>NOW_TIME
+                ));
+            }
+            M("Chat")->sys_send(NOW_UID,'您的帖子 <a href="'. HYBBS_URLA('thread',$thread_data['tid']).'" target="_blank">['.$thread_data['title'].']</a>被管理员'.($state?'加精':'取消加精').($state?'获得':'扣除').'金钱:'.$gold.',积分:'.$credits);
+            //{hook a_thread_digest_1}
+            $this->CacheObj->rm('thread_data_'.$tid);
+            return $this->json(array('error'=>true,'info'=>'操作成功!'));
+        }
+    }
     //{hook a_thread_fun}
 
 }
