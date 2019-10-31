@@ -115,8 +115,7 @@
                 </div>
             </div><!-- 搜索 -->
 
-            <form action="" method="post">
-                <input type="hidden" name="gn" value="del">
+            <form action="" method="post" onsubmit="return confirm('确定操作吗？');">
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered m-top-md" id="dataTable">
                         <thead>
@@ -163,9 +162,10 @@
                                 <td>
                                     <p>发表时间：<?php echo date("Y-m-d H:i:s",$v['atime']); ?></p>
                                     {if $v['etime']}
-                                    <p>编辑时间：<?php echo date("Y-m-d H:i:s",$v['etime']); ?></p>
+                                    <p style="margin-bottom: 0px">编辑时间：<?php echo date("Y-m-d H:i:s",$v['etime']); ?></p>
+                                    <p>编辑用户：{php echo M('User')->uid_to_user($v['euid'])}<small class="badge badge-success badge-square buttonceIn animation-delay2 m-left-xs pull-">{$v.euid}</small></p>
                                     {/if}
-                                    
+                                    {hook t_admin_post_time_list}
                                 </td>
                                 <td>
                                     <p>子评论数量：{$v.posts}</p>
@@ -188,9 +188,9 @@
                 </div>
                 <div class="smart-widget-body">
                     <div class="row">
-                       
                         <div class="col-md-12">
-                            <button class="btn btn-danger">删除 (不可恢复)</button>
+                            <button type="submit" name="gn" value="del" class="btn btn-danger"><i class="fa fa-trash"></i> 彻底删除</button>
+                            {hook t_admin_post_table_form_btn}
                         </div>
                     </div>
                 </div>
