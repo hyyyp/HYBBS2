@@ -90,6 +90,7 @@ DROP TABLE IF EXISTS hy_usergroup;
 DROP TABLE IF EXISTS hy_vote_post;
 DROP TABLE IF EXISTS hy_vote_thread;
 DROP TABLE IF EXISTS hy_file_type;
+DROP TABLE IF EXISTS hy_thread_star;
 
 
 
@@ -497,6 +498,14 @@ DROP TABLE IF EXISTS hy_file_type;
     ) ENGINE={$table_type} DEFAULT CHARSET=utf8;
 
     INSERT INTO `hy_file_type` (`id`, `name`) VALUES ('0', '未知'),('1', '图片'), ('2', '附件'), ('3', '视频'), ('4', '音频');
+
+    CREATE TABLE `hy_thread_star` (
+      `uid` int(10) UNSIGNED NOT NULL,
+      `tid` int(10) UNSIGNED NOT NULL,
+      `atime` int(10) UNSIGNED NOT NULL,
+      UNIQUE KEY `uid_tid` (`uid`,`tid`),
+      KEY `atime` (`atime`)
+    ) ENGINE={$table_type} DEFAULT CHARSET=utf8;
     
     ");
     if($result->errorCode() ==0)
