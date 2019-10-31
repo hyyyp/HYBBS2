@@ -29,6 +29,7 @@ class Data extends Model {
             $this->CacheObj->set('post_data_'.$pid,$PostData);
             //{hook m_data_get_post_data_2}
         }
+        //{hook m_data_get_post_data_3}
         return $PostData;
     }
    
