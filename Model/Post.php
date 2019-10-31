@@ -5,6 +5,7 @@ use HY\Model;
 !defined('HY_PATH') && exit('HY_PATH not defined.');
 class Post extends Model {
 	public function get_row($pid, $name = '*') {
+		//{hook m_post_get_row_1}
 		return $this->find($name, ['pid' => $pid]);
 	}
 	// 通过 评论ID 获取评论数据
