@@ -15,6 +15,16 @@ function open_post_box(obj){
 	setTimeout(function(){$(".hy-back").addClass('in');},1);
 
 }
+function star(tid,obj){
+    star_thread(tid,function(e){
+        var _obj = $(obj);
+        if (e.error) {
+            _obj.html('取消收藏');
+        } else {
+            _obj.html('收藏');
+        }
+    });
+}
 function hide_post_box(obj){
 	//document.addEventListener('touchmove', touchmove_handler, false);
 	if(obj == undefined)

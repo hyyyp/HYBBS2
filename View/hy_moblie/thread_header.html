@@ -51,6 +51,13 @@
                 {/if}
             </li>
             {/if}
+            <li class="hy-table-view-cell">
+                {if $thread_data['star']}
+                <a class="hy-font-danger" onclick="star({$thread_data.tid},this)">取消收藏 </a>
+                {else}
+                <a onclick="star({$thread_data.tid},this)">收藏 </a>
+                {/if}
+            </li>
             {if $thread_data['uid'] == NOW_UID || NOW_GID == C("ADMIN_GROUP") || is_forumg($forum,NOW_UID,$thread_data['fid'])}
             <li class="hy-table-view-cell">
                 <a class="hy-font-purple" href="{php HYBBS_URL('post','edit',['id'=>$post_data['pid']]); }">{$_LANG['编辑文章']} </a>

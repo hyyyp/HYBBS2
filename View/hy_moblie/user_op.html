@@ -39,6 +39,7 @@
 	</div>
 	<div class="hy-box" style="margin-top:20px">
 	<!--{hook t_m_user_op_7}-->
+		{if BBSCONF('on_edit_user')}
 		<form action="{php HYBBS_URL('user','edit');}" class="form-horizontal" role="form" method="post">
 			<input type="hidden" name="gn" value="edit_username">
 			<div class="hy-input-box">
@@ -51,6 +52,7 @@
 				<button type="submit" class="hy-btn hy-btn-danger hy-btn-block" style="padding: 8px 0;">{$_LANG['修改']}</button>
 			</div>
 		</form>
+		{/if}
 		<form action="{php HYBBS_URL('user','edit');}" class="form-horizontal" role="form" method="post">
 		<input type="hidden" name="gn" value="ps">
 		<!--{hook t_m_user_op_8}-->

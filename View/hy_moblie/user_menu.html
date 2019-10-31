@@ -17,7 +17,7 @@
     <!--{hook t_m_user_menu_6}-->
     <li class="{$menu_action.post}"><a href="{php HYBBS_URL('my',$data['user'],'post');}">{$_LANG['帖子']}</a></li>
     <!--{hook t_m_user_menu_7}-->
-    
+    <li {if $method == 'collections'}class="active"{/if}><a href="{php HYBBS_URL('my',$data['user'],'collections');}">收藏</a></li>
     <!--{hook t_m_user_menu_8}-->
   </ul>
 </div>

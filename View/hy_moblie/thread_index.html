@@ -6,7 +6,8 @@
 <!--{hook t_m_thread_index_2}-->
 	<div class="hy-box thread-index" style="margin-bottom: 0;padding-bottom: 0;padding-top: 0;">
 	<!--{hook t_m_thread_index_3}-->
-		<h2>{if $thread_data['digest']}<span title="{$_LANG['精']}" style="color: red;">{$_LANG['精']}</span>{/if}{$thread_data.title}{if $thread_data['state']}<span title="{$_LANG['禁止回复']}" style="    color: brown;"> - {$_LANG['已锁定']}</span>{/if}</h2>
+		<h2>{$thread_data.title}{if $thread_data['digest']} <i class="icon icon-fire" title="{$_LANG['精']}" style="color: tomato !important;    font-size: inherit;"></i>{/if}
+		        	{if $thread_data['state']} <i class="icon icon-lock" title="{$_LANG['禁止回复']}" style="color: grey !important;    font-size: inherit;"></i>{/if}</h2>
 		<!--{hook t_m_thread_index_4}-->
 		<p class="cl">
 			<a href="{php HYBBS_URL('my',$thread_data['user']);}" class="user">

@@ -11,7 +11,10 @@
 		<!--{hook t_m_thread_list_3}-->
 
 		<a class="list-title" href="{php HYBBS_URL('thread',$v['tid']);}" ajax="true" pos="right">
-			<h3>{if $v['digest']}<span title="{$_LANG['精']}" style="color: red;">{$_LANG['精']}</span>{/if}{$v.title}</h3>
+			<h3>{$v.title}
+				{if $v['digest']}<i class="icon icon-fire" title="{$_LANG['精']}" style="color: tomato !important;;    font-size: inherit;"></i>{/if}
+		        	{if $v['state']}<i class="icon icon-lock" title="{$_LANG['禁止回复']}" style="color: grey !important;s;    font-size: inherit;"></i>{/if}
+		    </h3>
 		</a>
 		<!--{hook t_m_thread_list_4}-->
 		<ul class="hy-lable-group">
