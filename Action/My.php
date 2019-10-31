@@ -68,7 +68,7 @@ class My extends HYBBS {
             $post_data = S("Post")->select("*",array(
                 'AND'=>array(
                     'uid'=>$uid,
-                    'isthread'=>0
+                    'isthread'=>0,
                 ),
                 "ORDER"=> ['pid'=>'DESC'],
                 'LIMIT'=>5
@@ -136,7 +136,7 @@ class My extends HYBBS {
                 
                 'AND'=>[
                     'uid'=>$uid,
-                    'isthread'=>0
+                    'isthread'=>0,
                 ],
                 'LIMIT' =>[($pageid-1) * 10, 10],
                 'ORDER' => ['pid'=>'DESC']
@@ -373,6 +373,37 @@ class My extends HYBBS {
             $this->v('friend_list',$friend_list);
             $this->v('data',$data);
             $this->display('user_message');
+        }elseif($method == 'collections'){
+            $pageid=intval(isset($_GET['HY_URL'][3]) ? $_GET['HY_URL'][3] : 1) or $pageid=1;
+
+            $data = $User->read($uid);
+            $data['avatar'] = $this->avatar($uid);
+            $this->v('data',$data);
+            $this->v("title","积分日志");
+
+            $Thread_star = S('Thread_star');
+            $tid_list = $Thread_star->select('tid',[
+                'uid'=>$uid,
+                'ORDER'=>['atime'=>'DESC'],
+                'LIMIT' =>[($pageid-1) * 10, 10],
+            ]);
+            $thread_data=[];
+
+            if(!empty($tid_list)){
+                $thread_data = S('Thread')->select('*',['tid'=>$tid_list]);
+            }
+
+
+
+            $count = $Thread_star->count(['uid'=>$uid]);
+            $page_count = ($count % 10 != 0)?(intval($count/10)+1) : intval($count/10);
+
+            $this->v("count",$count);
+            $this->v("pageid",$pageid);
+            $this->v("page_count",$page_count);
+            $this->v('thread_data',$thread_data);
+
+            $this->display('user_collections');
         }
         //{hook a_my_empty_18}
 
