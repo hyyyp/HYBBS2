@@ -421,68 +421,67 @@ class Admin extends HYBBS {
                 
                 return $this->json(array('error'=>true,'info'=>'删除成功'));
             }elseif($gn == 'del_more'){ //删除勾选用户
-                if(X('post.del_post') == 'on'){ //确认删除
-                    $uid = X('post.id');
-                    if(is_array($uid)){
-                        $Thread = S("Thread");
-                        $Post = S("Post");
-                        $Chat = S("Chat");
-                        $Chat_count = S("Chat_count");
-                        $Chat_pm = S("Chat_pm");
-                        $File = S("File");
-                        $Filegold = S("Filegold");
-                        $Fileinfo = S("Fileinfo");
-                        $Friend = S("Friend");
-                        $Ol = S("Online");
-                        $Threadgold = S("Threadgold");
-                        $Vote_post = S("Vote_post");
-                        $Vote_thread = S("Vote_thread");
-                        foreach ($uid as $v) {
-                            $User->delete(['uid'=>$v]);
-                            $tid_list = S("Thread")->select('tid',['uid'=>$v]);
-                            if(!empty($tid_list)){
-                                foreach ($tid_list as $tid) {
-                                    $StorageThreadDir = GetStorageThreadDir($tid,false);
-                                    deldir(INDEX_PATH . $StorageThreadDir,false,true);
-                                }
+                
+                $uid = X('post.id');
+                if(is_array($uid)){
+                    $Thread = S("Thread");
+                    $Post = S("Post");
+                    $Chat = S("Chat");
+                    $Chat_count = S("Chat_count");
+                    $Chat_pm = S("Chat_pm");
+                    $File = S("File");
+                    $Filegold = S("Filegold");
+                    $Fileinfo = S("Fileinfo");
+                    $Friend = S("Friend");
+                    $Ol = S("Online");
+                    $Threadgold = S("Threadgold");
+                    $Vote_post = S("Vote_post");
+                    $Vote_thread = S("Vote_thread");
+                    foreach ($uid as $v) {
+                        $User->delete(['uid'=>$v]);
+                        $tid_list = S("Thread")->select('tid',['uid'=>$v]);
+                        if(!empty($tid_list)){
+                            foreach ($tid_list as $tid) {
+                                $StorageThreadDir = GetStorageThreadDir($tid,false);
+                                deldir(INDEX_PATH . $StorageThreadDir,false,true);
                             }
-                            
-                            $Thread->delete(array('uid'=>$v));
-                            $Post->delete(array('uid'=>$v));
-                            $Chat->delete(array('OR'=>array('uid1'=>$v,'uid2'=>$v)));
-                            $Chat_count->delete(array('uid'=>$v));
-                            $Chat_pm->delete(array('OR'=>array('uid1'=>$v,'uid2'=>$v)));
-                            $File->delete(array('uid'=>$v));
-                            $Filegold->delete(array('uid'=>$v));
-                            $Fileinfo->delete(array('uid'=>$v));
-                            $Friend->delete(array('OR'=>array('uid1'=>$v,'uid2'=>$v)));
-                            $Ol->delete(array('uid'=>$v));
-                            $Threadgold->delete(array('uid'=>$v));
-                            $Vote_post->delete(array('uid'=>$v));
-                            $Vote_thread->delete(array('uid'=>$v));
-                            deldir(INDEX_PATH. "upload/userfile/" . $v,false,true);
-
-                            $path_avatar = INDEX_PATH . 'upload/avatar/' . md5($v);
-                            $path_user_avatar = 'upload/avatar/' . md5($v);
-                            if(is_file($path_user_avatar.".jpg")){
-                                unlink($path_user_avatar.".jpg");
-                            }
-                            if(is_file($path_user_avatar."-a.jpg")){
-                                unlink($path_user_avatar."-a.jpg");
-                            }
-                            if(is_file($path_user_avatar."-b.jpg")){
-                                unlink($path_user_avatar."-b.jpg");
-                            }
-                            if(is_file($path_user_avatar."-c.jpg")){
-                                unlink($path_user_avatar."-c.jpg");
-                            }
-
                         }
-                        header('Location: '. X("server.HTTP_REFERER"));
-                        return $this->mess("删除完成");
+                        
+                        $Thread->delete(array('uid'=>$v));
+                        $Post->delete(array('uid'=>$v));
+                        $Chat->delete(array('OR'=>array('uid1'=>$v,'uid2'=>$v)));
+                        $Chat_count->delete(array('uid'=>$v));
+                        $Chat_pm->delete(array('OR'=>array('uid1'=>$v,'uid2'=>$v)));
+                        $File->delete(array('uid'=>$v));
+                        $Filegold->delete(array('uid'=>$v));
+                        $Fileinfo->delete(array('uid'=>$v));
+                        $Friend->delete(array('OR'=>array('uid1'=>$v,'uid2'=>$v)));
+                        $Ol->delete(array('uid'=>$v));
+                        $Threadgold->delete(array('uid'=>$v));
+                        $Vote_post->delete(array('uid'=>$v));
+                        $Vote_thread->delete(array('uid'=>$v));
+                        deldir(INDEX_PATH. "upload/userfile/" . $v,false,true);
+
+                        $path_avatar = INDEX_PATH . 'upload/avatar/' . md5($v);
+                        $path_user_avatar = 'upload/avatar/' . md5($v);
+                        if(is_file($path_user_avatar.".jpg")){
+                            unlink($path_user_avatar.".jpg");
+                        }
+                        if(is_file($path_user_avatar."-a.jpg")){
+                            unlink($path_user_avatar."-a.jpg");
+                        }
+                        if(is_file($path_user_avatar."-b.jpg")){
+                            unlink($path_user_avatar."-b.jpg");
+                        }
+                        if(is_file($path_user_avatar."-c.jpg")){
+                            unlink($path_user_avatar."-c.jpg");
+                        }
+
                     }
-                    return $this->mess("删除勾选用户 你未选择需要删除的用户");
+                    header('Location: '. X("server.HTTP_REFERER"));
+                    return $this->mess("删除完成");
                 }
+                   
                 
                 return $this->mess("删除勾选用户 你未勾选确认删除");
                 
@@ -860,7 +859,7 @@ class Admin extends HYBBS {
                     foreach ($pid_list as $pid) {
                         //{hook a_admin_post_5}
                         $tid = $Post->get_row($pid,'tid');
-                        $StoragePostDir = GetStoragePostDir($tid,$pid);
+                        $StoragePostDir = GetStoragePostDir($tid,$pid,false);
                         deldir(INDEX_PATH . $StoragePostDir,false,true);
                         $File->delete(['pid'=>$pid]);
                         //{hook a_admin_post_8}
@@ -2427,7 +2426,7 @@ function plugin_uninstall(){
                 $pid_list = $Post->select(['pid','tid'],['uid'=>$uid]);
                 if(!empty($pid_list)){
                     foreach ($pid_list as $v) {
-                        $StoragePostDir = GetStoragePostDir($v['tid'],$v['pid']);
+                        $StoragePostDir = GetStoragePostDir($v['tid'],$v['pid'],false);
                         deldir(INDEX_PATH . $StoragePostDir,false,true);
                     }
                 }
@@ -2452,7 +2451,7 @@ function plugin_uninstall(){
                 $pid_list = $Post->select(['pid','tid'],['uid'=>$uid]);
                 if(!empty($pid_list)){
                     foreach ($pid_list as $v) {
-                        $StoragePostDir = GetStoragePostDir($v['tid'],$v['pid']);
+                        $StoragePostDir = GetStoragePostDir($v['tid'],$v['pid'],false);
                         deldir(INDEX_PATH . $StoragePostDir,false,true);
                     }
                 }
