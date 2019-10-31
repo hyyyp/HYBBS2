@@ -164,8 +164,7 @@
                     </div>
                 </div>
             </div><!-- 搜索 -->
-            <form action="" method="post">
-                <input type="hidden" name="gn" value="del_more">
+            <form action="" method="post" onsubmit="return confirm('确定操作吗？');">
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered m-top-md" id="dataTable">
                         <thead>
@@ -263,21 +262,12 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="checkbox inline-block">
-                            <div class="custom-checkbox">
-                                <input type="checkbox" name="del_post" id="inlineCheckbox1" class="checkbox-red">
-                                <label for="inlineCheckbox1"></label>
-                            </div>
-                            <div class="inline-block vertical-top">
-                                勾选此项 确认多选删除
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
                         <div class="alert alert-danger alert-custom alert-dismissible" role="alert">
                             <i class="fa fa-times-circle m-right-xs"></i> <strong>特殊警告!</strong> 当你删除用户后，他的所有文章，评论，附件，文件，图片，聊天记录，好友粉丝等。有关他的一切数据都会被删除。而且无法恢复数据！
                         </div>
-                        <button class="btn btn-danger">删除勾选用户 (不可恢复)</button>
+                        
+                        <button type="submit" name="gn" value="del_more" class="btn btn-danger"><i class="fa fa-trash"></i> 彻底删除</button>
+                        {hook t_admin_user_table_form_btn}
                     </div>
                 </div>
             </form>
