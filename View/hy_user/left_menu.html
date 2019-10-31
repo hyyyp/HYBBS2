@@ -48,7 +48,7 @@
 
             <a href="{php HYBBS_URL('my',$data['user']);}"><i class="icon icon-home1"></i>{$_LANG['首页中心']}</a>
             </li>
-            <li class="tab-post {if in_array($method,['thread','post']) !== false}active{/if}">
+            <li class="tab-post {if in_array($method,['thread','post','collections']) !== false}active{/if}">
             <a href="{php HYBBS_URL('my',$data['user'],'thread');}"><i class="icon icon-post"></i>我的帖子</a>
             </li>
             

@@ -47,6 +47,7 @@
 			<h3 id="info">{$_LANG['修改资料']} <small></small></h3>
 		</div>
 		<!--{hook t_user_op_5}-->
+		{if BBSCONF('on_edit_user')}
 		<form class="form-horizontal" action="{php echo HYBBS_URL('user','edit');}" method="post">
 			<input type="hidden" name="gn" value="edit_username">
 			<div class="form-group">
@@ -62,6 +63,7 @@
 				</div>
 			</div>
 		</form>
+		{/if}
 		<form class="form-horizontal" action="{php echo HYBBS_URL('user','edit');}" method="post">
 			<input type="hidden" name="gn" value="ps">
 			<div class="form-group">
