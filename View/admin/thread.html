@@ -111,8 +111,7 @@
                     </div>
                 </div>
             </div><!-- 搜索 -->
-            <form action="" method="post">
-                <input type="hidden" name="gn" value="del">
+            <form action="" method="post" onsubmit="return confirm('确定操作吗？');">
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered m-top-md" id="dataTable">
                         <thead>
@@ -127,7 +126,7 @@
                                 <th>分类&FID</th>
                                 <th>作者&UID</th>
                                 <th>标题</th>
-                                <th>发表时间</th>
+                                <th>时间</th>
                                 <th>统计</th>
                                 <th>赞踩</th>
                                 
@@ -146,21 +145,28 @@
                                 <td>{$v.tid}</td>
                                 <td>
                                     <?php echo forum($forum,$v['fid'],'name'); ?><small class="badge badge-success badge-square bounceIn animation-delay2 m-left-xs pull-right">{$v.fid}</small></td>
-                                <td>{php echo M('User')->uid_to_user($v['uid'])}<small class="badge badge-success badge-square bounceIn animation-delay2 m-left-xs pull-right">{$v.uid}</small></td>
+                                <td>{php echo M('User')->uid_to_user($v['uid'])}<small class="badge badge-success badge-square buttonceIn animation-delay2 m-left-xs pull-right">{$v.uid}</small></td>
                                 <td>
+                                    {if $v['digest']}<span class="label label-primary">精</span>{/if}
                                     {if $v['top']==1}<span class="label label-success">板块置顶</span>{elseif $v['top']==2}<span class="label label-info">全站置顶</span>{/if}
 
                                     <a href="{php HYBBS_URL('thread',$v['tid'])}" target="_blank">{$v.title}</a>
                                     {if $v['state']}
                                     <span class="btn btn-success btn-xs">
-                                    <i class="fa fa-lock"></i>
-                                    
+                                    <i class="fa fa-lock"></i> 锁定
                                     </span>
                                     {/if}
                                     <a target="_blank" href="{php HYBBS_URL('thread',$v['tid']);}" class="btn btn-success btn-xs">查看</a>
                                 </td>
                                 <td>
-                                    <?php echo date("Y-m-d H:i:s",$v['atime']); ?>
+                                    
+                                    <p>发表时间：{:date("Y-m-d H:i:s",$v['atime']);}</p>
+                                    
+                                    {if $v['atime'] != $v['etime'] && $v['etime']}
+                                    <p style="margin-bottom: 0px">编辑时间：{:date("Y-m-d H:i:s",$v['etime']);} </p>
+                                    <p>编辑用户：{php echo M('User')->uid_to_user($v['euid'])}<small class="badge badge-success badge-square buttonceIn animation-delay2 m-left-xs pull-">{$v.euid}</small></p>
+                                    {/if}
+                                    {hook t_admin_thread_time_list}
                                 </td>
                                 <td>
                                     <p>评论数量：{$v.posts}</p>
@@ -183,9 +189,9 @@
                 </div>
                 <div class="smart-widget-body">
                     <div class="row">
-                        
                         <div class="col-md-12">
-                            <button class="btn btn-danger">删除 (不可恢复)</button>
+                            <button type="submit" name="gn" value="del" class="btn btn-danger"><i class="fa fa-trash"></i> 彻底删除</button>
+                            {hook t_admin_thread_table_form_btn}
                         </div>
                     </div>
                 </div>
