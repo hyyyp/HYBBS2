@@ -11,6 +11,7 @@ class Thread extends Model {
      * @return array | boolean
     */
     public function get_row($tid,$name = '*'){
+        //{hook m_thread_get_row_1}
         return $this->find($name,['tid'=>$tid]);
     }
     /**
@@ -25,6 +26,7 @@ class Thread extends Model {
     }
     //判断主题是否还存在
     public function is_tid($tid){
+        //{hook m_thread_is_tid_1}
         return $this->has(['tid'=>$tid]);
     }
     /**
@@ -77,11 +79,16 @@ class Thread extends Model {
     */
     public function get_user_thread_list($uid, $pageid = 1, $size = 10, $order = ['tid'=>'DESC']){
         //{hook m_get_user_thread_list_1}
-        return $this->select('*',[
-            'uid'=>$uid,
+        $where = [
+            'AND'=>[
+                'uid'=>$uid,
+                //{hook m_get_user_thread_list_2}
+            ],
             'ORDER'=>$order,
             'LIMIT' => [ ($pageid-1) * $size, $size ]
-        ]);
+        ];
+        //{hook m_get_user_thread_list_3}
+        return $this->select('*',$where);
     }
     /**
      * 获取主题列表
@@ -93,13 +100,18 @@ class Thread extends Model {
     */
     public function get_thread_list($pageid = 1 , $size = 10,$order = ['tid'=>'DESC']){
         //{hook m_get_thread_list_1}
-        return $this->select('*',[
+        $where = [
+            'AND'=>[
+                //{hook m_get_thread_list_2}
+            ],
             'ORDER' => $order,
             'LIMIT' => [
                 ($pageid-1) * $size,
                 $size
             ]
-        ]);
+        ];
+        //{hook m_get_thread_list_3}
+        return $this->select('*',$where);
     }
     /**
      * 获取某分类主题列表
@@ -112,14 +124,19 @@ class Thread extends Model {
     */
     public function get_forum_thread_list($fid, $pageid = 1 , $size = 10,$order = ['tid'=>'DESC']){
         //{hook m_get_forum_thread_list_1}
-        return $this->select('*',[
-            'fid'   => $fid,
+        $where = [
+            'AND'=>[
+                'fid'   => $fid,
+                //{hook m_get_forum_thread_list_2}
+            ],
             'ORDER' => $order,
             'LIMIT' => [
                 ($pageid-1) * $size,
                 $size
             ]
-        ]);
+        ];
+        //{hook m_get_forum_thread_list_3}
+        return $this->select('*',$where);
     }
     /**
      * 获取全站置顶帖子
@@ -128,7 +145,15 @@ class Thread extends Model {
     */
     public function get_top_thread(){
         //{hook m_get_top_thread_1}
-        return $this->select('*',['top'=>2]);
+        $where = [
+            'AND'=>[
+                'top'=>2,
+                //{hook m_get_top_thread_2}
+            ]
+            
+        ];
+        //{hook m_get_top_thread_3}
+        return $this->select('*',$where);
     }
     /**
      * 获取某分类置顶帖子
@@ -138,13 +163,15 @@ class Thread extends Model {
     */
     public function get_forum_top_thread($fid){
         //{hook m_get_forum_top_thread_1}
-        return $this->select('*',[
+        $where = [
             'AND'=>[
                 'top'=>1,
-                'fid'=>$fid
-                ]
+                'fid'=>$fid,
+                //{hook m_get_forum_top_thread_2}
             ]
-        );
+        ];
+        //{hook m_get_forum_top_thread_3}
+        return $this->select('*',$where);
     }
     /**
      * 主题列表格式化
