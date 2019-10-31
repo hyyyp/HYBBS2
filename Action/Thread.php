@@ -44,7 +44,6 @@ class Thread extends HYBBS {
                 return $this->message("你没有权限访问这个帖子");
 
             //{hook a_thread_empty_3}
-            
 
             //添加网站描述
             $this->conf['description'] = filter_html($thread_data['summary']);
@@ -201,6 +200,14 @@ class Thread extends HYBBS {
             //增加主题点击数
             //if(NOW_UID != $thread_data['uid'])
                 $Thread->update_int($tid,'views');
+
+            //判断用户是否收藏
+            $thread_data['star']=false;
+            if(IS_LOGIN){
+                $Thread_star = S('Thread_star');
+                $thread_data['star']=$Thread_star->has(['AND'=>['uid'=>NOW_UID,'tid'=>$tid]]);
+            }
+
 
             $count = $thread_data['posts'];
     		$count = (!$count)?1:$count;
@@ -457,7 +464,7 @@ class Thread extends HYBBS {
     public function top(){
         //{hook a_thread_top_1}
         if(!IS_LOGIN)
-            return $this->json(array('error'=>false,'info'=>'请登录'));
+            return $this->json(array('error'=>false,'info'=>'请登录再继续操作！'));
         //{hook a_thread_top_2}
 
 
@@ -510,6 +517,9 @@ class Thread extends HYBBS {
     //锁帖
     public function set_state(){
         if(IS_POST){
+            if(!IS_LOGIN)
+                $this->json(array('error'=>false,'info'=>'请登录再继续操作！'));
+
             $tid = intval(X("post.id"));
             $state = X("post.state");
             if($state == 1)
@@ -517,34 +527,37 @@ class Thread extends HYBBS {
             else
                 $state = 1;
             if(empty($tid))
-                return $this->json(array('error'=>false,'info'=>'参数不正常!'));
+                $this->json(array('error'=>false,'info'=>'参数不正常!'));
             $Thread = M("Thread");
 
             $thread_data = $Thread->read($tid);
             if(empty($thread_data))
-                return $this->json(array('error'=>false,'info'=>'主题不存在!'));
+                $this->json(array('error'=>false,'info'=>'主题不存在!'));
             if($thread_data['uid'] != NOW_UID && NOW_GID != C("ADMIN_GROUP") && !is_forumg($this->_forum,NOW_UID,$thread_data['fid']))
-                return $this->json(array('error'=>false,'info'=>'你没有权限这样做!'));
+                $this->json(array('error'=>false,'info'=>'你没有权限这样做!'));
             $Thread->update(['state'=>$state],['tid'=>$tid]);
             $this->CacheObj->rm('thread_data_'.$tid);
-            return $this->json(array('error'=>true,'info'=>'操作成功!'));
+            $this->json(array('error'=>true,'info'=>'操作成功!'));
         }
     }
     //帖子加精华
     public function digest(){
         if (IS_POST){
+            if(!IS_LOGIN)
+                $this->json(array('error'=>false,'info'=>'请登录再继续操作！'));
+
             $tid = intval(X("post.id"));
             $state = intval(X("post.state"));
             if (!in_array($state,[0,1]))
-                return $this->json(array('error'=>false,'info'=>'参数错误!'));
+                $this->json(array('error'=>false,'info'=>'参数错误!'));
             if(empty($tid))
-                return $this->json(array('error'=>false,'info'=>'参数错误!'));
+                $this->json(array('error'=>false,'info'=>'参数错误!'));
             $Thread = M("Thread");
             $thread_data = $Thread->read($tid);
             if(empty($thread_data))
-                return $this->json(array('error'=>false,'info'=>'主题不存在!'));
+                $this->json(array('error'=>false,'info'=>'主题不存在!'));
             if(NOW_GID != C("ADMIN_GROUP") && !is_forumg($this->_forum,NOW_UID,$thread_data['fid']))
-                return $this->json(array('error'=>false,'info'=>'你没有权限这样做!'));
+                $this->json(array('error'=>false,'info'=>'你没有权限这样做!'));
             $Thread->update(['digest'=>$state],['tid'=>$tid]);
             $User = M('User');
             $gold = $state?$this->conf['gold_digest']:-$this->conf['gold_digest'];
@@ -565,7 +578,32 @@ class Thread extends HYBBS {
             M("Chat")->sys_send(NOW_UID,'您的帖子 <a href="'. HYBBS_URLA('thread',$thread_data['tid']).'" target="_blank">['.$thread_data['title'].']</a>被管理员'.($state?'加精':'取消加精').($state?'获得':'扣除').'金钱:'.$gold.',积分:'.$credits);
             //{hook a_thread_digest_1}
             $this->CacheObj->rm('thread_data_'.$tid);
-            return $this->json(array('error'=>true,'info'=>'操作成功!'));
+            $this->json(array('error'=>true,'info'=>'操作成功!'));
+        }
+    }
+    public function star(){
+        if(IS_POST){
+            if(!IS_LOGIN)
+                $this->json(array('error'=>false,'info'=>'请登录再继续操作！'));
+
+            $tid = intval(X("post.tid"));
+            if(empty($tid))
+                $this->json(array('error'=>false,'info'=>'参数错误!'));
+
+            $Thread = M("Thread");
+            $thread_data = $Thread->read($tid);
+            if(empty($thread_data))
+                $this->json(array('error'=>false,'info'=>'主题不存在!'));
+
+            $Thread_star = S('Thread_star');
+            if($Thread_star->has(['AND'=>['uid'=>NOW_UID,'tid'=>$tid]])){
+                $Thread_star->delete(['AND'=>['uid'=>NOW_UID,'tid'=>$tid]]);
+                $this->json(array('error'=>true,'info'=>fale));
+            }else{
+                $Thread_star->insert(['uid'=>NOW_UID,'tid'=>$tid,'atime'=>NOW_TIME]);
+                $this->json(array('error'=>true,'info'=>true));    
+            }
+            
         }
     }
     //{hook a_thread_fun}
