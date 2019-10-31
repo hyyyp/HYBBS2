@@ -274,6 +274,7 @@ footer{
     color: #eef3f7;
     background: #2d84cc;
     border-color: #2d84cc;
+    margin-right: 10px
 }
 
 
@@ -289,7 +290,7 @@ footer{
 
 .btn-link {
     padding: 0;
-    margin-left: 18px;
+    margin-right: 18px;
     font-size: 14px;
     height: auto;
     line-height: inherit;

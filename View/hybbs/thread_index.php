@@ -23,9 +23,9 @@
 		<div class="wrap-box t-info">
 			<div class="head">
 		        <h1>
-                    {if $thread_data['digest']}<span title="{$_LANG['精']}" style="color: red;">{$_LANG['精']}</span>{/if}
 		        	{$thread_data.title}
-		        	{if $thread_data['state']}<span title="{$_LANG['禁止回复']}" style="color: brown;"> - {$_LANG['已锁定']}</span>{/if}
+		        	{if $thread_data['digest']}<i class="iconfont icon-jinghua" title="{$_LANG['精']}" style="color: tomato;    font-size: inherit;"></i>{/if}
+		        	{if $thread_data['state']}<i class="iconfont icon-lock" title="{$_LANG['禁止回复']}" style="color: grey;    font-size: inherit;"></i>{/if}
 		        </h1>
 		        <div class="meta">
 				<a href="{php HYBBS_URL('my',$thread_data['user']);}" target="_blank">
@@ -66,26 +66,40 @@
 				<button class="btn btn-info" onclick="tp('thread2',{$thread_data.tid},this)">
 					<i class="iconfont icon-thumbsdown1"></i> <span>{$thread_data.nos}</span>
 				</button>
-		        
-		        {if IS_LOGIN } 
+				<div style="width: 10px;display: inline-block;"></div>
+				{if IS_LOGIN}
 					<?php $arr = explode(",",forum($forum,$thread_data['fid'],'forumg')); ?>
-		            {if $thread_data['uid'] == NOW_UID || NOW_GID == C("ADMIN_GROUP") || is_forumg($forum,NOW_UID,$thread_data['fid'])}
-		            
-		            <a class="btn btn-link" href="{php HYBBS_URL('post','edit',['id'=>$post_data['pid']]); }">
-		            <i class="iconfont icon-edit3" ></i> 编辑主题
-		            </a>
-		          
-		            
-		            <a href="javascript:void(0);" class="btn btn-link" onclick="del_thread({$thread_data.tid},'thread')" >
-		            <i class="iconfont icon-delete"></i> {$_LANG['删除主题']}
-		            </a>
-
-		            
+			        {if $thread_data['uid'] == NOW_UID || NOW_GID == C("ADMIN_GROUP") || is_forumg($forum,NOW_UID,$thread_data['fid'])}
 		            <a href="javascript:void(0);" class="btn btn-link" onclick="set_state({$thread_data.tid},{$thread_data.state})" >
-		            <i class="iconfont icon-lock{if $thread_data['state']}1{/if}"></i> {if $thread_data['state']}{$_LANG['解锁帖子']}{else}{$_LANG['锁定帖子']}{/if}
+		            <i class="iconfont icon-{if $thread_data['state']}un{/if}lock"></i> {if $thread_data['state']}{$_LANG['解锁帖子']}{else}{$_LANG['锁定帖子']}{/if}
 		            </a>
+		            {/if}
+
+		            <a href="javascript:;" class="btn btn-link" onclick="star({$thread_data.tid},this)">
+		            <i class="iconfont icon-star" ></i> {if $thread_data['star']}取消{/if}收藏
+		            </a>
+				{/if}
+		        
+		        
+			</div>
+			{if IS_LOGIN } 
+			<?php $arr = explode(",",forum($forum,$thread_data['fid'],'forumg')); ?>
+			{if $thread_data['uid'] == NOW_UID || NOW_GID == C("ADMIN_GROUP") || is_forumg($forum,NOW_UID,$thread_data['fid'])}
+			<div style="border-top: 1px solid #F3F3F3;margin-top: 15px;padding-top: 10px;">
+				
+			            {if $thread_data['uid'] == NOW_UID || NOW_GID == C("ADMIN_GROUP") || is_forumg($forum,NOW_UID,$thread_data['fid'])}
+			            
+			            <a class="btn btn-link" href="{php HYBBS_URL('post','edit',['id'=>$post_data['pid']]); }">
+			            <i class="iconfont icon-edit3" ></i> 编辑主题
+			            </a>
+			          
+			            
+			            <a href="javascript:void(0);" class="btn btn-link" onclick="del_thread({$thread_data.tid},'thread')" >
+			            <i class="iconfont icon-delete"></i> {$_LANG['删除主题']}
+			            </a>
 
 		            {/if}
+					
 		            {if NOW_GID == C("ADMIN_GROUP")}
 		          
 		                {if $thread_data['top'] == 1}
@@ -123,16 +137,18 @@
                       {if NOW_GID == C("ADMIN_GROUP") || is_forumg($forum,NOW_UID,$thread_data['fid'])}
                       {if $thread_data['digest'] == 1}
                       <a href="javascript:void(0);" class="btn btn-info is-active" onclick="thread_digest({$thread_data.tid},0)" >
-                          <i class="iconfont icon-top"></i> {$_LANG['取消加精']}
+                          <i class="iconfont icon-jinghua"></i> {$_LANG['取消加精']}
                       </a>
                       {else}
                       <a href="javascript:void(0);" class="btn btn-link" onclick="thread_digest({$thread_data.tid},1)" >
-                          <i class="iconfont icon-top"></i> {$_LANG['加精']}
+                          <i class="iconfont icon-jinghua"></i> {$_LANG['加精']}
                       </a>
                       {/if}
                       {/if}
-		          {/if}
-		      </div>
+				
+			</div>
+			{/if}
+			{/if}
 		</div>
 		{if $thread_data['files']}
 		<div class="wrap-box">
