@@ -276,6 +276,21 @@ function friend_state(uid, callback) {
         swal("失败", "请尝试重新提交", "error");
     });
 }
+function star_thread(tid, callback){
+	$.ajax({
+        url: www + 'thread' + exp + 'star',
+        type: "POST",
+        cache: false,
+        data: {
+            tid: tid,
+        },
+        dataType: 'json'
+    }).then(function(e) {
+        callback(e);
+    }, function(e) {
+        callback(e);
+    });
+}
 function ajax_api(url,data,success,error){
 	success = success|| null;
 	error = error || null;
