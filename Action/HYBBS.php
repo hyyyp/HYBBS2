@@ -235,7 +235,7 @@ class HYBBS extends Action {
             'send_email_s'      =>  '300',
             'out_s'             =>  '300',
             'emailtitle'        =>  'HYBBS找回密码验证码邮件',
-            'emailcontent'      =>  '您的用户名为：%s，本次操作验证码喂：%s',
+            'emailcontent'      =>  '您的用户名为：%s，本次操作验证码为：%s',
             'mp3_friend'        =>  'public/mp3/msg.mp3',
             'mp3_system'        =>  'public/mp3/system.mp3',
 
