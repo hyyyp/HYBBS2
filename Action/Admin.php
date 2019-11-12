@@ -1692,6 +1692,8 @@ class Admin extends HYBBS {
                     //return $this->mess('这个插件并没有安装,你不需要卸载');
                     if(is_file(PLUGIN_PATH . "/{$name}/install"))
                         unlink(PLUGIN_PATH . "/{$name}/install");
+                    if(is_file(PLUGIN_PATH . "/{$name}/on"))
+                        unlink(PLUGIN_PATH . "/{$name}/on");
                     del_cache_file($this->conf);
                     return $this->mess('卸载成功');
                 }
