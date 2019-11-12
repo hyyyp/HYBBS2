@@ -598,7 +598,7 @@ class Thread extends HYBBS {
             $Thread_star = S('Thread_star');
             if($Thread_star->has(['AND'=>['uid'=>NOW_UID,'tid'=>$tid]])){
                 $Thread_star->delete(['AND'=>['uid'=>NOW_UID,'tid'=>$tid]]);
-                $this->json(array('error'=>true,'info'=>fale));
+                $this->json(array('error'=>true,'info'=>false));
             }else{
                 $Thread_star->insert(['uid'=>NOW_UID,'tid'=>$tid,'atime'=>NOW_TIME]);
                 $this->json(array('error'=>true,'info'=>true));    
