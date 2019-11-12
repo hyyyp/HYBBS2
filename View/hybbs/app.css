@@ -1196,3 +1196,9 @@ label {
   clear: both;
   content: "";
 }
+.post-content video{
+max-width:100%
+}
+.thread-content video{
+max-width:100%
+}

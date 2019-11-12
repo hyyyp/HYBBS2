@@ -85,7 +85,7 @@ function friend(uid, obj) {
 function star(tid,obj){
     star_thread(tid,function(e){
         var _obj = $(obj);
-        if (e.error) {
+        if (e.info) {
             _obj.html('<i class="iconfont icon-star" ></i> 取消收藏');
         } else {
             _obj.html('<i class="iconfont icon-star" ></i> 收藏');
