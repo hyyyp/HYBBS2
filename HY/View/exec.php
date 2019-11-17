@@ -56,7 +56,7 @@ dl,pre{
         foreach ($translate as $key => $value) {
             $message = str_replace($key,$value,$message);
         }
-        echo $message;
+        echo htmlspecialchars($message);
         ?>
       </font>
     </div>
@@ -162,9 +162,9 @@ dl,pre{
 
 <div class="box">
   <h3>运行信息</h3>
-  <dd><b>URL:</b> <?php echo $_SERVER['REQUEST_URI'];?></dd>
-  <dd><b>控制器Action:</b> <?php echo ACTION_NAME;?></dd>
-  <dd><b>操作方法Method:</b> <?php echo METHOD_NAME;?></dd>
+  <dd><b>URL:</b> <?php echo htmlspecialchars($_SERVER['REQUEST_URI']);?></dd>
+  <dd><b>控制器Action:</b> <?php echo htmlspecialchars(ACTION_NAME);?></dd>
+  <dd><b>操作方法Method:</b> <?php echo htmlspecialchars(METHOD_NAME);?></dd>
   <dd><b>访问者IP:</b> <?php echo CLIENT_IP?></dd>
   <dd><b>现在服务器时间:</b> <?php echo date('Y/n/j H:i',NOW_TIME);?></dd>
 
@@ -200,11 +200,11 @@ dl,pre{
 <?php
   if(DEBUG) {
     if(isset($_GET))
-      echo '<div class="box" style="    margin: 10px 10px 0 10px;white-space: pre;word-break: break-word;white-space: pre-wrap;word-wrap: break-word;">$_GET = '.print_r($_GET, 1).'</div>';
+      echo '<div class="box" style="    margin: 10px 10px 0 10px;white-space: pre;word-break: break-word;white-space: pre-wrap;word-wrap: break-word;">$_GET = '.htmlspecialchars(print_r($_GET, 1)).'</div>';
     if(isset($_POST))
-      echo '<div class="box" style="    margin: 10px 10px 0 10px;white-space: pre;word-break: break-word;white-space: pre-wrap;word-wrap: break-word;">$_POST = '.print_r($_POST, 1).'</div>';
+      echo '<div class="box" style="    margin: 10px 10px 0 10px;white-space: pre;word-break: break-word;white-space: pre-wrap;word-wrap: break-word;">$_POST = '.htmlspecialchars(print_r($_POST, 1)).'</div>';
     if(isset($_COOKIE))
-      echo '<div class="box" style="    margin: 10px 10px 0 10px;white-space: pre;word-break: break-word;white-space: pre-wrap;word-wrap: break-word;">$_COOKIE = '.print_r($_COOKIE, 1).'</div>';
+      echo '<div class="box" style="    margin: 10px 10px 0 10px;white-space: pre;word-break: break-word;white-space: pre-wrap;word-wrap: break-word;">$_COOKIE = '.htmlspecialchars(print_r($_COOKIE, 1)).'</div>';
 
     echo '<div class="box" style="    margin: 10px 10px 0 10px;">内存使用 = '.(memory_get_usage() / 1000).' kb</div>';
     if(isset($GLOBALS['START_TIME']))
