@@ -563,9 +563,9 @@ class Thread extends HYBBS {
             $gold = $state?$this->conf['gold_digest']:-$this->conf['gold_digest'];
             $credits = $state?$this->conf['credits_digest']:-$this->conf['credits_digest'];
             //用户增加 金钱
-            $User->update_int(NOW_UID, 'gold', '+', $gold);
+            $User->update_int($thread_data['uid'], 'gold', '+', $gold);
             //用户增加 积分
-            $User->update_int(NOW_UID, 'credits', '+', $credits);
+            $User->update_int($thread_data['uid'], 'credits', '+', $credits);
             if($this->conf['gold_digest'] != 0 || $this->conf['credits_digest'] != 0){
                 S("Log")->insert(array(
                     'uid'=>$thread_data['uid'],
@@ -575,7 +575,7 @@ class Thread extends HYBBS {
                     'atime'=>NOW_TIME
                 ));
             }
-            M("Chat")->sys_send(NOW_UID,'您的帖子 <a href="'. HYBBS_URLA('thread',$thread_data['tid']).'" target="_blank">['.$thread_data['title'].']</a>被管理员'.($state?'加精':'取消加精').($state?'获得':'扣除').'金钱:'.$gold.',积分:'.$credits);
+            M("Chat")->sys_send($thread_data['uid'],'您的帖子 <a href="'. HYBBS_URLA('thread',$thread_data['tid']).'" target="_blank">['.$thread_data['title'].']</a>被管理员'.($state?'加精':'取消加精').($state?'获得':'扣除').'金钱:'.$gold.',积分:'.$credits);
             //{hook a_thread_digest_1}
             $this->CacheObj->rm('thread_data_'.$tid);
             $this->json(array('error'=>true,'info'=>'操作成功!'));
