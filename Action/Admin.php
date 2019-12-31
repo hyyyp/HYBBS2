@@ -226,6 +226,9 @@ class Admin extends HYBBS {
                     
                 }
 
+                // if($iid == $fid)
+                //     return $this->mess("");
+
                 // if($fid != -1){ //父分类修改
                 //     $Forum->update(array('zid'=>1),array('id'=>$fid));// 存在子分类
                 // }else{ //$fid == -1
