@@ -2,7 +2,7 @@
 /*!
  * Medoo database framework
  * https://medoo.in
- * Version 1.7.6
+ * Version 1.7.7
  *
  * Copyright 2019, Angel Lai
  * Released under the MIT license
@@ -488,6 +488,11 @@ class Medoo
 
     protected function tableQuote($table)
     {
+        if (!preg_match('/^[a-zA-Z0-9_]+$/i', $table))
+        {
+            throw new InvalidArgumentException("Incorrect table name \"$table\"");
+        }
+
         return '"' . $this->prefix . $table . '"';
     }
 
