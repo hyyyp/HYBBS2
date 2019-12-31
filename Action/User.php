@@ -123,12 +123,203 @@ class User extends HYBBS {
     public function repass(){
         //{hook a_user_repass_1}
         $this->v("title","找回密码");
-        if(IS_LOGIN)
-            return $this->message("你已经登录,请注销后找回密码?");
+        // if(IS_LOGIN)
+        //     return $this->message("你已经登录,请注销后找回密码?");
         //{hook a_user_repass_2}
         if(IS_GET){
             
             $this->display('user_repass');
+        }elseif(IS_POST){
+            $gn = X('post.gn');
+            if($gn == 'has'){//判断账号是否存在
+                $user = X('post.user');
+
+                $User = M("User");
+                if(!$User->is_user($user))
+                    $this->json(['error'=>false,'info'=>'您提交的账号，尚未注册！']);
+
+                $this->json(['error'=>true,'info'=>'true']);
+            }elseif($gn == 'get_safe_info'){ //获取账号安全信息
+                $type = X('post.type');
+                $user = X('post.user');
+
+                $User = M("User");
+                $user_data = $User->user_read($user);
+                if(empty($user_data))
+                    $this->json(['error'=>false,'info'=>'您提交的账号，尚未注册！']);
+
+                if($type == 'email'){
+                    if(empty($user_data['email']))
+                        $this->json(['error'=>false,'info'=>'安全邮箱为空，不能使用邮箱进行找回密码！']);
+                    $this->json(['error'=>true,'info'=>hideStar($user_data['email'])]);
+                }
+                $this->json(['error'=>false,'info'=>'没有找到相关找回方式！']);
+
+            }elseif($gn == 'send_code'){ //发送验证码
+                $type = X('post.type');
+                $user = X('post.user');
+
+                $User = M("User");
+                $user_data = $User->user_read($user);
+                if(empty($user_data))
+                    $this->json(['error'=>false,'info'=>'您提交的账号，尚未注册！']);
+
+                if($type == 'email'){
+                    if(empty($user_data['email']))
+                        $this->json(['error'=>false,'info'=>'安全邮箱为空，不能使用邮箱进行找回密码！']);
+                    //开始发送验证码
+                    $emailhost = $this->conf['emailhost'];
+                    $emailport = $this->conf['emailport'];
+                    $emailuser = $this->conf['emailuser'];
+                    $emailpass = $this->conf['emailpass'];
+
+                    if(empty($emailhost) || empty($emailport))
+                        $this->json(['error'=>false,'info'=>'网站没开启邮箱功能,请联系网站管理员']);
+               
+                    $cache = cache('email_verify_code_' . $user_data['uid']);
+                    if(empty($cache)){
+                        $cache=[
+                            'code'  => '',  //验证码
+                            'expire'=> 0,   //下次允许发送时间
+                            'try_i' => 10   //允许尝试验证码次数
+                        ];
+                    }
+
+                    if($cache['expire'] > NOW_TIME)
+                        $this->json(['error'=>false,'info'=>($cache['expire'] - NOW_TIME). '秒后才能发送验证码.']);
+
+                    $cache['code'] = rand_code(6);
+                    $Email = L("Email");
+                    $Encrypt = L("Encrypt");
+                    $Email->init($emailhost,$emailport,true,$emailuser,$emailpass);
+
+                    if(!$Email->sendmail($user_data['email'],$emailuser,$this->conf['emailtitle'],sprintf($this->conf['emailcontent'],$user_data['user'],$cache['code']),'HTML'))
+                        $this->json(['error'=>false,'info'=>'发送失败,具体原因:'.$Email->error_mess]);
+
+                    $cache['expire'] = NOW_TIME + BBSCONF('send_email_s');
+
+                    cache('email_verify_code_' . $user_data['uid'], $cache, 300);
+
+                    cookie('HY_EMAIL',$Encrypt->encrypt($user_data['uid'],$user_data['salt'].C("MD5_KEY")),300);
+
+                    $this->json(['error'=>true,'info'=>'验证码已发送至：'.hideStar($user_data['email']),'next_s'=>BBSCONF('send_email_s')]);
+                }
+
+                $this->json(['error'=>false,'info'=>'发送失败，找回方式参数不存在！']);
+
+            }elseif($gn == 'verify_code'){
+                $type = X('post.type');
+                $user = X('post.user');
+
+                $User = M("User");
+                $user_data = $User->user_read($user);
+                if(empty($user_data))
+                    $this->json(['error'=>false,'info'=>'您提交的账号，尚未注册！']);
+
+                if($type == 'email'){
+                    $cookie = cookie("HY_EMAIL");
+                    if(empty($cookie))
+                        $this->json(['error'=>false,'info'=>'验证码已经过期,请获取新验证码！']);
+
+                    $Encrypt = L("Encrypt");
+                    $uid = $Encrypt->decrypt($cookie,$user_data['salt'].C("MD5_KEY"));
+                    if($uid != $user_data['uid']){
+                        $this->json(['error'=>false,'info'=>'参数被篡改，请刷新页面重试！']);
+                    }
+
+                    $cache = cache('email_verify_code_' . $uid);
+                    if(empty($cache)){
+                        $this->json(['error'=>false,'info'=>'验证码已经过期,请获取新验证码！']);
+                    }
+
+                    $code = X('post.code');
+                    if($cache['try_i'] <= 0){
+                        cache('email_verify_code_' . $uid,null);
+                        cookie('HY_EMAIL',null);
+                        $this->json(['error'=>false,'info'=>'多次提交错误验证码，请重新获取验证码！']);
+                    }
+
+                    
+
+                    if($code != $cache['code']){
+                        $cache['try_i']-=1;
+                        cache('email_verify_code_' . $uid, $cache, 300);
+                        $this->json(['error'=>false,'info'=>'验证码错误！'.$cache['try_i']]);
+                    }
+
+                    $this->json(['error'=>true,'info'=>'验证码正确']);
+                }
+
+                $this->json(['error'=>false,'info'=>'验证失败，验证参数不存在！']);
+
+            }elseif($gn == 'change'){
+                $type = X('post.type');
+                $user = X('post.user');
+
+                $User = M("User");
+                $user_data = $User->user_read($user);
+                if(empty($user_data))
+                    $this->json(['error'=>false,'info'=>'您提交的账号，尚未注册！']);
+
+                $adopt = false;
+                if($type == 'email'){
+                    $cookie = cookie("HY_EMAIL");
+                    if(empty($cookie))
+                        $this->json(['error'=>false,'info'=>'验证码已经过期,请获取新验证码！']);
+
+                    $Encrypt = L("Encrypt");
+                    $uid = $Encrypt->decrypt($cookie,$user_data['salt'].C("MD5_KEY"));
+                    if($uid != $user_data['uid']){
+                        $this->json(['error'=>false,'info'=>'参数被篡改，请刷新页面重试！']);
+                    }
+
+                    $cache = cache('email_verify_code_' . $uid);
+                    if(empty($cache)){
+                        $this->json(['error'=>false,'info'=>'验证码已经过期,请获取新验证码！']);
+                    }
+
+                    $code = X('post.code');
+                    if($cache['try_i'] <= 0){
+                        cache('email_verify_code_' . $uid,null);
+                        cookie('HY_EMAIL',null);
+                        $this->json(['error'=>false,'info'=>'多次提交错误验证码，请重新获取验证码！']);
+                    }
+
+                    if($code != $cache['code']){
+                        $cache['try_i']-=1;
+                        cache('email_verify_code_' . $uid, $cache, 300);
+                        $this->json(['error'=>false,'info'=>'验证码错误！'.$cache['try_i']]);
+                    }
+                    $adopt = true;
+                    cache('email_verify_code_' . $uid,null);
+                    cookie('HY_EMAIL',null);
+                }
+
+                if(!$adopt) //验证通过
+                    $this->json(['error'=>false,'info'=>'验证不通过']);
+
+                $pass1=X("post.pass1");
+                $pass2=X("post.pass2");
+                if(empty($pass1)||empty($pass2))
+                    $this->json(['error'=>false,'info'=>'参数不完整,请填写好表单!']);
+                if($pass1 != $pass2)
+                    $this->json(['error'=>false,'info'=>'确认新密码不一致！']);
+
+                $UserLib = L("User");
+                if(!$UserLib->check_pass($pass1))
+                    $this->json(['error'=>false,'info'=>'新密码不符合规则,必须大于等于5位']);
+
+
+                $User->update([
+                    'pass'=>L("User")->md5_md5($pass1,$user_data['salt'])
+                ],[
+                    'uid'=>$user_data['uid']
+                ]);
+                $this->json(array('error'=>true,'info'=>'修改成功.'));
+                
+
+            }
+            $this->json(['error'=>false,'info'=>'参数错误！']);
         }
     }
     //提交更改密码
@@ -225,7 +416,7 @@ class User extends HYBBS {
         //{hook a_user_login_1}
         $this->v("title","登录页面");
         if(IS_LOGIN)
-            return $this->message("你都已经登录了,登录那么多次干嘛");
+            return $this->message("您已登录，请勿多次提交！");
 
         if(IS_GET){
             //{hook a_user_login_2}
@@ -237,7 +428,7 @@ class User extends HYBBS {
             
             $this->display('user_login');
         }
-        elseif(IS_POST){
+        elseif(IS_POST){            
             $user = X("post.user");
             $pass = X("post.pass");
 
@@ -315,7 +506,7 @@ class User extends HYBBS {
 
         $this->v("title","注册用户");
         if(IS_LOGIN)
-            return $this->message("你都已经登录了,还注册那么多账号干嘛");
+            return $this->message("您已登录，如需注册新账号，请退出本当前账号再次访问！");
         if(IS_GET){
             //{hook a_user_add_2}
             $re_url = X("server.HTTP_REFERER");
