@@ -379,7 +379,7 @@ class My extends HYBBS {
             $data = $User->read($uid);
             $data['avatar'] = $this->avatar($uid);
             $this->v('data',$data);
-            $this->v("title","积分日志");
+            $this->v("title","帖子收藏");
 
             $Thread_star = S('Thread_star');
             $tid_list = $Thread_star->select('tid',[
