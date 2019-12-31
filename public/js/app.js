@@ -340,6 +340,9 @@ function loading(text){
 function loading_close(){
 	swal.close();
 }
+function ajax_error_swal(e,type){
+	swal(type, e.status + ' ' + e.statusText, "error");
+}
 
 
 //在线情况
