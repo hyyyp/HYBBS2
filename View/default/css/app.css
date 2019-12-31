@@ -1,0 +1,7 @@
+.thread-content video,.post-content video{
+max-width:100%
+}
+.thread-content p,.post-content p{
+margin:0;
+padding: 0;
+}
