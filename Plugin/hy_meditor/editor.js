@@ -562,7 +562,7 @@ function HY_editor(selector,config){
 	}
 	//console.log(this.$editor.width());
 	//console.log(this.$toolbar.width());
-	this.$toolbar.css('width',this.$editor.width());
+	//this.$toolbar.css('width',this.$editor.width());
 
 	//当前悬浮状态
 	this.nowToolFixed=false;
